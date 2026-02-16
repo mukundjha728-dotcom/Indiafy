@@ -84,30 +84,93 @@
 
 
 
+// import React from 'react';
+// import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+// import WebsiteLayout from './components/WebsiteLayout';
+// import DashboardLayout from './components/DashboardLayout';
+// import Dashboard from './pages/SellerDashboard/Dashboard';
+// import Orders from './pages/SellerDashboard/Orders';
+// import VideoVerification from './pages/SellerDashboard/VideoVerification';
+// import Inventory from './pages/SellerDashboard/Inventory';
+
+// function App() {
+//   return (
+//     <BrowserRouter>
+//       <DashboardLayout>
+//         <Routes>
+//           {/* Default path redirects to Dashboard */}
+//           <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          
+//           {/* Routes */}
+//           <Route path="/dashboard" element={<Dashboard />} />
+//           <Route path="/orders" element={<Orders />} />
+//           <Route path="/video-verification" element={<VideoVerification />} />
+//           <Route path="/inventory" element={<Inventory />} />
+//           {/* Add more routes here later, e.g., /inventory */}
+//         </Routes>
+//       </DashboardLayout>
+//     </BrowserRouter>
+//   );
+// }
+
+// export default App;
+
+
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
+// Layouts
+import WebsiteLayout from './components/WebsiteLayout';
 import DashboardLayout from './components/DashboardLayout';
+
+// Seller Dashboard Pages
 import Dashboard from './pages/SellerDashboard/Dashboard';
 import Orders from './pages/SellerDashboard/Orders';
 import VideoVerification from './pages/SellerDashboard/VideoVerification';
 import Inventory from './pages/SellerDashboard/Inventory';
 
+// Placeholder Home Page for the Public Website
+const Home = () => (
+  <div className="flex flex-col items-center justify-center min-h-[80vh] text-center px-4">
+    <h1 className="text-4xl font-bold text-blue-600 mb-4">Welcome to Indiafy</h1>
+    <p className="text-gray-600 mb-8">This is the public website facing the customers.</p>
+    <a href="/dashboard" className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+      Go to Seller Dashboard
+    </a>
+  </div>
+);
+
 function App() {
   return (
     <BrowserRouter>
-      <DashboardLayout>
-        <Routes>
-          {/* Default path redirects to Dashboard */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          
-          {/* Routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/video-verification" element={<VideoVerification />} />
-          <Route path="/inventory" element={<Inventory />} />
-          {/* Add more routes here later, e.g., /inventory */}
-        </Routes>
-      </DashboardLayout>
+      <Routes>
+        
+        {/* --- 1. PUBLIC WEBSITE ROUTES --- */}
+        {/* This wrapper applies the White Navbar to everything inside */}
+        <Route element={<WebsiteLayout />}>
+           <Route path="/" element={<Home />} />
+           {/* Add other public pages here, e.g., <Route path="/about" ... /> */}
+        </Route>
+
+        {/* --- 2. SELLER DASHBOARD ROUTES --- */}
+        {/* The '/*' captures any other route and applies the Dashboard Layout */}
+        <Route path="/*" element={
+          <DashboardLayout>
+            <Routes>
+              {/* Redirect /dashboard (without subpath) to main dashboard */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/inventory" element={<Inventory />} />
+              <Route path="/video-verification" element={<VideoVerification />} />
+              
+              {/* If someone types a random URL like /xyz, send them to dashboard */}
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </DashboardLayout>
+        } />
+
+      </Routes>
     </BrowserRouter>
   );
 }
