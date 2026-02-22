@@ -298,6 +298,7 @@ export default function Products({ products = [], setProducts }) {
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-xl transition-all active:scale-95 shadow-sm">Cancel</button>
                 <button type="submit" className="flex-1 py-3 font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl shadow-md transition-all active:scale-95">Save Product</button>
               </div>
+              <div className="h-60 w-full md:hidden shrink-0"></div>
             </form>
           </div>
         </div>

@@ -325,6 +325,7 @@ export default function Inventory({ products = [], setProducts, search: globalSe
                 <button type="button" onClick={() => setEditingProduct(null)} className="flex-1 py-3 font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all shadow-sm">Cancel</button>
                 <button type="submit" className="flex-1 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-all">Update Product</button>
               </div>
+              <div className="h-60 w-full md:hidden shrink-0"></div>
             </form>
           </div>
         </div>
