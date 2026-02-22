@@ -1,40 +1,38 @@
-// import React from 'react';
-// import Sidebar from './Sidebar';
-// import Navbar from './Navbar';
 
-// const DashboardLayout = ({ children }) => {
-//   return (
-//     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-[#0b1120]">
-//       <Sidebar />
-//       <main className="flex-1 ml-0 md:ml-72 h-full overflow-y-auto">
-//         <Navbar />
-//         <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-10 py-10">
-//           {children}
-//         </div>
-//       </main>
-//     </div>
-//   );
-// };
+import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
 
-// export default DashboardLayout;
+// 1. Accept storeDetails here
+export default function DashboardLayout({ children, storeDetails }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-
-import React from 'react';
-import Sidebar from './Sidebar'; // Correct because they are in the same folder
-import Navbar from './Navbar';   // Correct because they are in the same folder
-
-const DashboardLayout = ({ children }) => {
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-[#0b1120]">
-      <Sidebar />
-      <main className="flex-1 ml-0 md:ml-72 h-full overflow-y-auto">
-        <Navbar />
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-10 py-10">
-          {children}
-        </div>
-      </main>
+    <div className="flex min-h-screen bg-slate-50 text-slate-900">
+      
+      {/* Sidebar - Pass setSidebarOpen to close it on mobile after click */}
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      <div className="flex-1 flex flex-col min-w-0">
+        
+        {/* 2. Navbar - Pass storeDetails down so the profile updates dynamically */}
+        <Navbar 
+          setSidebarOpen={setSidebarOpen} 
+          storeDetails={storeDetails} 
+        />
+
+        {/* Dynamic Page Content */}
+        {/* Notice the overflow-x-hidden and min-w-0 which prevents horizontal scrolling bugs */}
+        <main className="flex-1 min-w-0 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto w-full">
+            {children}
+          </div>
+        </main>
+        
+        {/* Mobile bottom spacer */}
+        <div className="h-80 w-full md:hidden shrink-0"></div>
+        
+      </div>
     </div>
   );
-};
-
-export default DashboardLayout;
+}

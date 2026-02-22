@@ -1,178 +1,123 @@
-// // import React from 'react';
 
-// // const Sidebar = () => {
-// //   return (
-// //     <aside className="hidden md:flex flex-col w-72 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-800/50 h-full fixed z-20">
-// //       <div className="p-8 flex items-center gap-3">
-// //         <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-2xl shadow-[0_0_15px_rgba(99,102,241,0.3)]">
-// //           <span className="material-symbols-outlined text-[20px]">bolt</span>
-// //         </div>
-// //         <div className="flex flex-col">
-// //           <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">Indiafy</span>
-// //           <span className="text-[10px] font-semibold tracking-widest uppercase text-indigo-500 mt-1">Elite Seller</span>
-// //         </div>
-// //       </div>
-      
-// //       <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-// //         <a className="flex items-center gap-3.5 px-4 py-3.5 text-sm font-medium rounded-xl bg-indigo-50/80 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 shadow-sm ring-1 ring-indigo-100 dark:ring-indigo-800" href="#">
-// //           <span className="material-symbols-outlined text-[22px]">dashboard</span>
-// //           Command Center
-// //         </a>
-// //         <p className="px-4 pt-6 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Operations</p>
-// //         <a className="flex items-center gap-3.5 px-4 py-3 text-sm font-medium rounded-xl text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-indigo-600 transition-all" href="#">
-// //           <span className="material-symbols-outlined text-[22px]">shopping_bag</span>
-// //           Orders
-// //           <span className="ml-auto bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 py-0.5 px-2 rounded-full text-[10px] font-bold">12</span>
-// //         </a>
-// //         <a className="flex items-center gap-3.5 px-4 py-3 text-sm font-medium rounded-xl text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-indigo-600 transition-all" href="#">
-// //           <span className="material-symbols-outlined text-[22px]">inventory_2</span>
-// //           Inventory
-// //         </a>
-// //       </nav>
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { 
+  BarChart3, 
+  Package, 
+  Clock, 
+  Boxes, 
+  Wallet, 
+  Settings, 
+  X, 
+  Video 
+} from "lucide-react";
 
-// //       <div className="p-6 border-t border-slate-200/50 dark:border-slate-800/50">
-// //         <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-// //           <img alt="Profile" className="h-10 w-10 rounded-xl object-cover" src="https://via.placeholder.com/40" />
-// //           <div className="flex-1 min-w-0">
-// //             <p className="text-sm font-bold text-slate-900 dark:text-white truncate">The Green Leaf</p>
-// //             <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-medium">Verified Seller</p>
-// //           </div>
-// //         </div>
-// //       </div>
-// //     </aside>
-// //   );
-// // };
+const menus = [
+  { id: "dashboard", label: "Dashboard", icon: BarChart3, path: "/dashboard" },
+  { id: "orders", label: "Orders Inbox", icon: Package, path: "/orders" },
+  { id: "live", label: "Live Orders", icon: Clock, path: "/live" },
+  { id: "video", label: "Video Verification", icon: Video, path: "/video-verification" },
+  { id: "history", label: "Order History", icon: Boxes, path: "/history" },
+  { id: "products", label: "Products", icon: Package, path: "/products" },
+  { id: "inventory", label: "Inventory", icon: Boxes, path: "/inventory" },
+  { id: "finance", label: "Finance", icon: Wallet, path: "/finance" },
+  { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
+];
 
-// // export default Sidebar;
-
-
-// import React from 'react';
-// import { NavLink } from 'react-router-dom';
-
-// const Sidebar = () => {
-//   // Helper function for active styling
-//   const getLinkClass = ({ isActive }) => {
-//     const baseClass = "flex items-center gap-3.5 px-4 py-3 text-sm font-medium rounded-xl transition-all";
-//     const activeClass = "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 shadow-sm ring-1 ring-indigo-100 dark:ring-indigo-800";
-//     const inactiveClass = "text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 hover:shadow-sm";
-    
-//     return `${baseClass} ${isActive ? activeClass : inactiveClass}`;
-//   };
-
-//   return (
-//     <aside className="hidden md:flex flex-col w-72 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-800/50 h-full fixed z-20 overflow-y-auto">
-//       <div className="p-8 flex items-center gap-3">
-//         <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-2xl shadow-[0_0_15px_rgba(99,102,241,0.3)]">
-//           <span className="material-symbols-outlined text-[20px]">bolt</span>
-//         </div>
-//         <div className="flex flex-col">
-//           <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">Indiafy</span>
-//           <span className="text-[10px] font-semibold tracking-widest uppercase text-indigo-500 mt-1">Elite Seller</span>
-//         </div>
-//       </div>
-      
-//       <nav className="flex-1 px-4 py-6 space-y-1.5">
-        
-//         {/* Dashboard Link */}
-//         <NavLink to="/dashboard" className={getLinkClass}>
-//           <span className="material-symbols-outlined text-[22px]">dashboard</span>
-//           Command Center
-//         </NavLink>
-
-//         <p className="px-4 pt-6 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Operations</p>
-        
-//         {/* Orders Link */}
-//         <NavLink to="/orders" className={getLinkClass}>
-//           <span className="material-symbols-outlined text-[22px]">shopping_bag</span>
-//           Orders
-//           <span className="ml-auto bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 py-0.5 px-2 rounded-full text-[10px] font-bold">12</span>
-//         </NavLink>
-
-//         {/* Inventory Link (Placeholder) */}
-//         <NavLink to="/inventory" className={getLinkClass}>
-//           <span className="material-symbols-outlined text-[22px]">inventory_2</span>
-//           Inventory
-//         </NavLink>
-        
-//         {/* Logistics Link (Placeholder) */}
-//         <NavLink to="/logistics" className={getLinkClass}>
-//           <span className="material-symbols-outlined text-[22px]">local_shipping</span>
-//           Logistics
-//         </NavLink>
-
-//       </nav>
-
-//       {/* Footer Profile Section */}
-//       <div className="p-6 border-t border-slate-200/50 dark:border-slate-800/50 mt-auto">
-//         <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-//           <img alt="Profile" className="h-10 w-10 rounded-xl object-cover" src="https://via.placeholder.com/40" />
-//           <div className="flex-1 min-w-0">
-//             <p className="text-sm font-bold text-slate-900 dark:text-white truncate">The Green Leaf</p>
-//             <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-medium">Verified Seller</p>
-//           </div>
-//         </div>
-//       </div>
-//     </aside>
-//   );
-// };
-
-// export default Sidebar;
-
-
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-
-const Sidebar = () => {
-  const linkClasses = ({ isActive }) =>
-    `flex items-center gap-3.5 px-4 py-3 text-sm font-medium rounded-xl transition-all ${
-      isActive
-        ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 shadow-sm ring-1 ring-indigo-100 dark:ring-indigo-800'
-        : 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 hover:shadow-sm'
-    }`;
+export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
+  
+  // Helper component for navigation links
+  const NavItems = ({ closeMobile }) => (
+    <nav className="flex-1 space-y-1">
+      {menus.map((menu) => (
+        <NavLink
+          key={menu.id}
+          to={menu.path}
+          onClick={() => {
+            if (closeMobile) setSidebarOpen(false);
+          }}
+          className={({ isActive }) => `
+            w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all
+            ${isActive 
+              ? "bg-slate-900 text-white shadow-md shadow-slate-200" 
+              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            }
+          `}
+        >
+          <menu.icon size={18} />
+          {menu.label}
+        </NavLink>
+      ))}
+    </nav>
+  );
 
   return (
-    <aside className="hidden md:flex flex-col w-72 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-800/50 h-full fixed z-20 overflow-y-auto">
-      <div className="p-8 flex items-center gap-3">
-        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-2xl shadow-glow">
-          <span className="material-symbols-outlined text-[20px]">bolt</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">Indiafy</span>
-          <span className="text-[10px] font-semibold tracking-widest uppercase text-indigo-500 mt-1">Elite Seller</span>
-        </div>
-      </div>
-      
-      <nav className="flex-1 px-4 py-6 space-y-1.5">
-        <NavLink to="/dashboard" className={linkClasses}>
-          <span className="material-symbols-outlined text-[22px]">dashboard</span>
-          Command Center
-        </NavLink>
-
-        <p className="px-4 pt-6 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Operations</p>
-        
-        <NavLink to="/orders" className={linkClasses}>
-          <span className="material-symbols-outlined text-[22px]">shopping_bag</span>
-          Orders
-          <span className="ml-auto bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 py-0.5 px-2 rounded-full text-[10px] font-bold">12</span>
-        </NavLink>
-
-        <NavLink to="/inventory" className={linkClasses}>
-          <span className="material-symbols-outlined text-[22px]">inventory_2</span>
-          Inventory
-        </NavLink>
-      </nav>
-
-      <div className="p-6 border-t border-slate-200/50 dark:border-slate-800/50 mt-auto">
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">GL</div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">The Green Leaf</p>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate font-medium">Verified Seller</p>
+    <>
+      {/* --- DESKTOP SIDEBAR (Unchanged) --- */}
+      <aside className="w-64 bg-white border-r border-slate-200/60 hidden md:flex flex-col sticky top-0 h-screen">
+        <div className="p-6 border-b border-slate-200/60">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">I</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900 leading-none">INDIAFY</h1>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Seller Portal</p>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
-  );
-};
+        
+        <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
+           <NavItems closeMobile={false} />
+        </div>
 
-export default Sidebar;
+        {/* <div className="p-4 border-t border-slate-100">
+          <div className="bg-slate-50 rounded-xl p-3 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+               <img src="https://ui-avatars.com/api/?name=Jai+Store&background=random" alt="Avatar" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-slate-900 truncate">Jai Store</p>
+              <p className="text-[10px] text-slate-500 truncate">Premium Seller</p>
+            </div>
+          </div>
+        </div> */}
+      </aside>
+
+      {/* --- MOBILE DROPDOWN SIDEBAR (Updated) --- */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 md:hidden transition-opacity"
+          onClick={() => setSidebarOpen(false)}
+        >
+  
+          <aside 
+            className="absolute top-0 left-0 w-full bg-white max-h-[85vh] shadow-2xl flex flex-col rounded-b-3xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Mobile Header Inside Dropdown */}
+            <div className="p-4 flex justify-between items-center border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold">I</span>
+                </div>
+                <h1 className="text-lg font-bold text-slate-900">INDIAFY</h1>
+              </div>
+              <button 
+                onClick={() => setSidebarOpen(false)} 
+                className="p-2 bg-slate-100 text-slate-500 rounded-full hover:bg-slate-200 hover:text-slate-900 transition"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            {/* Scrollable Nav Items */}
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+              <NavItems closeMobile={true} />
+            </div>
+          </aside>
+        </div>
+      )}
+    </>
+  );
+}
