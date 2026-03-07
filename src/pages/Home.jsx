@@ -4,6 +4,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 // Home Sections
+import StoreModeToggle from "../components/HomePage/StoreModeToggle";
 import Hero from "../components/HomePage/Hero";
 import BrowseCategories from "../components/HomePage/BrowseCategories";
 import TrustSection from "../components/HomePage/TrustSection";
@@ -17,6 +18,7 @@ const Home = () => {
 
       {/* Main Content */}
       <main>
+        <StoreModeToggle />
         <Hero />
         <BrowseCategories />
         <VerifiedStores />
