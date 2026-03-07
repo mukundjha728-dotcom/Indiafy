@@ -1,4 +1,9 @@
-import { useState } from "react";
+ import { useState } from "react";
+import StoreModeToggle from "./StoreModeToggle";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
+import Navbar from "../Navbar";
+import Footer from "../Footer";
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -747,6 +752,11 @@ function BusinessCTA() {
 
 export default function WholesalePage() {
   return (
+    <>
+      <Navbar />
+       {/* 2. Add Toggle Here */}
+       <StoreModeToggle />
+
     <div className="font-sans antialiased bg-white">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500&display=swap');
@@ -762,5 +772,7 @@ export default function WholesalePage() {
       <TopSellers />
       <BusinessCTA />
     </div>
+    <Footer />
+     </>
   );
 }
