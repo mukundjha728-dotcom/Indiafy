@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import graphuraLogo from "../../assets/logo/logo.webp";
+// import graphuraLogo from "../../assets/logo/logo.webp";
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -69,7 +69,7 @@ export default function Sidebar() {
       >
         {/* Mobile Header */}
         <div className="flex items-center justify-between mb-6 lg:hidden">
-          <img
+          {/* <img
             src={graphuraLogo}
             alt="Graphura"
             className="h-9 sm:h-10 cursor-pointer"
@@ -77,7 +77,7 @@ export default function Sidebar() {
               navigate("/admin/dashboard");
               setOpen(false);
             }}
-          />
+          /> */}
           <X
             className="cursor-pointer"
             size={20}
@@ -90,11 +90,11 @@ export default function Sidebar() {
           onClick={() => navigate("/admin/dashboard")}
           className="hidden lg:flex justify-center mb-6 cursor-pointer"
         >
-          <img
+          {/* <img
             src={graphuraLogo}
             alt="Graphura"
             className="h-14 object-contain"
-          />
+          /> */}
         </div>
 
         {/* Navigation */}

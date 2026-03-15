@@ -16,6 +16,10 @@ import Productdetailpage from './components/HomePage/Productdetailpage';
 import Categorylistingpage from './components/HomePage/Categorylistingpage';
 import Searchresultspage from './components/HomePage/Searchresultspage';
 
+// User Auth
+
+import UserSignup from "./components/HomePage/UserSignup"
+
 // ================= CUSTOMER ACCOUNT PAGES =================
 import Customerprofile from './components/HomePage/Customerprofile';
 import Savedaddresses from './components/HomePage/Savedaddresses';
@@ -24,7 +28,7 @@ import Ordertrackingpage from './components/HomePage/Ordertrackingpage';
 import Customersupport from './components/HomePage/Customersupport';
 
 // ================= AUTH PAGE =================
-import SellerAuth from './frontend/pages/SellerAuth'; 
+import SellerAuth from './frontend/pages/SellerAuth';
 
 // ================= SELLER DASHBOARD PAGES =================
 import Dashboard from './frontend/pages/SellerDashboard/Dashboard';
@@ -38,12 +42,32 @@ import Settings from './frontend/pages/SellerDashboard/Settings';
 import Notifications from './frontend/pages/SellerDashboard/Notifications';
 import VideoVerification from './frontend/pages/SellerDashboard/VideoVerification';
 
+
+// Admin Auth
+import AdminLogin from "./frontend/pages/admin/AdminLogin";
+// import AdminSignup from "./frontend/pages/admin/AdminSignup";
+
+// /*  ADMIN PAGES  */
+import AdminDashboard from "./frontend/pages/admin/Dashboard";
+import AdminInventory from "./frontend/pages/admin/Inventory";
+import ProductManagement from "./frontend/pages/admin/ProductManagement";
+import AdminOrderManagement from "./frontend/pages/admin/OrderManagement";
+import OrderDetail from "./frontend/pages/admin/OrderDetail";
+import Analytics from "./frontend/pages/admin/Analytics";
+import AdminSettings from "./frontend/pages/admin/Settings";
+import Payments from "./frontend/pages/admin/Payment";
+import AdminProfile from "./frontend/pages/admin/Profile";
+import Coupons from "./frontend/pages/admin/Coupons";
+import CustomerManagement from "./frontend/pages/admin/CustomerManagement"
+
+
+
 export default function App() {
   // --- GLOBAL STORE PROFILE STATE ---
   const [storeDetails, setStoreDetails] = useState({
     name: "Jai Store",
     initials: "JS",
-    logo: null, 
+    logo: null,
     email: "contact@jaistore.com",
     phone: "+91 98765 43210",
     address: "Street 10, Sector 22\nChandigarh, 160022",
@@ -69,21 +93,21 @@ export default function App() {
   const [liveOrders, setLiveOrders] = useState([]);
 
   // --- HANDLERS ---
-  const handleAcceptOrder = (order) => { 
-    setInboxOrders(prev => prev.filter(o => o.id !== order.id)); 
-    setLiveOrders(prev => [{ ...order, status: "Packing In Progress" }, ...prev]); 
+  const handleAcceptOrder = (order) => {
+    setInboxOrders(prev => prev.filter(o => o.id !== order.id));
+    setLiveOrders(prev => [{ ...order, status: "Packing In Progress" }, ...prev]);
   };
-  const handleRejectOrder = (id) => { 
-    setInboxOrders(prev => prev.filter(o => o.id !== id)); 
+  const handleRejectOrder = (id) => {
+    setInboxOrders(prev => prev.filter(o => o.id !== id));
   };
-  const handleCompleteOrder = (id) => { 
-    setLiveOrders(prev => prev.filter(o => o.id !== id)); 
+  const handleCompleteOrder = (id) => {
+    setLiveOrders(prev => prev.filter(o => o.id !== id));
   };
 
   return (
     <BrowserRouter>
       <Routes>
-        
+
         {/* ================= PUBLIC WEBSITE ROUTES ================= */}
         {/* All routes inside this block will have the Main Navbar and Footer */}
         <Route element={<WebsiteLayout />}>
@@ -94,7 +118,7 @@ export default function App() {
           <Route path="/payment" element={<Paymentpage />} />
           <Route path="/order-success" element={<Ordersuccesspage />} />
           <Route path="/search" element={<Searchresultspage />} />
-          
+
           {/* Dynamic Data Routes (Notice the colon ':') */}
           <Route path="/product/:id" element={<Productdetailpage />} />
           <Route path="/category/:categoryName" element={<Categorylistingpage />} />
@@ -125,12 +149,34 @@ export default function App() {
               <Route path="settings" element={<Settings storeDetails={storeDetails} setStoreDetails={setStoreDetails} />} />
               <Route path="notifications" element={<Notifications />} />
               <Route path="video-verification" element={<VideoVerification />} />
-              
+
               {/* Fallback to Dashboard if route is not found inside the dashboard */}
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </DashboardLayout>
         } />
+
+        {/* User Auth */}
+
+        <Route path="/signup" element={<UserSignup/>}/>
+
+        {/* Admin Auth */}
+        
+        <Route path="/admin/login" element={<AdminLogin/>}/>
+        {/* <Route path="/admin/signup" element={<AdminSignup/>}/> */}
+        {/* Admin Dashboard */}
+
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/analytics" element={<Analytics />} />
+        <Route path="/admin/customers" element={<CustomerManagement />} />
+        <Route path="/admin/orders" element={<AdminOrderManagement />} />
+        <Route path="/admin/orders/:id" element={<OrderDetail />} />
+        <Route path="/admin/payments" element={<Payments />} />
+        <Route path="/admin/products" element={<ProductManagement />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
+        <Route path="/admin/profiles" element={<AdminProfile />} />
+        <Route path="/admin/coupons" element={<Coupons />} />
+        <Route path="/admin/inventory" element={<AdminInventory />} />
 
       </Routes>
     </BrowserRouter>
