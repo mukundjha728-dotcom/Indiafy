@@ -1,3 +1,4 @@
+
 import {
   ShoppingBag,
   ShoppingBasket,
@@ -8,41 +9,49 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom"; // 1. Import Link from React Router
 
 function BrowseCategories() {
+  // 2. Added 'slug' to each category to create a unique URL path
   const categories = [
     {
       name: "Garments",
+      slug: "garments",
       stores: "12 Stores",
       icon: <ShoppingBag size={26} />,
       gradient: "from-blue-500 to-blue-400",
     },
     {
       name: "Grocery",
+      slug: "grocery",
       stores: "45 Stores",
       icon: <ShoppingBasket size={26} />,
       gradient: "from-green-500 to-green-400",
     },
     {
       name: "Pharmacy",
+      slug: "pharmacy",
       stores: "8 Stores",
       icon: <Pill size={26} />,
       gradient: "from-red-500 to-red-400",
     },
     {
       name: "Electronics",
+      slug: "electronics",
       stores: "15 Stores",
       icon: <Tv size={26} />,
       gradient: "from-purple-500 to-purple-400",
     },
     {
       name: "Home Decor",
+      slug: "home-decor",
       stores: "22 Stores",
       icon: <Lamp size={26} />,
       gradient: "from-orange-500 to-orange-400",
     },
     {
       name: "Personal Care",
+      slug: "personal-care",
       stores: "31 Stores",
       icon: <Scissors size={26} />,
       gradient: "from-pink-500 to-pink-400",
@@ -72,13 +81,17 @@ function BrowseCategories() {
             </p>
           </div>
 
-          <button className="group flex items-center gap-2 text-blue-600 font-semibold">
+          {/* 3. Link the View All button */}
+          <Link 
+            to="/browse-categories" 
+            className="group flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700"
+          >
             View All
             <ArrowRight
               size={18}
               className="transition group-hover:translate-x-1"
             />
-          </button>
+          </Link>
         </motion.div>
 
         {/* Desktop Grid */}
@@ -90,25 +103,28 @@ function BrowseCategories() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.08, duration: 0.6 }}
               viewport={{ once: true }}
-              className="group relative bg-white rounded-3xl p-8 text-center border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-pointer"
+              className="group relative bg-white rounded-3xl text-center border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
             >
-              {/* Hover Glow */}
-              <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-blue-50 to-transparent"></div>
+              {/* 4. Wrap card content in a Link */}
+              <Link to={`/category/${category.slug}`} className="block w-full h-full p-8 cursor-pointer">
+                {/* Hover Glow */}
+                <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-blue-50 to-transparent pointer-events-none"></div>
 
-              {/* Icon */}
-              <div
-                className={`relative w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-gradient-to-br ${category.gradient} text-white shadow-md transition group-hover:scale-110`}
-              >
-                {category.icon}
-              </div>
+                {/* Icon */}
+                <div
+                  className={`relative w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-gradient-to-br ${category.gradient} text-white shadow-md transition group-hover:scale-110`}
+                >
+                  {category.icon}
+                </div>
 
-              <h3 className="relative text-lg font-semibold text-gray-900">
-                {category.name}
-              </h3>
+                <h3 className="relative text-lg font-semibold text-gray-900">
+                  {category.name}
+                </h3>
 
-              <p className="relative text-sm text-gray-500 mt-2">
-                {category.stores}
-              </p>
+                <p className="relative text-sm text-gray-500 mt-2">
+                  {category.stores}
+                </p>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -122,17 +138,20 @@ function BrowseCategories() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.08, duration: 0.5 }}
               viewport={{ once: true }}
-              className="min-w-[170px] bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100"
+              className="min-w-[170px] bg-white rounded-2xl text-center shadow-sm border border-gray-100"
             >
-              <div
-                className={`w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-br ${category.gradient} text-white`}
-              >
-                {category.icon}
-              </div>
+              {/* 5. Wrap mobile card content in a Link */}
+              <Link to={`/category/${category.slug}`} className="block w-full h-full p-6">
+                <div
+                  className={`w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-br ${category.gradient} text-white`}
+                >
+                  {category.icon}
+                </div>
 
-              <h3 className="font-semibold text-gray-900">{category.name}</h3>
+                <h3 className="font-semibold text-gray-900">{category.name}</h3>
 
-              <p className="text-sm text-gray-500 mt-1">{category.stores}</p>
+                <p className="text-sm text-gray-500 mt-1">{category.stores}</p>
+              </Link>
             </motion.div>
           ))}
         </div>

@@ -1,4 +1,8 @@
+
+
+
 import { useState, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom"; // 1. Import useNavigate
 
 // ─── GLOBAL STYLES ──────────────────────────────────────────────────────────
 const GlobalStyles = () => (
@@ -67,186 +71,18 @@ const GlobalStyles = () => (
 
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const RAW_PRODUCTS = [
-  {
-    id: 1,
-    name: "Sony WH-1000XM5 Noise Cancelling Headphones",
-    brand: "Sony",
-    price: 24990,
-    original: 34990,
-    rating: 4.8,
-    reviews: 3847,
-    seller: "Sharma Electronics",
-    dist: 1.3,
-    eta: 18,
-    img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80",
-    badge: "Best Seller",
-    inStock: true,
-  },
-  {
-    id: 2,
-    name: "Apple AirPods Pro (2nd Generation)",
-    brand: "Apple",
-    price: 24900,
-    original: 26900,
-    rating: 4.7,
-    reviews: 2140,
-    seller: "iZone Store",
-    dist: 2.1,
-    eta: 25,
-    img: "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?w=400&q=80",
-    badge: "New",
-    inStock: true,
-  },
-  {
-    id: 3,
-    name: "Bose QuietComfort 45 Over-Ear Headphones",
-    brand: "Bose",
-    price: 28990,
-    original: 38990,
-    rating: 4.6,
-    reviews: 1823,
-    seller: "AudioWorld",
-    dist: 0.9,
-    eta: 12,
-    img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&q=80",
-    badge: null,
-    inStock: true,
-  },
-  {
-    id: 4,
-    name: "JBL Flip 6 Portable Bluetooth Speaker",
-    brand: "JBL",
-    price: 8499,
-    original: 11999,
-    rating: 4.5,
-    reviews: 4201,
-    seller: "SoundHub",
-    dist: 3.2,
-    eta: 35,
-    img: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&q=80",
-    badge: "Hot Deal",
-    inStock: true,
-  },
-  {
-    id: 5,
-    name: "Sennheiser Momentum 4 Wireless Headphones",
-    brand: "Sennheiser",
-    price: 29990,
-    original: 39990,
-    rating: 4.7,
-    reviews: 987,
-    seller: "TechMart Official",
-    dist: 1.8,
-    eta: 22,
-    img: "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=400&q=80",
-    badge: null,
-    inStock: true,
-  },
-  {
-    id: 6,
-    name: "Anker Soundcore Life Q45 Headphones",
-    brand: "Anker",
-    price: 5999,
-    original: 8999,
-    rating: 4.3,
-    reviews: 3120,
-    seller: "GadgetZone",
-    dist: 4.5,
-    eta: 45,
-    img: "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400&q=80",
-    badge: "Budget Pick",
-    inStock: true,
-  },
-  {
-    id: 7,
-    name: "Samsung Galaxy Buds 2 Pro True Wireless",
-    brand: "Samsung",
-    price: 13990,
-    original: 17990,
-    rating: 4.4,
-    reviews: 2301,
-    seller: "Samsung SmartShop",
-    dist: 2.7,
-    eta: 30,
-    img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&q=80",
-    badge: "New",
-    inStock: false,
-  },
-  {
-    id: 8,
-    name: "Jabra Evolve2 85 Wireless Headset",
-    brand: "Jabra",
-    price: 32990,
-    original: 42990,
-    rating: 4.6,
-    reviews: 654,
-    seller: "ProAudio India",
-    dist: 5.1,
-    eta: 55,
-    img: "https://images.unsplash.com/photo-1565136114553-cc643e631c86?w=400&q=80",
-    badge: null,
-    inStock: true,
-  },
-  {
-    id: 9,
-    name: "Sony WF-1000XM5 True Wireless Earbuds",
-    brand: "Sony",
-    price: 19990,
-    original: 24990,
-    rating: 4.5,
-    reviews: 1567,
-    seller: "Sharma Electronics",
-    dist: 1.3,
-    eta: 18,
-    img: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80",
-    badge: "Top Rated",
-    inStock: true,
-  },
-  {
-    id: 10,
-    name: "Marshall Major IV On-Ear Headphones",
-    brand: "Marshall",
-    price: 11999,
-    original: 14999,
-    rating: 4.4,
-    reviews: 892,
-    seller: "RockSound Store",
-    dist: 3.8,
-    eta: 40,
-    img: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80",
-    badge: null,
-    inStock: true,
-  },
-  {
-    id: 11,
-    name: "Nothing Ear (2) True Wireless Earphones",
-    brand: "Nothing",
-    price: 9999,
-    original: 12999,
-    rating: 4.5,
-    reviews: 2034,
-    seller: "TechMart Official",
-    dist: 1.8,
-    eta: 22,
-    img: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&q=80",
-    badge: "New",
-    inStock: true,
-  },
-  {
-    id: 12,
-    name: "Beats Studio Pro Wireless Headphones",
-    brand: "Beats",
-    price: 27990,
-    original: 32990,
-    rating: 4.3,
-    reviews: 1124,
-    seller: "iZone Store",
-    dist: 2.1,
-    eta: 25,
-    img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80",
-    badge: null,
-    inStock: true,
-  },
+  { id: 1, name: "Sony WH-1000XM5 Noise Cancelling Headphones", brand: "Sony", price: 24990, original: 34990, rating: 4.8, reviews: 3847, seller: "Sharma Electronics", dist: 1.3, eta: 18, img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80", badge: "Best Seller", inStock: true, },
+  { id: 2, name: "Apple AirPods Pro (2nd Generation)", brand: "Apple", price: 24900, original: 26900, rating: 4.7, reviews: 2140, seller: "iZone Store", dist: 2.1, eta: 25, img: "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?w=400&q=80", badge: "New", inStock: true, },
+  { id: 3, name: "Bose QuietComfort 45 Over-Ear Headphones", brand: "Bose", price: 28990, original: 38990, rating: 4.6, reviews: 1823, seller: "AudioWorld", dist: 0.9, eta: 12, img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&q=80", badge: null, inStock: true, },
+  { id: 4, name: "JBL Flip 6 Portable Bluetooth Speaker", brand: "JBL", price: 8499, original: 11999, rating: 4.5, reviews: 4201, seller: "SoundHub", dist: 3.2, eta: 35, img: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&q=80", badge: "Hot Deal", inStock: true, },
+  { id: 5, name: "Sennheiser Momentum 4 Wireless Headphones", brand: "Sennheiser", price: 29990, original: 39990, rating: 4.7, reviews: 987, seller: "TechMart Official", dist: 1.8, eta: 22, img: "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=400&q=80", badge: null, inStock: true, },
+  { id: 6, name: "Anker Soundcore Life Q45 Headphones", brand: "Anker", price: 5999, original: 8999, rating: 4.3, reviews: 3120, seller: "GadgetZone", dist: 4.5, eta: 45, img: "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400&q=80", badge: "Budget Pick", inStock: true, },
+  { id: 7, name: "Samsung Galaxy Buds 2 Pro True Wireless", brand: "Samsung", price: 13990, original: 17990, rating: 4.4, reviews: 2301, seller: "Samsung SmartShop", dist: 2.7, eta: 30, img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&q=80", badge: "New", inStock: false, },
+  { id: 8, name: "Jabra Evolve2 85 Wireless Headset", brand: "Jabra", price: 32990, original: 42990, rating: 4.6, reviews: 654, seller: "ProAudio India", dist: 5.1, eta: 55, img: "https://images.unsplash.com/photo-1565136114553-cc643e631c86?w=400&q=80", badge: null, inStock: true, },
+  { id: 9, name: "Sony WF-1000XM5 True Wireless Earbuds", brand: "Sony", price: 19990, original: 24990, rating: 4.5, reviews: 1567, seller: "Sharma Electronics", dist: 1.3, eta: 18, img: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80", badge: "Top Rated", inStock: true, },
+  { id: 10, name: "Marshall Major IV On-Ear Headphones", brand: "Marshall", price: 11999, original: 14999, rating: 4.4, reviews: 892, seller: "RockSound Store", dist: 3.8, eta: 40, img: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80", badge: null, inStock: true, },
+  { id: 11, name: "Nothing Ear (2) True Wireless Earphones", brand: "Nothing", price: 9999, original: 12999, rating: 4.5, reviews: 2034, seller: "TechMart Official", dist: 1.8, eta: 22, img: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&q=80", badge: "New", inStock: true, },
+  { id: 12, name: "Beats Studio Pro Wireless Headphones", brand: "Beats", price: 27990, original: 32990, rating: 4.3, reviews: 1124, seller: "iZone Store", dist: 2.1, eta: 25, img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80", badge: null, inStock: true, },
 ];
 
 const BRANDS = [
@@ -528,15 +364,25 @@ function Sidebar({ filters, setFilters, onReset }) {
   );
 }
 
-// ─── PRODUCT CARD ────────────────────────────────────────────────────────────
+// ─── PRODUCT CARD (GRID VIEW) ────────────────────────────────────────────────
 function ProductCard({ product, idx }) {
+  const navigate = useNavigate(); // 2. Initialize navigate hook
   const [wishlisted, setWishlisted] = useState(false);
-  const [added, setAdded] = useState(false);
   const d = disc(product.price, product.original);
 
-  const handleCart = () => {
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+  const handleCardClick = () => {
+    // Navigate to the product details page
+    navigate(`/product/${product.id}`); 
+  };
+
+  const handleCart = (e) => {
+    e.stopPropagation(); // Prevents the card click from triggering
+    navigate("/cart");   // Navigate directly to the cart page
+  };
+
+  const handleWishlist = (e) => {
+    e.stopPropagation(); // Prevents the card click from triggering
+    setWishlisted((w) => !w);
   };
 
   const BADGE_COLORS = {
@@ -549,6 +395,7 @@ function ProductCard({ product, idx }) {
 
   return (
     <div
+      onClick={handleCardClick} // 3. Attach click to the main card container
       className="prod-card fade-in bg-white rounded-2xl border border-stone-200 overflow-hidden cursor-pointer group"
       style={{ animationDelay: `${idx * 0.05}s` }}
     >
@@ -579,7 +426,7 @@ function ProductCard({ product, idx }) {
 
         {/* Wishlist */}
         <button
-          onClick={() => setWishlisted((w) => !w)}
+          onClick={handleWishlist} // Uses the stopPropagation handler
           className={`heart-btn absolute bottom-3 right-3 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center border border-stone-100 ${wishlisted ? "active" : "text-stone-400"}`}
         >
           <Ic
@@ -663,15 +510,11 @@ function ProductCard({ product, idx }) {
             <span className="text-[10px] font-bold">{product.eta} min</span>
           </div>
           <button
-            onClick={handleCart}
+            onClick={handleCart} // Uses the stopPropagation handler
             disabled={!product.inStock}
-            className={`cart-btn flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
-              added
-                ? "bg-emerald-600 text-white border-emerald-600"
-                : "bg-stone-100 text-stone-800 border-stone-200 hover:bg-[#1c1917] hover:text-[#f7f4ef] hover:border-[#1c1917]"
-            } disabled:opacity-40 disabled:cursor-not-allowed`}
+            className={`cart-btn flex-1 py-2 rounded-xl text-xs font-bold border transition-all bg-stone-100 text-stone-800 border-stone-200 hover:bg-[#1c1917] hover:text-[#f7f4ef] hover:border-[#1c1917] disabled:opacity-40 disabled:cursor-not-allowed`}
           >
-            {added ? "✓ Added" : "Add to Cart"}
+            Add to Cart
           </button>
         </div>
       </div>
@@ -712,7 +555,7 @@ function ActiveFilters({ filters, setFilters }) {
       label: b,
       clear: () =>
         setFilters((f) => ({ ...f, brands: f.brands.filter((x) => x !== b) })),
-    }),
+    })
   );
   if (tags.length === 0) return null;
   return (
@@ -747,6 +590,7 @@ const DEFAULT_FILTERS = {
 };
 
 export default function CategoryListingPage() {
+  const navigate = useNavigate(); // 4. Initialize navigate hook for the List View
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [sort, setSort] = useState("relevance");
   const [viewMode, setViewMode] = useState("grid"); // grid | list
@@ -937,10 +781,12 @@ export default function CategoryListingPage() {
                 ))}
               </div>
             ) : (
+              // 5. LIST VIEW Layout handling
               <div className="space-y-3">
                 {filtered.map((p, i) => (
                   <div
                     key={p.id}
+                    onClick={() => navigate(`/product/${p.id}`)} // Route to product page
                     className="prod-card fade-in bg-white border border-stone-200 rounded-2xl p-4 flex gap-4 cursor-pointer"
                     style={{ animationDelay: `${i * 0.04}s` }}
                   >
@@ -1015,7 +861,10 @@ export default function CategoryListingPage() {
                     </div>
                     <div className="flex flex-col justify-center gap-2 shrink-0">
                       <button
-                        onClick={() => {}}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevents clicking the list item beneath it
+                          navigate("/cart");   // Navigate directly to cart
+                        }}
                         className="cart-btn py-2 px-4 bg-stone-100 text-stone-800 text-xs font-bold border border-stone-200 rounded-xl"
                       >
                         Add

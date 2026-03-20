@@ -1,4 +1,7 @@
+
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ─── FONTS & BASE STYLES ──────────────────────────────────────────────────────
 const GlobalStyles = () => (
@@ -703,55 +706,9 @@ function PriceDetails({ items, onPlaceOrder, placing }) {
   );
 }
 
-// ─── SUCCESS OVERLAY ──────────────────────────────────────────────────────────
-function OrderSuccess({ onReset }) {
-  return (
-    <div className="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-      <div className="bg-white rounded-3xl border border-stone-200 shadow-2xl p-10 max-w-sm w-full text-center step-fade">
-        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5">
-          <svg
-            className="w-10 h-10 text-emerald-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        </div>
-        <h2 className="text-2xl font-black text-stone-900 mb-2">
-          Order Placed!
-        </h2>
-        <p className="text-stone-500 text-sm mb-1">
-          Your order has been confirmed.
-        </p>
-        <p className="text-stone-400 text-xs mb-6">
-          Estimated delivery:{" "}
-          <span className="font-semibold text-stone-700">15–25 minutes</span>
-        </p>
-        <div className="text-xs text-stone-400 bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 mb-6">
-          Order ID:{" "}
-          <span className="font-mono font-bold text-stone-700">
-            #ORD-{Math.floor(Math.random() * 9000000) + 1000000}
-          </span>
-        </div>
-        <button
-          onClick={onReset}
-          className="w-full py-3 text-sm font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 transition-all"
-        >
-          Continue Shopping
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // ─── CHECKOUT PAGE ────────────────────────────────────────────────────────────
 export default function CheckoutPage() {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [selectedAddr, setSelectedAddr] = useState(null);
   const [addrDone, setAddrDone] = useState(false);
   const [summaryDone, setSummaryDone] = useState(false);
@@ -759,7 +716,6 @@ export default function CheckoutPage() {
   const [payMethod, setPayMethod] = useState("upi");
   const [cartItems, setCartItems] = useState(CART);
   const [placing, setPlacing] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleQty = (id, delta) =>
     setCartItems((prev) =>
@@ -774,25 +730,13 @@ export default function CheckoutPage() {
     setPlacing(true);
     setTimeout(() => {
       setPlacing(false);
-      setSuccess(true);
+      navigate("/order-success"); // Redirect to Order Success Page
     }, 1800);
   };
 
   return (
     <div className="checkout-root min-h-screen bg-stone-100">
       <GlobalStyles />
-      {success && (
-        <OrderSuccess
-          onReset={() => {
-            setSuccess(false);
-            setAddrDone(false);
-            setSummaryDone(false);
-            setPaymentDone(false);
-            setSelectedAddr(null);
-            setCartItems(CART);
-          }}
-        />
-      )}
 
       {/* Progress bar */}
       <div className="bg-white border-b border-stone-200 px-4 py-3">

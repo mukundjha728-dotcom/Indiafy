@@ -1,7 +1,7 @@
 import React from "react";
 
 // Layout Components
-import Navbar from "../components/Navbar";
+import WebsiteNavbar from "../components/WebsiteNavbar";
 import Footer from "../components/Footer";
 // Home Sections
 import StoreModeToggle from "../components/HomePage/StoreModeToggle";
@@ -14,7 +14,7 @@ const Home = () => {
   return (
     <>
       {/* Top Navigation */}
-      <Navbar />
+      <WebsiteNavbar />
 
       {/* Main Content */}
       <main>
