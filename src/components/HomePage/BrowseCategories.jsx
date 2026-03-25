@@ -1,4 +1,3 @@
-
 import {
   ShoppingBag,
   ShoppingBasket,
@@ -7,150 +6,151 @@ import {
   Lamp,
   Scissors,
   ArrowRight,
+  ChevronRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom"; // 1. Import Link from React Router
+import { Link } from "react-router-dom";
 
 function BrowseCategories() {
-  // 2. Added 'slug' to each category to create a unique URL path
   const categories = [
     {
       name: "Garments",
       slug: "garments",
       stores: "12 Stores",
-      icon: <ShoppingBag size={26} />,
-      gradient: "from-blue-500 to-blue-400",
+      icon: <ShoppingBag size={24} />,
     },
     {
       name: "Grocery",
       slug: "grocery",
       stores: "45 Stores",
-      icon: <ShoppingBasket size={26} />,
-      gradient: "from-green-500 to-green-400",
+      icon: <ShoppingBasket size={24} />,
     },
     {
       name: "Pharmacy",
       slug: "pharmacy",
       stores: "8 Stores",
-      icon: <Pill size={26} />,
-      gradient: "from-red-500 to-red-400",
+      icon: <Pill size={24} />,
     },
     {
       name: "Electronics",
       slug: "electronics",
       stores: "15 Stores",
-      icon: <Tv size={26} />,
-      gradient: "from-purple-500 to-purple-400",
+      icon: <Tv size={24} />,
     },
     {
       name: "Home Decor",
       slug: "home-decor",
       stores: "22 Stores",
-      icon: <Lamp size={26} />,
-      gradient: "from-orange-500 to-orange-400",
+      icon: <Lamp size={24} />,
     },
     {
       name: "Personal Care",
       slug: "personal-care",
       stores: "31 Stores",
-      icon: <Scissors size={26} />,
-      gradient: "from-pink-500 to-pink-400",
+      icon: <Scissors size={24} />,
     },
   ];
 
   return (
-    <section className="relative pt-20 pb-16 bg-gradient-to-b from-white to-gray-50">
-      {/* subtle divider */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+    <section className="relative pt-24 pb-20 bg-white overflow-hidden">
+      {/* Background Decorative Element */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-zinc-50 rounded-full blur-3xl opacity-50" />
 
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Header */}
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Header Section */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="flex justify-between items-end mb-14"
+          className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
         >
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="h-px w-8 bg-zinc-900" />
+              <span className="text-xs font-bold tracking-[0.2em] uppercase text-zinc-500">
+                Explore Gurugram
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-zinc-900 tracking-tight">
               Browse Categories
             </h2>
-            <p className="text-gray-500 mt-3 text-lg">
-              Everything available across West Gurugram
+            <p className="text-zinc-500 mt-4 text-lg font-medium max-w-md">
+              Discover verified local sellers across the platform's vertical
+              ecosystem. [cite: 5, 28]
             </p>
           </div>
 
-          {/* 3. Link the View All button */}
-          <Link 
-            to="/browse-categories" 
-            className="group flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700"
+          <Link
+            to="/browse-categories"
+            className="group inline-flex items-center gap-3 px-6 py-3 bg-zinc-900 text-white rounded-full text-sm font-bold hover:bg-zinc-800 transition-all shadow-lg hover:shadow-zinc-200"
           >
-            View All
+            View All Categories
             <ArrowRight
-              size={18}
-              className="transition group-hover:translate-x-1"
+              size={16}
+              className="transition-transform group-hover:translate-x-1"
             />
           </Link>
         </motion.div>
 
-        {/* Desktop Grid */}
-        <div className="hidden md:grid grid-cols-3 lg:grid-cols-6 gap-8">
+        {/* Desktop Grid Layout */}
+        <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
           {categories.map((category, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.08, duration: 0.6 }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
               viewport={{ once: true }}
-              className="group relative bg-white rounded-3xl text-center border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
             >
-              {/* 4. Wrap card content in a Link */}
-              <Link to={`/category/${category.slug}`} className="block w-full h-full p-8 cursor-pointer">
-                {/* Hover Glow */}
-                <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-blue-50 to-transparent pointer-events-none"></div>
-
-                {/* Icon */}
-                <div
-                  className={`relative w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full bg-gradient-to-br ${category.gradient} text-white shadow-md transition group-hover:scale-110`}
-                >
-                  {category.icon}
+              <Link
+                to={`/category/${category.slug}`}
+                className="group relative block bg-zinc-50 border border-zinc-100 rounded-[2rem] p-8 transition-all duration-500 hover:bg-white hover:shadow-2xl hover:shadow-zinc-200 hover:-translate-y-2 overflow-hidden"
+              >
+                {/* Background Pattern */}
+                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <ChevronRight size={80} strokeWidth={1} />
                 </div>
 
-                <h3 className="relative text-lg font-semibold text-gray-900">
-                  {category.name}
-                </h3>
+                <div className="relative z-10">
+                  <div className="w-14 h-14 mb-8 flex items-center justify-center rounded-2xl bg-white text-zinc-900 shadow-sm border border-zinc-100 group-hover:bg-zinc-900 group-hover:text-white transition-all duration-500">
+                    {category.icon}
+                  </div>
 
-                <p className="relative text-sm text-gray-500 mt-2">
-                  {category.stores}
-                </p>
+                  <h3 className="text-xl font-bold text-zinc-900 group-hover:tracking-wide transition-all">
+                    {category.name}
+                  </h3>
+
+                  <div className="mt-2 flex items-center gap-2 text-zinc-400 group-hover:text-zinc-600 transition-colors">
+                    <span className="text-xs font-semibold uppercase tracking-wider">
+                      {category.stores}
+                    </span>
+                    <ArrowRight
+                      size={12}
+                      className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"
+                    />
+                  </div>
+                </div>
               </Link>
             </motion.div>
           ))}
         </div>
 
-        {/* Mobile Scroll */}
-        <div className="md:hidden flex gap-5 overflow-x-auto pb-4">
+        {/* Mobile Horizontal Scroll */}
+        <div className="md:hidden flex gap-4 overflow-x-auto pb-8 snap-x no-scrollbar">
           {categories.map((category, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.08, duration: 0.5 }}
-              viewport={{ once: true }}
-              className="min-w-[170px] bg-white rounded-2xl text-center shadow-sm border border-gray-100"
-            >
-              {/* 5. Wrap mobile card content in a Link */}
-              <Link to={`/category/${category.slug}`} className="block w-full h-full p-6">
-                <div
-                  className={`w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-br ${category.gradient} text-white`}
-                >
+            <motion.div key={index} className="min-w-[200px] snap-center">
+              <Link
+                to={`/category/${category.slug}`}
+                className="block bg-zinc-50 border border-zinc-100 rounded-3xl p-6"
+              >
+                <div className="w-12 h-12 mb-6 flex items-center justify-center rounded-xl bg-white text-zinc-900 shadow-sm border border-zinc-100">
                   {category.icon}
                 </div>
-
-                <h3 className="font-semibold text-gray-900">{category.name}</h3>
-
-                <p className="text-sm text-gray-500 mt-1">{category.stores}</p>
+                <h3 className="font-bold text-zinc-900">{category.name}</h3>
+                <p className="text-xs text-zinc-400 font-bold mt-1 uppercase tracking-tighter">
+                  {category.stores}
+                </p>
               </Link>
             </motion.div>
           ))}

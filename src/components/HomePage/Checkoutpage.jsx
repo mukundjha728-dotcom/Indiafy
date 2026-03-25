@@ -1,841 +1,323 @@
-
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  MapPin,
+  ShieldCheck,
+  ChevronLeft,
+  CreditCard,
+  QrCode,
+  Truck,
+  BadgeCheck,
+  CheckCircle2,
+  Lock,
+  Smartphone,
+  Info,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-// ─── FONTS & BASE STYLES ──────────────────────────────────────────────────────
-const GlobalStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
-    .checkout-root * { box-sizing: border-box; }
-    .checkout-root { font-family: 'Sora', system-ui, sans-serif; }
-    .step-fade { animation: stepFade 0.3s ease; }
-    @keyframes stepFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .qty-btn:active { transform: scale(0.88); }
-    .addr-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
-    input[type=radio] { accent-color: #c2612a; }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  `}</style>
-);
+// Layout Components (Paths ensured as per previous fix)
+import WebsiteNavbar from "../WebsiteNavbar";
+import Footer from "../Footer";
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
+const fmt = (n) => "₹" + n.toLocaleString("en-IN");
+
 const ADDRESSES = [
   {
     id: 1,
     name: "Arjun Mehta",
     phone: "+91 98765 43210",
-    line1: "204, Sunrise Apartments, Koramangala 4th Block",
-    city: "Bengaluru",
-    state: "Karnataka",
-    pin: "560034",
+    line1: "House 204, Sector 45",
+    city: "Gurugram",
+    state: "Haryana",
+    pin: "122003",
     tag: "Home",
   },
   {
     id: 2,
     name: "Arjun Mehta",
     phone: "+91 98765 43210",
-    line1: "IndiQube Sigma, Outer Ring Road, Bellandur",
-    city: "Bengaluru",
-    state: "Karnataka",
-    pin: "560103",
+    line1: "IndiQube, Golf Course Ext Rd",
+    city: "Gurugram",
+    state: "Haryana",
+    pin: "122018",
     tag: "Work",
   },
 ];
 
-const CART = [
-  {
-    id: 1,
-    title: "Sony WH-1000XM5 Wireless Headphones",
-    seller: "Sharma Electronics",
-    price: 24990,
-    originalPrice: 34990,
-    qty: 1,
-    img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=120&q=80",
-  },
-  {
-    id: 2,
-    title: "Anker 65W USB-C Nano Charger",
-    seller: "TechMart Official",
-    price: 1499,
-    originalPrice: 2499,
-    qty: 2,
-    img: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=120&q=80",
-  },
-];
-
-const fmt = (n) => "₹" + n.toLocaleString("en-IN");
-
-// ─── ICONS ────────────────────────────────────────────────────────────────────
-const Icon = ({ d, className = "w-4 h-4", stroke = true, fill = false }) => (
-  <svg
-    className={className}
-    fill={fill ? "currentColor" : "none"}
-    stroke={stroke ? "currentColor" : "none"}
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d={d}
-    />
-  </svg>
-);
-
-// ─── STEP HEADER ─────────────────────────────────────────────────────────────
-function SectionHeader({ number, title, subtitle, completed, onEdit }) {
-  return (
-    <div className="flex items-center justify-between mb-5">
-      <div className="flex items-center gap-3">
-        <div
-          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${completed ? "bg-emerald-500 text-white" : "bg-stone-900 text-white"}`}
-        >
-          {completed ? <Icon d="M5 13l4 4L19 7" className="w-4 h-4" /> : number}
-        </div>
-        <div>
-          <h2 className="text-base font-semibold text-stone-900">{title}</h2>
-          {subtitle && (
-            <p className="text-xs text-stone-400 mt-0.5">{subtitle}</p>
-          )}
-        </div>
-      </div>
-      {completed && onEdit && (
-        <button
-          onClick={onEdit}
-          className="text-xs font-semibold text-amber-700 border border-amber-300 bg-amber-50 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors"
-        >
-          Edit
-        </button>
-      )}
-    </div>
-  );
-}
-
-// ─── SECTION WRAPPER ──────────────────────────────────────────────────────────
-function Card({ children, className = "" }) {
-  return (
-    <div
-      className={`bg-white border border-stone-200 rounded-2xl p-5 md:p-6 shadow-sm step-fade ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
-
-// ─── ADDRESS SECTION ──────────────────────────────────────────────────────────
-function AddressSection({
-  selectedId,
-  onSelect,
-  onComplete,
-  completed,
-  onEdit,
-}) {
-  const [showForm, setShowForm] = useState(false);
-  const [newAddr, setNewAddr] = useState({
-    name: "",
-    phone: "",
-    line1: "",
-    city: "",
-    pin: "",
-    tag: "Home",
-  });
-
-  const tagColors = {
-    Home: "bg-sky-50 text-sky-700 border-sky-200",
-    Work: "bg-violet-50 text-violet-700 border-violet-200",
-  };
-
-  return (
-    <Card>
-      <SectionHeader
-        number="1"
-        title="Delivery Address"
-        subtitle="Choose where to deliver your order"
-        completed={completed}
-        onEdit={onEdit}
-      />
-
-      {!completed && (
-        <div className="space-y-3 step-fade">
-          {ADDRESSES.map((addr) => (
-            <label
-              key={addr.id}
-              className={`addr-card flex gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${selectedId === addr.id ? "border-stone-900 bg-stone-50" : "border-stone-200 hover:border-stone-300"}`}
-            >
-              <input
-                type="radio"
-                name="address"
-                checked={selectedId === addr.id}
-                onChange={() => onSelect(addr.id)}
-                className="mt-1 shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-semibold text-stone-900">
-                    {addr.name}
-                  </span>
-                  <span
-                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${tagColors[addr.tag]}`}
-                  >
-                    {addr.tag}
-                  </span>
-                </div>
-                <p className="text-sm text-stone-500 mt-1 leading-relaxed">
-                  {addr.line1}, {addr.city}, {addr.state} — {addr.pin}
-                </p>
-                <p className="text-xs text-stone-400 mt-1">{addr.phone}</p>
-              </div>
-              {selectedId === addr.id && (
-                <button className="text-xs text-stone-500 border border-stone-200 rounded-lg px-2.5 py-1 self-start hover:bg-stone-100 transition-colors whitespace-nowrap">
-                  Edit
-                </button>
-              )}
-            </label>
-          ))}
-
-          {/* Add New Address toggle */}
-          {!showForm ? (
-            <button
-              onClick={() => setShowForm(true)}
-              className="w-full flex items-center justify-center gap-2 py-3.5 border-2 border-dashed border-stone-300 rounded-xl text-sm font-medium text-stone-500 hover:border-stone-400 hover:text-stone-700 hover:bg-stone-50 transition-all"
-            >
-              <Icon d="M12 4v16m8-8H4" className="w-4 h-4" />
-              Add New Address
-            </button>
-          ) : (
-            <div className="border-2 border-stone-200 rounded-xl p-4 space-y-3 step-fade">
-              <p className="text-sm font-semibold text-stone-800">
-                New Address
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  ["Full Name", "name"],
-                  ["Phone", "phone"],
-                ].map(([ph, key]) => (
-                  <input
-                    key={key}
-                    placeholder={ph}
-                    value={newAddr[key]}
-                    onChange={(e) =>
-                      setNewAddr((p) => ({ ...p, [key]: e.target.value }))
-                    }
-                    className="border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-                  />
-                ))}
-              </div>
-              <input
-                placeholder="Street Address"
-                value={newAddr.line1}
-                onChange={(e) =>
-                  setNewAddr((p) => ({ ...p, line1: e.target.value }))
-                }
-                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-              />
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  placeholder="City"
-                  value={newAddr.city}
-                  onChange={(e) =>
-                    setNewAddr((p) => ({ ...p, city: e.target.value }))
-                  }
-                  className="border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-                />
-                <input
-                  placeholder="PIN Code"
-                  value={newAddr.pin}
-                  onChange={(e) =>
-                    setNewAddr((p) => ({ ...p, pin: e.target.value }))
-                  }
-                  className="border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-                />
-              </div>
-              <div className="flex gap-2">
-                {["Home", "Work", "Other"].map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setNewAddr((p) => ({ ...p, tag: t }))}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${newAddr.tag === t ? "bg-stone-900 text-white border-stone-900" : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"}`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-2 pt-1">
-                <button
-                  onClick={() => setShowForm(false)}
-                  className="flex-1 py-2.5 text-sm font-medium text-stone-500 border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button className="flex-1 py-2.5 text-sm font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 transition-colors">
-                  Save Address
-                </button>
-              </div>
-            </div>
-          )}
-
-          <button
-            onClick={onComplete}
-            disabled={!selectedId}
-            className="w-full py-3 text-sm font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-1"
-          >
-            Deliver Here
-          </button>
-        </div>
-      )}
-
-      {completed &&
-        selectedId &&
-        (() => {
-          const addr = ADDRESSES.find((a) => a.id === selectedId);
-          return addr ? (
-            <div className="flex items-start gap-3 bg-stone-50 rounded-xl p-3 step-fade">
-              <span className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
-                <Icon
-                  d="M5 13l4 4L19 7"
-                  className="w-3.5 h-3.5 text-emerald-600"
-                />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-stone-800">
-                  {addr.name} · {addr.tag}
-                </p>
-                <p className="text-xs text-stone-500 mt-0.5">
-                  {addr.line1}, {addr.city} — {addr.pin}
-                </p>
-              </div>
-            </div>
-          ) : null;
-        })()}
-    </Card>
-  );
-}
-
-// ─── ORDER SUMMARY ────────────────────────────────────────────────────────────
-function OrderSummary({
-  items,
-  onQtyChange,
-  onRemove,
-  onComplete,
-  completed,
-  onEdit,
-}) {
-  return (
-    <Card>
-      <SectionHeader
-        number="2"
-        title="Order Summary"
-        subtitle={`${items.length} item${items.length !== 1 ? "s" : ""} in your cart`}
-        completed={completed}
-        onEdit={onEdit}
-      />
-
-      {!completed && (
-        <div className="space-y-4 step-fade">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="flex gap-4 p-4 bg-stone-50 rounded-xl border border-stone-100"
-            >
-              <div className="w-20 h-20 rounded-xl overflow-hidden bg-white border border-stone-200 shrink-0">
-                <img
-                  src={item.img}
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-stone-900 leading-snug line-clamp-2">
-                  {item.title}
-                </p>
-                <p className="text-xs text-stone-400 mt-0.5">
-                  by {item.seller}
-                </p>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-base font-bold text-stone-900">
-                    {fmt(item.price)}
-                  </span>
-                  <span className="text-xs text-stone-400 line-through">
-                    {fmt(item.originalPrice)}
-                  </span>
-                  <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                    {Math.round((1 - item.price / item.originalPrice) * 100)}%
-                    off
-                  </span>
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  {/* Qty */}
-                  <div className="flex items-center border border-stone-200 rounded-lg overflow-hidden bg-white">
-                    <button
-                      onClick={() => onQtyChange(item.id, -1)}
-                      className="qty-btn w-8 h-8 flex items-center justify-center text-stone-600 hover:bg-stone-100 transition-colors"
-                    >
-                      <Icon d="M20 12H4" className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="w-8 text-center text-sm font-semibold text-stone-900">
-                      {item.qty}
-                    </span>
-                    <button
-                      onClick={() => onQtyChange(item.id, 1)}
-                      className="qty-btn w-8 h-8 flex items-center justify-center text-stone-600 hover:bg-stone-100 transition-colors"
-                    >
-                      <Icon d="M12 4v16m8-8H4" className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                  {/* Remove */}
-                  <button
-                    onClick={() => onRemove(item.id)}
-                    className="flex items-center gap-1 text-xs text-rose-500 hover:text-rose-700 font-medium transition-colors"
-                  >
-                    <Icon
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      className="w-3.5 h-3.5"
-                    />
-                    Remove
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          <button
-            onClick={onComplete}
-            className="w-full py-3 text-sm font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 transition-all mt-1"
-          >
-            Continue to Payment
-          </button>
-        </div>
-      )}
-
-      {completed && (
-        <div className="flex items-start gap-3 bg-stone-50 rounded-xl p-3 step-fade">
-          <span className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
-            <Icon d="M5 13l4 4L19 7" className="w-3.5 h-3.5 text-emerald-600" />
-          </span>
-          <p className="text-sm text-stone-600">
-            {items.length} item{items.length !== 1 ? "s" : ""} confirmed ·{" "}
-            {fmt(items.reduce((s, i) => s + i.price * i.qty, 0))}
-          </p>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-// ─── PAYMENT METHODS ──────────────────────────────────────────────────────────
-const PAYMENT_OPTIONS = [
-  {
-    id: "upi",
-    label: "UPI",
-    desc: "Pay via Google Pay, PhonePe, Paytm",
-    icon: "M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z",
-    extra: (
-      <div className="mt-3 step-fade">
-        <input
-          placeholder="Enter UPI ID (e.g. name@upi)"
-          className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-        />
-        <div className="flex gap-2 mt-3">
-          {["GPay", "PhonePe", "Paytm", "BHIM"].map((app) => (
-            <button
-              key={app}
-              className="flex-1 py-2 text-xs font-semibold border border-stone-200 rounded-lg hover:border-stone-400 hover:bg-stone-50 transition-all text-stone-600"
-            >
-              {app}
-            </button>
-          ))}
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "card",
-    label: "Debit / Credit Card",
-    desc: "Visa, Mastercard, RuPay accepted",
-    icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z",
-    extra: (
-      <div className="mt-3 space-y-3 step-fade">
-        <input
-          placeholder="Card Number"
-          className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-        />
-        <div className="grid grid-cols-2 gap-3">
-          <input
-            placeholder="MM / YY"
-            className="border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-          />
-          <input
-            placeholder="CVV"
-            type="password"
-            className="border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-          />
-        </div>
-        <input
-          placeholder="Name on Card"
-          className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-stone-500 placeholder:text-stone-300"
-        />
-      </div>
-    ),
-  },
-  {
-    id: "cod",
-    label: "Cash on Delivery",
-    desc: "Pay when your order arrives",
-    icon: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z",
-    extra: (
-      <p className="mt-3 text-xs text-stone-500 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 step-fade">
-        ₹40 cash handling fee applies. Please keep exact change ready at the
-        time of delivery.
-      </p>
-    ),
-  },
-];
-
-function PaymentMethods({ selected, onSelect, completed, onEdit }) {
-  return (
-    <Card>
-      <SectionHeader
-        number="3"
-        title="Payment Method"
-        subtitle="Choose how you'd like to pay"
-        completed={completed}
-        onEdit={onEdit}
-      />
-
-      {!completed && (
-        <div className="space-y-3 step-fade">
-          {PAYMENT_OPTIONS.map((opt) => (
-            <div
-              key={opt.id}
-              onClick={() => onSelect(opt.id)}
-              className={`rounded-xl border-2 p-4 cursor-pointer transition-all duration-200 ${selected === opt.id ? "border-stone-900 bg-stone-50" : "border-stone-200 hover:border-stone-300"}`}
-            >
-              <div className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="payment"
-                  readOnly
-                  checked={selected === opt.id}
-                  className="shrink-0"
-                />
-                <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center ${selected === opt.id ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-500"} transition-all`}
-                >
-                  <Icon d={opt.icon} className="w-4.5 h-4.5 w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-stone-900">
-                    {opt.label}
-                  </p>
-                  <p className="text-xs text-stone-400">{opt.desc}</p>
-                </div>
-              </div>
-              {selected === opt.id && opt.extra}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {completed && (
-        <div className="flex items-start gap-3 bg-stone-50 rounded-xl p-3 step-fade">
-          <span className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
-            <Icon d="M5 13l4 4L19 7" className="w-3.5 h-3.5 text-emerald-600" />
-          </span>
-          <p className="text-sm text-stone-600">
-            {PAYMENT_OPTIONS.find((p) => p.id === selected)?.label ?? "—"}{" "}
-            selected
-          </p>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-// ─── TRUST SIGNALS ────────────────────────────────────────────────────────────
-function TrustSignals() {
-  const signals = [
-    {
-      icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
-      label: "Secure Payment",
-      sub: "256-bit SSL encryption",
-    },
-    {
-      icon: "M13 10V3L4 14h7v7l9-11h-7z",
-      label: "Fast Delivery",
-      sub: "15–25 min delivery",
-    },
-    {
-      icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",
-      label: "Easy Returns",
-      sub: "7-day hassle-free returns",
-    },
-  ];
-  return (
-    <div className="grid grid-cols-3 gap-3 mt-4">
-      {signals.map(({ icon, label, sub }) => (
-        <div
-          key={label}
-          className="flex flex-col items-center text-center gap-1.5 bg-stone-50 border border-stone-200 rounded-xl p-3"
-        >
-          <div className="w-8 h-8 bg-white border border-stone-200 rounded-full flex items-center justify-center shadow-sm">
-            <Icon d={icon} className="w-4 h-4 text-stone-600" />
-          </div>
-          <p className="text-xs font-semibold text-stone-800">{label}</p>
-          <p className="text-[10px] text-stone-400 leading-tight">{sub}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ─── PRICE DETAILS ────────────────────────────────────────────────────────────
-function PriceDetails({ items, onPlaceOrder, placing }) {
-  const itemsTotal = items.reduce((s, i) => s + i.originalPrice * i.qty, 0);
-  const discount = items.reduce(
-    (s, i) => s + (i.originalPrice - i.price) * i.qty,
-    0,
-  );
-  const delivery = 40;
-  const total = itemsTotal - discount + delivery;
-
-  const rows = [
-    {
-      label: `Items Total (${items.reduce((s, i) => s + i.qty, 0)})`,
-      value: fmt(itemsTotal),
-      muted: false,
-    },
-    {
-      label: "Discount",
-      value: `−${fmt(discount)}`,
-      muted: false,
-      green: true,
-    },
-    { label: "Delivery Fee", value: fmt(delivery), muted: false },
-  ];
-
-  return (
-    <div className="space-y-4">
-      <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
-        <h3 className="text-sm font-semibold text-stone-900 mb-4 flex items-center gap-2">
-          <Icon
-            d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-            className="w-4 h-4 text-stone-400"
-          />
-          Price Details
-        </h3>
-        <div className="space-y-3">
-          {rows.map(({ label, value, green }) => (
-            <div key={label} className="flex items-center justify-between">
-              <span className="text-sm text-stone-500">{label}</span>
-              <span
-                className={`text-sm font-medium ${green ? "text-emerald-600" : "text-stone-800"}`}
-              >
-                {value}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="border-t border-stone-200 border-dashed mt-4 pt-4 flex items-center justify-between">
-          <span className="text-sm font-bold text-stone-900">
-            Total Payable
-          </span>
-          <span className="text-xl font-black text-stone-900">
-            {fmt(total)}
-          </span>
-        </div>
-        <p className="text-xs text-emerald-600 font-medium mt-2 text-right">
-          You save {fmt(discount)} on this order 🎉
-        </p>
-
-        {/* Place Order Button */}
-        <button
-          onClick={onPlaceOrder}
-          disabled={placing}
-          className="w-full mt-5 py-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400 active:scale-95 transition-all shadow-lg shadow-orange-200 disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
-        >
-          {placing ? (
-            <>
-              <svg
-                className="animate-spin w-4 h-4"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="white"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="white"
-                  d="M4 12a8 8 0 018-8v8z"
-                />
-              </svg>
-              Placing Order...
-            </>
-          ) : (
-            <>
-              <Icon d="M5 13l4 4L19 7" className="w-4 h-4" />
-              Place Order · {fmt(total)}
-            </>
-          )}
-        </button>
-      </div>
-
-      <TrustSignals />
-
-      {/* Accepted payments */}
-      <div className="text-center">
-        <p className="text-xs text-stone-400 mb-2">We accept</p>
-        <div className="flex justify-center gap-2 flex-wrap">
-          {["VISA", "MC", "RuPay", "UPI", "GPay", "PhonePe"].map((m) => (
-            <span
-              key={m}
-              className="text-[10px] font-bold border border-stone-200 text-stone-400 px-2 py-1 rounded-md bg-white"
-            >
-              {m}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── CHECKOUT PAGE ────────────────────────────────────────────────────────────
 export default function CheckoutPage() {
-  const navigate = useNavigate(); // Initialize useNavigate
-  const [selectedAddr, setSelectedAddr] = useState(null);
-  const [addrDone, setAddrDone] = useState(false);
-  const [summaryDone, setSummaryDone] = useState(false);
-  const [paymentDone, setPaymentDone] = useState(false);
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1); // 1: Address, 2: Payment
+  const [selectedAddr, setSelectedAddr] = useState(1);
   const [payMethod, setPayMethod] = useState("upi");
-  const [cartItems, setCartItems] = useState(CART);
-  const [placing, setPlacing] = useState(false);
-
-  const handleQty = (id, delta) =>
-    setCartItems((prev) =>
-      prev.map((i) =>
-        i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i,
-      ),
-    );
-  const handleRemove = (id) =>
-    setCartItems((prev) => prev.filter((i) => i.id !== id));
+  const [isPlacing, setIsPlacing] = useState(false);
 
   const handlePlaceOrder = () => {
-    setPlacing(true);
+    setIsPlacing(true);
     setTimeout(() => {
-      setPlacing(false);
-      navigate("/order-success"); // Redirect to Order Success Page
-    }, 1800);
+      setIsPlacing(false);
+      navigate("/order-success");
+    }, 2000);
   };
 
   return (
-    <div className="checkout-root min-h-screen bg-stone-100">
-      <GlobalStyles />
+    <div className="bg-zinc-50 min-h-screen">
+      <WebsiteNavbar />
 
-      {/* Progress bar */}
-      <div className="bg-white border-b border-stone-200 px-4 py-3">
-        <div className="max-w-5xl mx-auto flex items-center gap-2">
-          {[
-            { label: "Address", done: addrDone },
-            { label: "Order", done: summaryDone },
-            { label: "Payment", done: paymentDone },
-          ].map((s, i, arr) => (
-            <div key={s.label} className="flex items-center gap-2 flex-1">
-              <div
-                className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${s.done ? "text-emerald-600" : i === arr.findIndex((x) => !x.done) ? "text-stone-900" : "text-stone-400"}`}
-              >
-                <div
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${s.done ? "bg-emerald-500 text-white" : i === arr.findIndex((x) => !x.done) ? "bg-stone-900 text-white" : "bg-stone-200 text-stone-400"}`}
-                >
-                  {s.done ? "✓" : i + 1}
-                </div>
-                <span className="hidden sm:inline">{s.label}</span>
-              </div>
-              {i < arr.length - 1 && (
-                <div
-                  className={`flex-1 h-0.5 rounded-full transition-colors ${s.done ? "bg-emerald-400" : "bg-stone-200"}`}
-                />
-              )}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-24">
+        {/* Header */}
+        <div className="mb-10 flex items-center justify-between">
+          <div>
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-xs font-black uppercase tracking-widest mb-4"
+            >
+              <ChevronLeft size={16} /> Back
+            </button>
+            <h1 className="text-4xl font-black text-zinc-900 tracking-tighter">
+              Secure <span className="text-zinc-300 italic">Checkout</span>
+            </h1>
+          </div>
+          <div className="hidden md:flex items-center gap-4">
+            <div
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border ${step >= 1 ? "bg-zinc-900 text-white border-zinc-900" : "bg-white text-zinc-400"}`}
+            >
+              <span className="text-xs font-black">01</span>
+              <span className="text-xs font-bold uppercase tracking-tighter">
+                Address
+              </span>
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        <div className="flex flex-col lg:flex-row gap-5 items-start">
-          {/* LEFT: Steps */}
-          <div className="flex-1 w-full space-y-4 min-w-0">
-            <AddressSection
-              selectedId={selectedAddr}
-              onSelect={setSelectedAddr}
-              onComplete={() => setAddrDone(true)}
-              completed={addrDone}
-              onEdit={() => {
-                setAddrDone(false);
-                setSummaryDone(false);
-                setPaymentDone(false);
-              }}
-            />
-            {addrDone && (
-              <OrderSummary
-                items={cartItems}
-                onQtyChange={handleQty}
-                onRemove={handleRemove}
-                onComplete={() => setSummaryDone(true)}
-                completed={summaryDone}
-                onEdit={() => {
-                  setSummaryDone(false);
-                  setPaymentDone(false);
-                }}
-              />
-            )}
-            {summaryDone && (
-              <PaymentMethods
-                selected={payMethod}
-                onSelect={setPayMethod}
-                completed={paymentDone}
-                onEdit={() => setPaymentDone(false)}
-              />
-            )}
-            {summaryDone && !paymentDone && (
-              <button
-                onClick={() => setPaymentDone(true)}
-                className="w-full py-3.5 text-sm font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 transition-all shadow-sm"
-              >
-                Review & Place Order →
-              </button>
-            )}
-          </div>
-
-          {/* RIGHT: Price Details */}
-          <div className="w-full lg:w-80 lg:sticky lg:top-6 shrink-0">
-            <PriceDetails
-              items={cartItems}
-              onPlaceOrder={handlePlaceOrder}
-              placing={placing}
-            />
+            <div className="h-px w-8 bg-zinc-200" />
+            <div
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border ${step >= 2 ? "bg-zinc-900 text-white border-zinc-900" : "bg-white text-zinc-400"}`}
+            >
+              <span className="text-xs font-black">02</span>
+              <span className="text-xs font-bold uppercase tracking-tighter">
+                Payment
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 px-4 py-3 shadow-2xl z-40">
-        <button
-          onClick={handlePlaceOrder}
-          disabled={placing || !paymentDone}
-          className="w-full py-3.5 text-sm font-bold text-white bg-gradient-to-r from-amber-600 to-orange-500 rounded-xl hover:from-amber-500 hover:to-orange-400 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          {placing
-            ? "Placing..."
-            : `Place Order · ${fmt(cartItems.reduce((s, i) => s + i.price * i.qty, 0) + 40)}`}
-        </button>
-      </div>
+        <div className="grid lg:grid-cols-12 gap-12 items-start">
+          {/* LEFT: FORM SECTIONS */}
+          <div className="lg:col-span-8 space-y-6">
+            {/* STEP 1: ADDRESS */}
+            <section
+              className={`bg-white rounded-[2.5rem] p-8 border ${step === 1 ? "border-zinc-900 shadow-2xl" : "border-zinc-100 opacity-60 pointer-events-none"}`}
+            >
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-10 h-10 rounded-2xl bg-zinc-100 flex items-center justify-center text-zinc-900">
+                  <MapPin size={20} />
+                </div>
+                <h3 className="text-xl font-black uppercase tracking-tight">
+                  Delivery Location
+                </h3>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                {ADDRESSES.map((addr) => (
+                  <div
+                    key={addr.id}
+                    onClick={() => setSelectedAddr(addr.id)}
+                    className={`cursor-pointer p-6 rounded-3xl border-2 transition-all ${selectedAddr === addr.id ? "border-zinc-900 bg-zinc-50" : "border-zinc-100 hover:border-zinc-200"}`}
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="px-3 py-1 bg-zinc-900 text-white text-[9px] font-black uppercase rounded-full">
+                        {addr.tag}
+                      </span>
+                      {selectedAddr === addr.id && (
+                        <CheckCircle2 size={20} className="text-zinc-900" />
+                      )}
+                    </div>
+                    <p className="font-bold text-zinc-900">{addr.name}</p>
+                    <p className="text-sm text-zinc-500 mt-1 leading-relaxed">
+                      {addr.line1}, {addr.city}, {addr.pin}
+                    </p>
+                    <p className="text-xs font-bold text-zinc-400 mt-3">
+                      {addr.phone}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {step === 1 && (
+                <button
+                  onClick={() => setStep(2)}
+                  className="w-full mt-8 py-5 bg-zinc-900 text-white rounded-3xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-zinc-800 transition-all"
+                >
+                  Deliver to this address
+                </button>
+              )}
+            </section>
+
+            {/* STEP 2: PAYMENT */}
+            <section
+              className={`bg-white rounded-[2.5rem] p-8 border ${step === 2 ? "border-zinc-900 shadow-2xl" : "border-zinc-100 opacity-60 pointer-events-none"}`}
+            >
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-2xl bg-zinc-100 flex items-center justify-center text-zinc-900">
+                    <CreditCard size={20} />
+                  </div>
+                  <h3 className="text-xl font-black uppercase tracking-tight">
+                    Payment Method
+                  </h3>
+                </div>
+                {step === 2 && (
+                  <button
+                    onClick={() => setStep(1)}
+                    className="text-[10px] font-black uppercase text-zinc-400 hover:text-zinc-900 border-b border-zinc-200"
+                  >
+                    Change Address
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                {/* UPI - Indiafy Preference */}
+                <label
+                  className={`block p-6 rounded-3xl border-2 cursor-pointer transition-all ${payMethod === "upi" ? "border-zinc-900 bg-zinc-50" : "border-zinc-100"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="radio"
+                        checked={payMethod === "upi"}
+                        onChange={() => setPayMethod("upi")}
+                        className="w-4 h-4 accent-zinc-900"
+                      />
+                      <div>
+                        <p className="font-bold text-zinc-900">
+                          UPI / Dynamic QR
+                        </p>
+                        <p className="text-xs text-zinc-400 font-medium">
+                          Instant reconciliation via Indiafy Node
+                        </p>
+                      </div>
+                    </div>
+                    <Smartphone size={24} className="text-zinc-300" />
+                  </div>
+                  {payMethod === "upi" && (
+                    <div className="mt-6 p-4 bg-zinc-100 rounded-2xl border border-dashed border-zinc-300 flex items-center gap-4">
+                      <QrCode size={40} className="text-zinc-400" />
+                      <p className="text-[10px] font-bold text-zinc-500 leading-tight uppercase tracking-tighter">
+                        A Secure Dynamic QR will be generated upon confirmation.
+                        Rider-personal transfers are prohibited.
+                      </p>
+                    </div>
+                  )}
+                </label>
+
+                {/* COD - Sector Restricted */}
+                <label
+                  className={`block p-6 rounded-3xl border-2 cursor-pointer transition-all ${payMethod === "cod" ? "border-zinc-900 bg-zinc-50" : "border-zinc-100"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="radio"
+                        checked={payMethod === "cod"}
+                        onChange={() => setPayMethod("cod")}
+                        className="w-4 h-4 accent-zinc-900"
+                      />
+                      <div>
+                        <p className="font-bold text-zinc-900">
+                          Cash on Delivery
+                        </p>
+                        <p className="text-xs text-zinc-400 font-medium">
+                          Verify & Pay at Sector-assigned Rider
+                        </p>
+                      </div>
+                    </div>
+                    <Truck size={24} className="text-zinc-300" />
+                  </div>
+                  {payMethod === "cod" && (
+                    <div className="mt-4 flex items-start gap-2 text-amber-600 bg-amber-50 p-4 rounded-2xl border border-amber-100">
+                      <Info size={16} className="shrink-0 mt-0.5" />
+                      <p className="text-[10px] font-bold uppercase leading-relaxed tracking-tighter">
+                        ₹40 operational fee applies for COD. Your eligibility
+                        score is being calculated.
+                      </p>
+                    </div>
+                  )}
+                </label>
+              </div>
+            </section>
+          </div>
+
+          {/* RIGHT: SUMMARY */}
+          <aside className="lg:col-span-4">
+            <div className="sticky top-32 space-y-6">
+              <div className="bg-zinc-950 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-zinc-300">
+                <h2 className="text-lg font-black uppercase tracking-widest mb-8">
+                  Order Total
+                </h2>
+
+                <div className="space-y-4 mb-8">
+                  <div className="flex justify-between text-zinc-500 font-medium text-sm">
+                    <span>Subtotal</span>
+                    <span className="text-white font-bold">{fmt(26489)}</span>
+                  </div>
+                  <div className="flex justify-between text-zinc-500 font-medium text-sm">
+                    <span>Delivery Fee</span>
+                    <span className="text-emerald-400 font-bold uppercase text-[10px] pt-1 tracking-widest">
+                      Free
+                    </span>
+                  </div>
+                  {payMethod === "cod" && (
+                    <div className="flex justify-between text-zinc-500 font-medium text-sm">
+                      <span>COD Fee</span>
+                      <span className="text-white font-bold">{fmt(40)}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-6 border-t border-zinc-800 flex justify-between items-end mb-10">
+                  <div>
+                    <p className="text-[9px] font-black uppercase text-zinc-600 tracking-[0.2em] mb-1">
+                      Payable Amount
+                    </p>
+                    <p className="text-4xl font-black">
+                      {fmt(payMethod === "cod" ? 26529 : 26489)}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  disabled={step !== 2 || isPlacing}
+                  onClick={handlePlaceOrder}
+                  className="w-full py-5 bg-white text-zinc-900 rounded-3xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30"
+                >
+                  {isPlacing ? "Processing Order..." : "Confirm & Pay Now"}
+                </button>
+
+                <div className="mt-8 flex items-center justify-center gap-2 text-zinc-600">
+                  <Lock size={12} />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">
+                    256-bit Secure Encryption
+                  </span>
+                </div>
+              </div>
+
+              {/* Trust Footer */}
+              <div className="p-6 bg-emerald-50 rounded-[2rem] border border-emerald-100 flex items-start gap-4">
+                <BadgeCheck size={24} className="text-emerald-600 shrink-0" />
+                <div>
+                  <p className="text-[11px] font-black uppercase text-emerald-700 tracking-tighter">
+                    Indiafy Assurance
+                  </p>
+                  <p className="text-[10px] font-bold text-emerald-600/70 leading-relaxed uppercase tracking-tighter mt-1">
+                    Sector-assigned rider OTP & Video-Verified packing active
+                    for this sector.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }
