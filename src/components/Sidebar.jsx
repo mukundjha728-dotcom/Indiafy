@@ -1,6 +1,5 @@
-
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { 
   BarChart3, 
   Package, 
@@ -9,7 +8,8 @@ import {
   Wallet, 
   Settings, 
   X, 
-  Video 
+  Video,
+  LogOut
 } from "lucide-react";
 
 const menus = [
@@ -25,8 +25,18 @@ const menus = [
 ];
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
-  
-  // Helper component for navigation links
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear your specific auth token here
+    localStorage.removeItem("token"); 
+    
+    // Updated to match the path in App.jsx
+    navigate("/auth"); 
+    
+    if (sidebarOpen) setSidebarOpen(false);
+  };
+
   const NavItems = ({ closeMobile }) => (
     <nav className="flex-1 space-y-1">
       {menus.map((menu) => (
@@ -53,7 +63,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
   return (
     <>
-      {/* --- DESKTOP SIDEBAR (Unchanged) --- */}
+      {/* --- DESKTOP SIDEBAR --- */}
       <aside className="w-64 bg-white border-r border-slate-200/60 hidden md:flex flex-col sticky top-0 h-screen">
         <div className="p-6 border-b border-slate-200/60">
           <div className="flex items-center gap-2">
@@ -71,31 +81,28 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
            <NavItems closeMobile={false} />
         </div>
 
-        {/* <div className="p-4 border-t border-slate-100">
-          <div className="bg-slate-50 rounded-xl p-3 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
-               <img src="https://ui-avatars.com/api/?name=Jai+Store&background=random" alt="Avatar" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-slate-900 truncate">Jai Store</p>
-              <p className="text-[10px] text-slate-500 truncate">Premium Seller</p>
-            </div>
-          </div>
-        </div> */}
+        {/* Desktop Logout Button */}
+        <div className="p-4 border-t border-slate-100">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-all"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
       </aside>
 
-      {/* --- MOBILE DROPDOWN SIDEBAR (Updated) --- */}
+      {/* --- MOBILE DROPDOWN SIDEBAR --- */}
       {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 md:hidden transition-opacity"
           onClick={() => setSidebarOpen(false)}
         >
-  
           <aside 
             className="absolute top-0 left-0 w-full bg-white max-h-[85vh] shadow-2xl flex flex-col rounded-b-3xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Mobile Header Inside Dropdown */}
             <div className="p-4 flex justify-between items-center border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
@@ -111,9 +118,19 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               </button>
             </div>
             
-            {/* Scrollable Nav Items */}
             <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
               <NavItems closeMobile={true} />
+              
+              {/* Mobile Logout Button */}
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <button 
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-all"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              </div>
             </div>
           </aside>
         </div>
