@@ -1,5 +1,5 @@
  import { useState } from "react";
-import StoreModeToggle from "./StoreModeToggle";
+
 // import Navbar from "../components/Navbar";
 // import Footer from "../components/Footer";
 import Navbar from "../Navbar";
@@ -755,7 +755,7 @@ export default function WholesalePage() {
     <>
       <Navbar />
        {/* 2. Add Toggle Here */}
-       <StoreModeToggle />
+       
 
     <div className="font-sans antialiased bg-white">
       <style>{`
