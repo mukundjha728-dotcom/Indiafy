@@ -5,7 +5,7 @@ import WebsiteNavbar from "../components/WebsiteNavbar";
 import Footer from "../components/Footer";
 
 // Home Sections
- import StoreModeToggle from "../components/HomePage/StoreModeToggle";
+
 // import SectionOption from "../components/HomePage/SectionOption";
 import Hero from "../components/HomePage/Hero";
 import BrowseCategories from "../components/HomePage/BrowseCategories";
@@ -24,7 +24,7 @@ const Home = () => {
       <main className="overflow-hidden">
         {/* Dynamic visual introduction [cite: 9, 91] */}
         <Hero />
-        <StoreModeToggle />
+        
 
         {/* Sector-based discovery [cite: 10, 44] */}
         <BrowseCategories />
