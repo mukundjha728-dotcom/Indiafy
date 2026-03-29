@@ -1,185 +1,200 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
-  MapPin,
   ArrowRight,
   ShoppingBag,
-  Truck,
-  Building2,
+  Zap,
+  Landmark,
+  ShieldCheck,
+  ChevronRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const categories = [
+const verticals = [
   {
     id: "quick",
-    label: "Quick Commerce",
-    icon: <Truck size={18} />,
-    desc: "10-25 Mins",
+    label: "Hyperlocal",
+    sub: "10-25 Mins",
+    icon: <Zap size={20} className="text-emerald-400" />,
+    path: "/quick-commerce",
+    bg: "bg-emerald-500/10",
+    border: "border-emerald-500/20",
   },
   {
     id: "eco",
-    label: "E-Commerce",
-    icon: <ShoppingBag size={18} />,
-    desc: "Same Day",
+    label: "India Hub",
+    sub: "Same Day",
+    icon: <ShoppingBag size={20} className="text-blue-400" />,
+    path: "/",
+    bg: "bg-blue-500/10",
+    border: "border-blue-500/20",
   },
   {
     id: "wholesale",
-    label: "Wholesale",
-    icon: <Building2 size={18} />,
-    desc: "Bulk Savings",
+    label: "Bulk Node",
+    sub: "B2B Volume",
+    icon: <Landmark size={20} className="text-amber-400" />,
+    path: "/wholesale",
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/20",
   },
 ];
 
-const backgroundImages = [
-  "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2500&auto=format&fit=crop", // Grocery
-  "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2500&auto=format&fit=crop", // Fashion
-  "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=2500&auto=format&fit=crop", // Home/Wholesale
+const bentoImages = [
+  "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800", // Grocery Focus
+  "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=800", // Fashion Focus
+  "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=800", // Warehouse Focus
 ];
 
 export default function Hero() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState("quick");
+  const navigate = useNavigate();
+  const [currentImg, setCurrentImg] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % backgroundImages.length);
-    }, 8000);
+      setCurrentImg((prev) => (prev + 1) % bentoImages.length);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section className="relative h-[90vh] min-h-[700px] w-full flex items-center bg-zinc-50 overflow-hidden">
-      {/* 1. BACKGROUND LAYER */}
-      <div className="absolute inset-0 z-0">
+    <section className="relative w-full min-h-[100svh] flex items-start lg:items-center bg-[#030303] overflow-hidden selection:bg-emerald-500 selection:text-black">
+      {/* 🖼️ BACKGROUND LAYER (Fills top on mobile, Right on Desktop) */}
+      <div className="absolute top-0 left-0 w-full h-[70vh] lg:w-[55%] lg:h-full lg:left-auto lg:right-0 z-0">
         <AnimatePresence mode="wait">
           <motion.img
-            key={currentIndex}
-            src={backgroundImages[currentIndex]}
-            initial={{ opacity: 0, scale: 1.1 }}
+            key={currentImg}
+            src={bentoImages[currentImg]}
+            initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2 }}
-            className="absolute inset-0 w-full h-full object-cover"
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="w-full h-full object-cover opacity-50 lg:opacity-70"
+            alt="Commerce Visual"
           />
         </AnimatePresence>
-        {/* Modern Glass Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent z-10" />
+        {/* Gradient Mask: Fades smoothly into the black background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#030303]/40 via-transparent to-[#030303] lg:bg-gradient-to-l lg:from-transparent lg:to-[#030303]" />
       </div>
 
-      {/* 2. CONTENT LAYER */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-7 flex flex-col justify-center">
-          {/* Location Badge */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-2 mb-6 w-fit px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white"
-          >
-            <MapPin size={16} className="text-gray-300" />
-            <span className="text-sm font-medium tracking-wide">
-              Serving Gurugram Sectors
-            </span>
-          </motion.div>
+      {/* 📱 CONTENT LAYER (Moved UP for Mobile) */}
+      <div className="w-full max-w-[1400px] mx-auto px-5 sm:px-8 relative z-10 pt-32 lg:pt-0">
+        <div className="grid lg:grid-cols-12 gap-8 items-center">
+          {/* ⚡ LEFT: TYPOGRAPHY & INTERACTION */}
+          <div className="lg:col-span-7 flex flex-col">
+            {/* Live Node Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2.5 w-fit px-3 py-1.5 mb-6 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-xl"
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
+              <p className="text-[10px] font-black uppercase tracking-widest text-white">
+                GURUGEAM Node
+              </p>
+            </motion.div>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
-          >
-            Indiafy Your <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-              Daily Lifestyle.
-            </span>
-          </motion.h1>
+            {/* Massive Typographic Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-[3.5rem] sm:text-7xl lg:text-[6.5rem] font-black text-white tracking-tighter leading-[0.85] mb-6"
+            >
+              COMMERCE. <br />
+              <span className="text-zinc-500 italic">CODIFIED.</span>
+            </motion.h1>
 
-          {/* Tri-Vertical Tabs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-wrap gap-3 mb-8"
-          >
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveTab(cat.id)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-xl transition-all duration-300 border ${
-                  activeTab === cat.id
-                    ? "bg-white text-black border-white shadow-lg scale-105"
-                    : "bg-black/30 text-white border-white/20 hover:bg-black/50"
-                }`}
-              >
-                {cat.icon}
-                <div className="text-left">
-                  <p className="text-xs font-bold leading-none">{cat.label}</p>
-                  <p className="text-[10px] opacity-70 uppercase tracking-tighter">
-                    {cat.desc}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-zinc-300 text-sm sm:text-base font-medium max-w-lg mb-10 leading-relaxed"
+            >
+              One unified logistics engine. Discover Hyperlocal 15-min delivery,
+              Pan-India commerce, and verified B2B bulk sourcing from a single
+              terminal.
+            </motion.p>
+
+            {/* Smart Universal Search Terminal */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="relative w-full max-w-2xl mb-10 group"
+            >
+              <div className="flex items-center bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-[1.5rem] p-1.5 focus-within:border-zinc-500 transition-all duration-300 shadow-2xl">
+                <Search size={20} className="text-zinc-500 ml-4 mr-2" />
+                <input
+                  type="text"
+                  placeholder="Search essentials, electronics, or bulk..."
+                  className="flex-1 py-3.5 bg-transparent border-none outline-none text-white text-sm sm:text-base placeholder:text-zinc-600 font-medium"
+                />
+                <button className="bg-white text-black p-3.5 rounded-xl hover:bg-zinc-200 active:scale-95 transition-all flex items-center justify-center group-focus-within:bg-emerald-400">
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </motion.div>
+
+            {/* The 3 Pillars (Vertical Selectors) - Mobile Optimized Grid */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="grid grid-cols-3 gap-3 sm:gap-4 max-w-2xl"
+            >
+              {verticals.map((v) => (
+                <div
+                  key={v.id}
+                  onClick={() => navigate(v.path)}
+                  className={`cursor-pointer group flex flex-col items-center sm:items-start p-4 sm:p-5 rounded-[1.25rem] sm:rounded-3xl ${v.bg} border ${v.border} hover:scale-[1.02] active:scale-95 transition-all duration-300 backdrop-blur-md`}
+                >
+                  <div className="bg-zinc-950 p-2 sm:p-2.5 rounded-xl border border-zinc-800 mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
+                    {v.icon}
+                  </div>
+                  <h3 className="text-white font-black uppercase tracking-tight text-[10px] sm:text-sm mb-1 text-center sm:text-left w-full">
+                    {v.label}
+                  </h3>
+                  <p className="text-[8px] sm:text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center sm:text-left w-full truncate">
+                    {v.sub}
                   </p>
                 </div>
-              </button>
-            ))}
-          </motion.div>
+              ))}
+            </motion.div>
+          </div>
 
-          {/* Search Bar */}
+          {/* 🖼️ RIGHT: OVERLAPPING TRUST CARD (Desktop Only) */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="relative max-w-2xl group"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+            className="lg:col-span-5 hidden lg:flex justify-end items-end h-full pb-20"
           >
-            <div className="flex items-center bg-white rounded-2xl p-2 shadow-2xl transition-all duration-300 focus-within:ring-4 ring-white/20">
-              <div className="px-4 text-gray-400">
-                <Search size={24} />
+            <div className="w-80 bg-zinc-950/80 backdrop-blur-2xl border border-zinc-800 p-8 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative -left-12">
+              <div className="flex justify-between items-start mb-6">
+                <ShieldCheck size={32} className="text-emerald-400" />
+                <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-full">
+                  Audited
+                </span>
               </div>
-              <input
-                type="text"
-                placeholder={`Search for ${activeTab === "quick" ? "Milk, Eggs, Bread..." : "Shirts, Shoes, Electronics..."}`}
-                className="flex-1 py-4 bg-transparent border-none outline-none text-black text-lg"
-              />
-              <button className="bg-black text-white px-8 py-4 rounded-xl font-bold hover:bg-zinc-800 transition-all flex items-center gap-2">
-                Order Now <ArrowRight size={18} />
+              <h4 className="text-white font-black text-xl mb-3 leading-none">
+                Zero-Trust Infra
+              </h4>
+              <p className="text-zinc-400 text-sm font-medium leading-relaxed mb-6">
+                Every order is video-packaged and verified across all
+                operational nodes before dispatch.
+              </p>
+              <button className="flex items-center gap-2 text-[11px] font-black text-white uppercase tracking-widest hover:text-emerald-400 transition-colors group">
+                Operational Discipline{" "}
+                <ChevronRight
+                  size={16}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </button>
             </div>
           </motion.div>
         </div>
-
-        {/* 3. PROMO CARD (Visual Interest) */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-          className="hidden lg:flex lg:col-span-5 items-center justify-center"
-        >
-          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 p-8 rounded-[2rem] text-white w-full max-w-sm">
-            <div className="h-48 w-full bg-zinc-800/50 rounded-2xl mb-6 overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1601599561213-832382fd07ba?q=80&w=1000&auto=format&fit=crop"
-                className="w-full h-full object-cover opacity-80"
-                alt="Promo"
-              />
-            </div>
-            <p className="text-2xl font-bold mb-2">Verified Sellers Only</p>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Every product in Gurugram is checked with video verification
-              before it leaves the store.
-            </p>
-            <div className="mt-6 pt-6 border-t border-white/10 flex justify-between items-center">
-              <span className="text-xs font-mono uppercase tracking-widest text-gray-400">
-                Trusted Infrastructure
-              </span>
-              <div className="flex -space-x-2">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-black bg-zinc-700"
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
