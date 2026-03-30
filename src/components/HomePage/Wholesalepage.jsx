@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Landmark,
   TrendingDown,
@@ -79,6 +81,15 @@ const heroMovingImages = [
 ];
 
 export default function WholesalePage() {
+  const navigate = useNavigate();
+
+  // Handle Search Execution
+  const handleSearch = (e) => {
+    if (e.key === "Enter" && e.target.value.trim()) {
+      navigate(`/search?query=${encodeURIComponent(e.target.value.trim())}`);
+    }
+  };
+
   return (
     <div className="bg-[#050505] min-h-screen text-zinc-400 font-sans selection:bg-amber-500 selection:text-black">
       <WebsiteNavbar />
@@ -128,16 +139,23 @@ export default function WholesalePage() {
                 />
                 <input
                   type="text"
+                  onKeyDown={handleSearch}
                   placeholder="Search Wholesale Products, Sellers, or Categories..."
                   className="w-full bg-zinc-900/50 border border-zinc-800 rounded-full pl-16 pr-8 py-5 text-white placeholder:text-zinc-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
                 />
               </div>
 
               <div className="flex flex-wrap gap-5 pt-6">
-                <button className="px-10 py-5 bg-white text-black rounded-full font-black uppercase tracking-widest text-[11px] flex items-center gap-3 hover:bg-amber-500 transition-all shadow-2xl shadow-white/5">
+                <button
+                  onClick={() => navigate("/search")}
+                  className="px-10 py-5 bg-white text-black rounded-full font-black uppercase tracking-widest text-[11px] flex items-center gap-3 hover:bg-amber-500 transition-all shadow-2xl shadow-white/5"
+                >
                   Request Bulk Quote <ArrowRight size={16} />
                 </button>
-                <button className="px-10 py-5 border border-zinc-800 rounded-full font-black uppercase tracking-widest text-[11px] text-zinc-300 hover:bg-zinc-900 transition-all">
+                <button
+                  onClick={() => navigate("/auth")}
+                  className="px-10 py-5 border border-zinc-800 rounded-full font-black uppercase tracking-widest text-[11px] text-zinc-300 hover:bg-zinc-900 transition-all"
+                >
                   Register Business
                 </button>
               </div>
@@ -180,7 +198,10 @@ export default function WholesalePage() {
                   Browse <span className="text-zinc-700 italic">Nodes</span>
                 </h2>
               </div>
-              <button className="text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">
+              <button
+                onClick={() => navigate("/category/:categoryName")}
+                className="text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors"
+              >
                 View All Catalogs
               </button>
             </div>
@@ -189,6 +210,11 @@ export default function WholesalePage() {
               {CATEGORIES.map((cat, i) => (
                 <motion.div
                   key={cat.id}
+                  onClick={() =>
+                    navigate(
+                      `/category/${cat.name.toLowerCase().replace(/\s+/g, "-")}`
+                    )
+                  }
                   whileHover={{ y: -10, scale: 1.02 }}
                   className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] p-4 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-amber-500/30 transition-all duration-500 h-[220px]"
                 >
@@ -229,7 +255,8 @@ export default function WholesalePage() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="group border border-zinc-100 rounded-[3rem] p-8 hover:border-zinc-300 hover:bg-zinc-50 transition-all duration-700 shadow-sm hover:shadow-2xl"
+                  onClick={() => navigate(`/product/${i}`)}
+                  className="group cursor-pointer border border-zinc-100 rounded-[3rem] p-8 hover:border-zinc-300 hover:bg-zinc-50 transition-all duration-700 shadow-sm hover:shadow-2xl"
                 >
                   <div className="aspect-[4/3] bg-zinc-50 rounded-[2rem] mb-8 border border-zinc-100 overflow-hidden relative">
                     <img
@@ -237,8 +264,8 @@ export default function WholesalePage() {
                         i === 1
                           ? "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600"
                           : i === 2
-                            ? "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600"
-                            : "https://images.unsplash.com/photo-1593121925328-369cc8459c08?w=600"
+                          ? "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600"
+                          : "https://images.unsplash.com/photo-1593121925328-369cc8459c08?w=600"
                       }
                       alt="Product Bulk Lot"
                       className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
@@ -252,8 +279,8 @@ export default function WholesalePage() {
                       {i === 1
                         ? "Cotton Tees #20"
                         : i === 2
-                          ? "Grocery Sack"
-                          : "Wireless Buds OEM"}
+                        ? "Grocery Sack"
+                        : "Wireless Buds OEM"}
                     </h3>
                     <div className="text-right font-black text-2xl tracking-tighter text-zinc-950">
                       {i === 1 ? "₹120" : i === 2 ? "₹42" : "₹350"}{" "}
@@ -264,7 +291,13 @@ export default function WholesalePage() {
                     <span>
                       MOQ: {i === 1 ? "500" : i === 2 ? "100" : "200"} Units
                     </span>
-                    <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-400 group-hover:bg-zinc-950 group-hover:text-white transition-colors cursor-pointer">
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevents routing to product page when clicking plus
+                        // Add to cart logic here
+                      }}
+                      className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-400 group-hover:bg-zinc-950 group-hover:text-white transition-colors cursor-pointer"
+                    >
                       <Plus size={16} />
                     </div>
                   </div>
@@ -314,7 +347,10 @@ export default function WholesalePage() {
                   Register to unlock factory pricing, tax credits, and logistics
                   mapping.
                 </p>
-                <button className="w-full py-5 bg-zinc-950 text-white rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-amber-500 hover:text-black transition-all shadow-xl">
+                <button
+                  onClick={() => navigate("/auth")}
+                  className="w-full py-5 bg-zinc-950 text-white rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-amber-500 hover:text-black transition-all shadow-xl"
+                >
                   Register Business
                 </button>
               </div>

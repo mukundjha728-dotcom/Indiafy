@@ -82,7 +82,7 @@ function BrowseCategories() {
           </div>
 
           <Link
-            to="/browse-categories"
+            to="/category/:categoryName"
             className="group inline-flex items-center gap-3 px-6 py-3 bg-zinc-900 text-white rounded-full text-sm font-bold hover:bg-zinc-800 transition-all shadow-lg hover:shadow-zinc-200"
           >
             View All Categories

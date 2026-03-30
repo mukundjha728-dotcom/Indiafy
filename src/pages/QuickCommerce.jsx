@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -233,6 +234,13 @@ export default function QuickCommerce() {
     });
   };
 
+  // Handle Search Execution
+  const handleSearch = (e) => {
+    if (e.key === "Enter" && e.target.value.trim()) {
+      navigate(`/search?query=${encodeURIComponent(e.target.value.trim())}`);
+    }
+  };
+
   const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
   const totalPrice = Object.entries(cart).reduce((total, [id, qty]) => {
     let productPrice = 0;
@@ -248,7 +256,6 @@ export default function QuickCommerce() {
       {/* Main Navbar */}
       <WebsiteNavbar />
 
-      {/* FIX: Yahan mt-[70px] lg:mt-[85px] lagaya hai taaki ye main navbar ke bilkul neeche se shuru ho */}
       <div className="mt-[70px] lg:mt-[85px] bg-white px-4 py-3 shadow-sm border-b border-zinc-100 relative z-30">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
           <div className="flex justify-between items-center md:w-auto w-full gap-4">
@@ -296,6 +303,7 @@ export default function QuickCommerce() {
             />
             <input
               type="text"
+              onKeyDown={handleSearch}
               placeholder="Search Essentials, Electronics, or Groceries..."
               className="w-full bg-zinc-100 border border-transparent focus:bg-white focus:border-emerald-500 focus:shadow-md rounded-2xl py-3 pl-11 pr-4 text-sm font-bold text-zinc-900 outline-none transition-all"
             />
@@ -421,6 +429,8 @@ export default function QuickCommerce() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         key={product.id}
+                        // LINKED: Navigate to product detail page
+                        onClick={() => navigate(`/product/${product.id}`)}
                         className="bg-white rounded-[1.5rem] p-3 border border-zinc-100 hover:border-emerald-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 flex flex-col relative group cursor-pointer"
                       >
                         {product.discount && (
@@ -471,7 +481,11 @@ export default function QuickCommerce() {
                                 className="flex items-center bg-emerald-600 text-white rounded-xl h-9 shadow-md shadow-emerald-600/20"
                               >
                                 <button
-                                  onClick={() => handleDec(product.id)}
+                                  // STOP PROPAGATION added here
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDec(product.id);
+                                  }}
                                   className="w-8 h-full flex items-center justify-center active:bg-emerald-700 rounded-l-xl transition-colors"
                                 >
                                   <Minus size={14} strokeWidth={3} />
@@ -480,7 +494,11 @@ export default function QuickCommerce() {
                                   {cart[product.id]}
                                 </span>
                                 <button
-                                  onClick={() => handleInc(product.id)}
+                                  // STOP PROPAGATION added here
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleInc(product.id);
+                                  }}
                                   className="w-8 h-full flex items-center justify-center active:bg-emerald-700 rounded-r-xl transition-colors"
                                 >
                                   <Plus size={14} strokeWidth={3} />
@@ -488,7 +506,11 @@ export default function QuickCommerce() {
                               </motion.div>
                             ) : (
                               <button
-                                onClick={() => handleAdd(product.id)}
+                                // STOP PROPAGATION added here
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAdd(product.id);
+                                }}
                                 className="border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 h-9 px-5 rounded-xl text-xs font-black tracking-wide active:scale-95 transition-all shadow-sm"
                               >
                                 ADD

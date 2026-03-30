@@ -131,7 +131,9 @@ export default function Hero() {
                   placeholder="Search essentials, electronics, or bulk..."
                   className="flex-1 py-3.5 bg-transparent border-none outline-none text-white text-sm sm:text-base placeholder:text-zinc-600 font-medium"
                 />
-                <button className="bg-white text-black p-3.5 rounded-xl hover:bg-zinc-200 active:scale-95 transition-all flex items-center justify-center group-focus-within:bg-emerald-400">
+                <button
+                  onClick={() => navigate("/search?q=hyperlocal+essentials")} 
+                className="bg-white text-black p-3.5 rounded-xl hover:bg-zinc-200 active:scale-95 transition-all flex items-center justify-center group-focus-within:bg-emerald-400">
                   <ArrowRight size={18} />
                 </button>
               </div>
