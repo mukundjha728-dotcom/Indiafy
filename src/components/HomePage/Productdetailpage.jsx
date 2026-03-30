@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,7 +19,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Layout Components
 import WebsiteNavbar from "../WebsiteNavbar";
 import Footer from "../Footer";
 
@@ -38,6 +38,7 @@ const PRODUCT = {
     "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?w=800&q=80",
   ],
   seller: {
+    id: "sharma-electronics", // ✅ seller id for /store/:id
     name: "Sharma Electronics",
     rating: 4.5,
     distance: "1.3 km",
@@ -118,6 +119,7 @@ const fmt = (n) => "₹" + Number(n).toLocaleString("en-IN");
 export default function ProductDetailPage() {
   const [activeImg, setActiveImg] = useState(0);
   const [tab, setTab] = useState("description");
+  const [wishlisted, setWishlisted] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -125,7 +127,7 @@ export default function ProductDetailPage() {
       <WebsiteNavbar />
 
       <main className="max-w-7xl mx-auto px-6 pt-32 pb-20">
-        {/* Back Button */}
+        {/* ✅ Back → go to previous page */}
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors mb-8 font-bold text-xs uppercase tracking-widest"
@@ -146,10 +148,25 @@ export default function ProductDetailPage() {
                   className="w-full h-full object-cover"
                   alt="Main"
                 />
-                <div className="absolute top-6 left-6 bg-zinc-900/90 backdrop-blur-md text-white px-4 py-2 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
-                  <Video size={14} className="text-emerald-400" />{" "}
-                  Video-Verified Store
-                </div>
+
+                {/* ✅ Video Verified badge → seller's video verification page */}
+                <button
+                  onClick={() => navigate(`/store/${PRODUCT.seller.id}`)}
+                  className="absolute top-6 left-6 bg-zinc-900/90 backdrop-blur-md text-white px-4 py-2 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+                >
+                  <Video size={14} className="text-emerald-400" /> Video-Verified Store
+                </button>
+
+                {/* ✅ Wishlist toggle on main image */}
+                <button
+                  onClick={() => setWishlisted((w) => !w)}
+                  className="absolute top-6 right-6 p-3 rounded-full bg-white shadow-lg hover:scale-105 active:scale-95 transition-all"
+                >
+                  <Heart
+                    size={18}
+                    className={wishlisted ? "text-red-500 fill-red-500" : "text-zinc-400"}
+                  />
+                </button>
               </motion.div>
 
               <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
@@ -157,13 +174,13 @@ export default function ProductDetailPage() {
                   <button
                     key={i}
                     onClick={() => setActiveImg(i)}
-                    className={`w-24 h-24 rounded-3xl overflow-hidden border-2 transition-all ${activeImg === i ? "border-zinc-900 scale-95 shadow-lg" : "border-transparent opacity-60"}`}
+                    className={`w-24 h-24 rounded-3xl overflow-hidden border-2 transition-all ${
+                      activeImg === i
+                        ? "border-zinc-900 scale-95 shadow-lg"
+                        : "border-transparent opacity-60"
+                    }`}
                   >
-                    <img
-                      src={img}
-                      className="w-full h-full object-cover"
-                      alt="thumb"
-                    />
+                    <img src={img} className="w-full h-full object-cover" alt="thumb" />
                   </button>
                 ))}
               </div>
@@ -185,7 +202,6 @@ export default function ProductDetailPage() {
               <h1 className="text-4xl font-black text-zinc-900 leading-tight mb-6">
                 {PRODUCT.title}
               </h1>
-
               <div className="flex items-baseline gap-4">
                 <span className="text-4xl font-black text-zinc-900">
                   {fmt(PRODUCT.currentPrice)}
@@ -199,20 +215,19 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* SELLER CARD */}
-            <div className="p-6 rounded-[2.5rem] bg-zinc-50 border border-zinc-100">
+            {/* ✅ SELLER CARD → /store/:id */}
+            <div
+              onClick={() => navigate(`/store/${PRODUCT.seller.id}`)}
+              className="p-6 rounded-[2.5rem] bg-zinc-50 border border-zinc-100 cursor-pointer hover:border-zinc-300 hover:shadow-md transition-all"
+            >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center text-white font-black">
                     {PRODUCT.seller.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-zinc-400">
-                      Sold by
-                    </p>
-                    <p className="font-bold text-zinc-900">
-                      {PRODUCT.seller.name}
-                    </p>
+                    <p className="text-[10px] font-black uppercase text-zinc-400">Sold by</p>
+                    <p className="font-bold text-zinc-900">{PRODUCT.seller.name}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -236,7 +251,7 @@ export default function ProductDetailPage() {
               )}
             </div>
 
-            {/* QUICK ACTIONS */}
+            {/* QUICK DELIVERY INFO */}
             <div className="grid grid-cols-3 gap-4">
               {[
                 { icon: Clock, val: PRODUCT.delivery.eta },
@@ -255,14 +270,19 @@ export default function ProductDetailPage() {
               ))}
             </div>
 
-            {/* BUTTONS */}
+            {/* ✅ BUTTONS — Add to Cart → /cart | Buy Now → /checkout */}
             <div className="flex gap-4">
-              <button className="flex-1 py-5 bg-white border-2 border-zinc-900 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-zinc-50 transition-all flex items-center justify-center gap-3">
+              <button
+                onClick={() => navigate("/cart")}
+                className="flex-1 py-5 bg-white border-2 border-zinc-900 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-zinc-50 transition-all flex items-center justify-center gap-3"
+              >
                 <ShoppingBag size={18} /> Add to Cart
               </button>
-              <button className="flex-1 py-5 bg-zinc-900 text-white rounded-3xl font-black uppercase tracking-widest text-xs shadow-2xl shadow-zinc-300 hover:bg-zinc-800 transition-all flex items-center justify-center gap-3">
-                <Zap size={18} className="text-yellow-400 fill-yellow-400" />{" "}
-                Buy Now
+              <button
+                onClick={() => navigate("/checkout")}
+                className="flex-1 py-5 bg-zinc-900 text-white rounded-3xl font-black uppercase tracking-widest text-xs shadow-2xl shadow-zinc-300 hover:bg-zinc-800 transition-all flex items-center justify-center gap-3"
+              >
+                <Zap size={18} className="text-yellow-400 fill-yellow-400" /> Buy Now
               </button>
             </div>
           </div>
@@ -275,7 +295,9 @@ export default function ProductDetailPage() {
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className={`pb-4 text-xs font-black uppercase tracking-[0.2em] transition-all relative ${tab === t ? "text-zinc-900" : "text-zinc-300 hover:text-zinc-500"}`}
+                className={`pb-4 text-xs font-black uppercase tracking-[0.2em] transition-all relative ${
+                  tab === t ? "text-zinc-900" : "text-zinc-300 hover:text-zinc-500"
+                }`}
               >
                 {t}
                 {tab === t && (
@@ -312,9 +334,7 @@ export default function ProductDetailPage() {
                     <span className="text-xs font-black uppercase tracking-widest text-zinc-400">
                       {s.label}
                     </span>
-                    <span className="text-sm font-bold text-zinc-900">
-                      {s.value}
-                    </span>
+                    <span className="text-sm font-bold text-zinc-900">{s.value}</span>
                   </div>
                 ))}
               </motion.div>
@@ -327,16 +347,10 @@ export default function ProductDetailPage() {
               >
                 <div className="grid md:grid-cols-3 gap-8 bg-zinc-50 p-8 rounded-[2.5rem] border border-zinc-100">
                   <div className="text-center md:border-r border-zinc-200 flex flex-col justify-center">
-                    <h4 className="text-6xl font-black text-zinc-900">
-                      {PRODUCT.rating}
-                    </h4>
+                    <h4 className="text-6xl font-black text-zinc-900">{PRODUCT.rating}</h4>
                     <div className="flex justify-center gap-1 my-3 text-zinc-900">
                       {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={18}
-                          fill={i < 4 ? "currentColor" : "none"}
-                        />
+                        <Star key={i} size={18} fill={i < 4 ? "currentColor" : "none"} />
                       ))}
                     </div>
                     <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
@@ -345,10 +359,7 @@ export default function ProductDetailPage() {
                   </div>
                   <div className="md:col-span-2 space-y-3">
                     {[5, 4, 3, 2, 1].map((n) => (
-                      <div
-                        key={n}
-                        className="flex items-center gap-4 text-xs font-bold"
-                      >
+                      <div key={n} className="flex items-center gap-4 text-xs font-bold">
                         <span className="w-4">{n}</span>
                         <div className="flex-1 h-2 bg-zinc-200 rounded-full overflow-hidden">
                           <div
@@ -376,9 +387,7 @@ export default function ProductDetailPage() {
                             {rev.avatar}
                           </div>
                           <div>
-                            <p className="font-bold text-zinc-900">
-                              {rev.user}
-                            </p>
+                            <p className="font-bold text-zinc-900">{rev.user}</p>
                             <div className="flex items-center gap-2 mt-1">
                               <Star size={10} fill="currentColor" />
                               <span className="text-[10px] font-bold text-zinc-400 uppercase">
@@ -391,12 +400,8 @@ export default function ProductDetailPage() {
                           Verified Purchase
                         </span>
                       </div>
-                      <h5 className="font-bold text-zinc-900 mb-2">
-                        {rev.title}
-                      </h5>
-                      <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                        {rev.body}
-                      </p>
+                      <h5 className="font-bold text-zinc-900 mb-2">{rev.title}</h5>
+                      <p className="text-zinc-500 text-sm leading-relaxed mb-6">{rev.body}</p>
                       <button className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 transition-colors">
                         <ThumbsUp size={14} /> Helpful ({rev.helpful})
                       </button>
@@ -415,16 +420,21 @@ export default function ProductDetailPage() {
               You may also <span className="text-zinc-300 italic">like</span>
             </h3>
             <div className="h-px flex-1 bg-zinc-100 mx-8 hidden md:block" />
-            <button className="text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900">
+            {/* ✅ View All → /search filtered by product brand/category */}
+            <button
+              onClick={() => navigate(`/search?q=${PRODUCT.brand}`)}
+              className="text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-colors"
+            >
               View All
             </button>
           </div>
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {RELATED_PRODUCTS.map((p) => (
               <div
                 key={p.id}
                 onClick={() => {
-                  navigate(`/product/${p.id}`);
+                  navigate(`/product/${p.id}`); // ✅ → /product/:id
                   window.scrollTo(0, 0);
                 }}
                 className="group cursor-pointer"
@@ -441,9 +451,7 @@ export default function ProductDetailPage() {
                     {p.name}
                   </h4>
                   <div className="flex justify-between items-center">
-                    <span className="font-black text-zinc-900">
-                      {fmt(p.price)}
-                    </span>
+                    <span className="font-black text-zinc-900">{fmt(p.price)}</span>
                     <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">
                       {p.dist}
                     </span>

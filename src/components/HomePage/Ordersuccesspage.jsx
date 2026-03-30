@@ -171,7 +171,7 @@ export default function OrderSuccessPage() {
           {/* ACTIONS */}
           <div className="grid grid-cols-2 gap-4 pt-4">
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/track-order/:orderId")}
               className="py-5 bg-zinc-900 text-white rounded-3xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-zinc-800 transition-all"
             >
               Track Rider
