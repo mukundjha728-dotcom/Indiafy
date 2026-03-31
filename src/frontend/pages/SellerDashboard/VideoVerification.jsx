@@ -22,14 +22,12 @@ import {
 const VideoVerification = () => {
   const navigate = useNavigate();
   
-  // Checklist State
   const [items, setItems] = useState([
     { id: 1, name: "Sony WH-1000XM5 Headphones", sku: "WH-XM5-BLK", qty: 1, variant: "Black", checked: false },
     { id: 2, name: "Braided USB-C Cable (2m)", sku: "CBL-USBC-2M", qty: 2, variant: "Grey", checked: false },
     { id: 3, name: "Include Return Label & Invoice", sku: "DOC-VERIFY", qty: "Req", variant: "Document", isDoc: true, checked: false },
   ]);
 
-  // Video Recording State
   const [isRecording, setIsRecording] = useState(false);
   const [videoSrc, setVideoSrc] = useState(null);
   const [stream, setStream] = useState(null);
@@ -42,7 +40,6 @@ const VideoVerification = () => {
   const toggleItem = (id) => setItems(items.map(i => i.id === id ? { ...i, checked: !i.checked } : i));
   const allVerified = items.every(item => item.checked);
 
-  // --- CAMERA FUNCTIONS ---
   const startRecording = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -93,7 +90,6 @@ const VideoVerification = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // --- UPLOAD FUNCTION ---
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -128,7 +124,7 @@ const VideoVerification = () => {
 
       <div className="flex flex-col lg:flex-row gap-6">
         
-        {/* Left Panel: Checklist (Batch Mode Removed) */}
+        {/* Left Panel: Checklist */}
         <div className="flex-1 flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="p-5 border-b border-slate-100 bg-slate-50/50">
             <h2 className="text-lg font-bold text-slate-900">Packing Checklist</h2>
@@ -158,7 +154,7 @@ const VideoVerification = () => {
                 {item.isDoc ? (
                   <div className="w-12 h-12 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-400 shrink-0"><FileText size={24} /></div>
                 ) : (
-                   <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 shrink-0 border border-slate-200"><ImageIcon size={20} /></div>
+                  <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 shrink-0 border border-slate-200"><ImageIcon size={20} /></div>
                 )}
                 
                 <div className="flex-1 min-w-0">
@@ -182,11 +178,11 @@ const VideoVerification = () => {
           </div>
         </div>
 
-        {/* Right Panel: Functional Video Recorder */}
+        {/* Right Panel: Video Recorder */}
         <div className="flex-1 flex flex-col gap-6">
           <div className="bg-slate-900 rounded-2xl shadow-lg overflow-hidden flex flex-col relative border border-slate-800">
             
-            {/* Dynamic Status Bar */}
+            {/* Status Bar */}
             <div className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none">
               <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
                 <span className={`w-2 h-2 rounded-full ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></span>
@@ -196,27 +192,36 @@ const VideoVerification = () => {
               </div>
             </div>
 
-            {/* Video Player/Stream Area */}
+            {/* Video Display Area */}
             <div className="aspect-video bg-neutral-900 relative flex items-center justify-center overflow-hidden">
-              {videoSrc ? (
-                // Playback Uploaded/Recorded Video
+              
+              {/* Live camera feed — always mounted so ref is available */}
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                playsInline
+                className={`w-full h-full object-cover z-10 scale-x-[-1] ${stream ? 'block' : 'hidden'}`}
+              />
+
+              {/* Recorded / uploaded video playback */}
+              {videoSrc && !stream && (
                 <video src={videoSrc} controls className="w-full h-full object-contain bg-black z-10" />
-              ) : stream ? (
-                // Live Camera Feed
-                <video ref={videoRef} autoPlay muted className="w-full h-full object-cover z-10 scale-x-[-1]" />
-              ) : (
-                // Standby Placeholder
+              )}
+
+              {/* Standby placeholder */}
+              {!stream && !videoSrc && (
                 <div className="text-center z-10 p-6 flex flex-col items-center">
-                   <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-                     <VideoOff size={32} className="text-white/50" />
-                   </div>
-                   <h3 className="text-white font-bold text-lg">Camera Ready</h3>
-                   <p className="text-slate-400 text-sm mt-2 max-w-xs">Start recording or upload a file.</p>
+                  <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+                    <VideoOff size={32} className="text-white/50" />
+                  </div>
+                  <h3 className="text-white font-bold text-lg">Camera Ready</h3>
+                  <p className="text-slate-400 text-sm mt-2 max-w-xs">Start recording or upload a file.</p>
                 </div>
               )}
             </div>
 
-            {/* Functional Controls */}
+            {/* Controls */}
             <div className="bg-slate-950 p-4 sm:p-6 border-t border-slate-800">
               {videoSrc ? (
                 <button onClick={clearVideo} className="w-full flex items-center justify-center gap-2 p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold transition-all">
@@ -233,7 +238,6 @@ const VideoVerification = () => {
                     <span className="text-white font-bold text-sm">Record Live</span>
                   </button>
                   
-                  {/* Hidden file input */}
                   <input type="file" accept="video/*" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
                   <button onClick={() => fileInputRef.current.click()} className="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all group">
                     <Upload size={24} className="text-blue-400 mb-2 group-hover:-translate-y-1 transition-transform" />
@@ -257,7 +261,6 @@ const VideoVerification = () => {
               </div>
             </div>
 
-            {/* Requires BOTH checklist and video to proceed */}
             <button 
               disabled={!allVerified || !videoSrc}
               className={`w-full py-4 rounded-xl text-base font-bold flex items-center justify-center gap-2 transition-all ${
@@ -270,7 +273,6 @@ const VideoVerification = () => {
               Verify & Complete Order
             </button>
           </div>
-          
         </div>
       </div>
     </div>

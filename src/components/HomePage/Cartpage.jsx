@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Trash2,
@@ -10,21 +11,26 @@ import {
   Truck,
   Clock,
   ArrowRight,
-  ChevronRight,
   BadgeCheck,
-  AlertCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Layout Components
 import WebsiteNavbar from "../WebsiteNavbar";
 import Footer from "../Footer";
 
 const fmt = (n) => "₹" + Number(n).toLocaleString("en-IN");
 
+// ✅ Vertical → route mapping
+const verticalRoutes = {
+  "E-Commerce":      "/category/ecommerce",
+  "Quick Commerce":  "/quick-commerce",
+  "Wholesale":       "/wholesale",
+};
+
 const INITIAL_ITEMS = [
   {
     id: 1,
+    sellerId: "sharma-electronics",
     name: "Sony WH-1000XM5 Wireless Headphones",
     brand: "Sony",
     seller: "Sharma Electronics",
@@ -37,6 +43,7 @@ const INITIAL_ITEMS = [
   },
   {
     id: 2,
+    sellerId: "green-earth-organics",
     name: "Fresh Organic Broccoli (500g)",
     brand: "FarmFresh",
     seller: "Green Earth Organics",
@@ -51,23 +58,28 @@ const INITIAL_ITEMS = [
 
 export default function CartPage() {
   const [items, setItems] = useState(INITIAL_ITEMS);
+  const [saved, setSaved] = useState([]); // ✅ Wishlist/saved-for-later state
   const navigate = useNavigate();
 
-  const updateQty = (id, delta) => {
-    setItems(
-      items.map((i) =>
-        i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i,
-      ),
-    );
-  };
+  const updateQty = (id, delta) =>
+    setItems(items.map((i) => (i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i)));
 
   const removeItem = (id) => setItems(items.filter((i) => i.id !== id));
 
+  // ✅ Save for later: remove from cart, add to saved list
+  const saveForLater = (item) => {
+    removeItem(item.id);
+    setSaved((prev) => [...prev, item]);
+  };
+
+  // ✅ Move saved item back to cart
+  const moveToCart = (item) => {
+    setSaved((prev) => prev.filter((s) => s.id !== item.id));
+    setItems((prev) => [...prev, { ...item, qty: 1 }]);
+  };
+
   const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0);
-  const totalSavings = items.reduce(
-    (acc, i) => acc + (i.original - i.price) * i.qty,
-    0,
-  );
+  const totalSavings = items.reduce((acc, i) => acc + (i.original - i.price) * i.qty, 0);
 
   return (
     <div className="bg-white min-h-screen">
@@ -80,16 +92,17 @@ export default function CartPage() {
             Shopping <span className="text-zinc-300 italic">Bag</span>
           </h1>
           <p className="text-zinc-500 font-medium">
-            You have {items.length} verified items in your bag.
+            You have {items.length} verified item{items.length !== 1 ? "s" : ""} in your bag.
           </p>
         </div>
 
-        {items.length === 0 ? (
+        {items.length === 0 && saved.length === 0 ? (
           <EmptyState navigate={navigate} />
         ) : (
           <div className="grid lg:grid-cols-12 gap-12 items-start">
             {/* Left: Cart Items */}
             <div className="lg:col-span-8 space-y-8">
+
               {/* Delivery Promise Banner */}
               <div className="bg-zinc-900 rounded-[2rem] p-6 text-white flex items-center justify-between overflow-hidden relative">
                 <div className="relative z-10 flex items-center gap-5">
@@ -123,8 +136,12 @@ export default function CartPage() {
                       className="group bg-zinc-50 rounded-[2.5rem] p-4 sm:p-6 border border-zinc-100 hover:bg-white hover:shadow-2xl transition-all duration-500"
                     >
                       <div className="flex flex-col sm:flex-row gap-6">
-                        {/* Image */}
-                        <div className="w-full sm:w-40 aspect-square rounded-[1.8rem] overflow-hidden bg-white border border-zinc-100 shrink-0">
+
+                        {/* ✅ Product Image → /product/:id */}
+                        <div
+                          onClick={() => navigate(`/product/${item.id}`)}
+                          className="w-full sm:w-40 aspect-square rounded-[1.8rem] overflow-hidden bg-white border border-zinc-100 shrink-0 cursor-pointer"
+                        >
                           <img
                             src={item.img}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -136,9 +153,13 @@ export default function CartPage() {
                         <div className="flex-1 flex flex-col justify-between py-1">
                           <div className="space-y-1">
                             <div className="flex justify-between items-start">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                              {/* ✅ Vertical tag → category route */}
+                              <button
+                                onClick={() => navigate(verticalRoutes[item.vertical] || "/")}
+                                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-700 transition-colors"
+                              >
                                 {item.vertical}
-                              </span>
+                              </button>
                               <button
                                 onClick={() => removeItem(item.id)}
                                 className="text-zinc-300 hover:text-red-500 transition-colors"
@@ -146,13 +167,23 @@ export default function CartPage() {
                                 <Trash2 size={18} />
                               </button>
                             </div>
-                            <h3 className="text-xl font-bold text-zinc-900 leading-tight">
+
+                            {/* ✅ Product name → /product/:id */}
+                            <h3
+                              onClick={() => navigate(`/product/${item.id}`)}
+                              className="text-xl font-bold text-zinc-900 leading-tight cursor-pointer hover:text-zinc-600 transition-colors"
+                            >
                               {item.name}
                             </h3>
+
                             <div className="flex items-center gap-2 mt-2">
-                              <div className="flex items-center gap-1 text-[10px] font-black text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded">
+                              {/* ✅ Seller badge → /store/:sellerId */}
+                              <button
+                                onClick={() => navigate(`/store/${item.sellerId}`)}
+                                className="flex items-center gap-1 text-[10px] font-black text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded hover:bg-emerald-100 transition-colors"
+                              >
                                 <BadgeCheck size={12} /> {item.seller}
-                              </div>
+                              </button>
                               <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
                                 {item.sector}
                               </span>
@@ -172,6 +203,13 @@ export default function CartPage() {
                               <p className="text-[10px] font-black text-emerald-500 uppercase">
                                 You save {fmt(item.original - item.price)}
                               </p>
+                              {/* ✅ Save for later button */}
+                              <button
+                                onClick={() => saveForLater(item)}
+                                className="flex items-center gap-1 text-[10px] font-bold text-zinc-400 hover:text-red-400 transition-colors uppercase tracking-tighter mt-1"
+                              >
+                                <Heart size={11} /> Save for Later
+                              </button>
                             </div>
 
                             {/* Qty Switcher */}
@@ -199,6 +237,46 @@ export default function CartPage() {
                   ))}
                 </AnimatePresence>
               </div>
+
+              {/* ✅ Saved for Later section */}
+              {saved.length > 0 && (
+                <div className="mt-10">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-zinc-400 mb-4">
+                    Saved for Later ({saved.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {saved.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-4 p-4 bg-zinc-50 rounded-2xl border border-zinc-100"
+                      >
+                        {/* ✅ Saved item image → /product/:id */}
+                        <div
+                          onClick={() => navigate(`/product/${item.id}`)}
+                          className="w-16 h-16 rounded-2xl overflow-hidden bg-white border border-zinc-100 shrink-0 cursor-pointer"
+                        >
+                          <img src={item.img} className="w-full h-full object-cover" alt={item.name} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p
+                            onClick={() => navigate(`/product/${item.id}`)}
+                            className="text-sm font-bold text-zinc-900 truncate cursor-pointer hover:text-zinc-600"
+                          >
+                            {item.name}
+                          </p>
+                          <p className="text-xs font-black text-zinc-900 mt-0.5">{fmt(item.price)}</p>
+                        </div>
+                        <button
+                          onClick={() => moveToCart(item)}
+                          className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border border-zinc-200 px-3 py-2 rounded-xl hover:bg-zinc-100 transition-colors whitespace-nowrap"
+                        >
+                          Move to Cart
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right: Summary */}
@@ -212,9 +290,7 @@ export default function CartPage() {
                   <div className="space-y-4 mb-8">
                     <div className="flex justify-between text-zinc-400 font-medium">
                       <span>Subtotal</span>
-                      <span className="text-white font-bold">
-                        {fmt(subtotal)}
-                      </span>
+                      <span className="text-white font-bold">{fmt(subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-zinc-400 font-medium">
                       <span>Delivery Fee</span>
@@ -237,24 +313,30 @@ export default function CartPage() {
                     </div>
                   </div>
 
+                  {/* ✅ Checkout → /checkout */}
                   <button
                     onClick={() => navigate("/checkout")}
-                    className="w-full py-5 bg-white text-zinc-900 rounded-3xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all group"
+                    disabled={items.length === 0}
+                    className="w-full py-5 bg-white text-zinc-900 rounded-3xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all group disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     Checkout Securely{" "}
-                    <ArrowRight
-                      size={18}
-                      className="group-hover:translate-x-1 transition-transform"
-                    />
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </button>
+
+                  {/* ✅ Continue Shopping → / */}
+                  {/* <button
+                    onClick={() => navigate("/")}
+                    className="w-full mt-3 py-3 text-zinc-500 hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors"
+                  >
+                    ← Continue Shopping
+                  </button> */}
                 </div>
 
                 {/* Secure Note */}
                 <div className="p-6 border-2 border-dashed border-zinc-100 rounded-[2rem] flex items-center gap-4">
                   <ShieldCheck size={32} className="text-zinc-300 shrink-0" />
                   <p className="text-[10px] font-bold text-zinc-400 uppercase leading-relaxed tracking-tighter">
-                    Encrypted Dynamic QR Payments & Video Verification active
-                    for this order.
+                    Encrypted Dynamic QR Payments & Video Verification active for this order.
                   </p>
                 </div>
               </div>
@@ -279,6 +361,7 @@ const EmptyState = ({ navigate }) => (
     <p className="text-zinc-400 font-medium mb-10 max-w-xs mx-auto">
       Start Indiafying your daily lifestyle with verified local sellers.
     </p>
+    {/* ✅ Start Shopping → / */}
     <button
       onClick={() => navigate("/")}
       className="px-12 py-4 bg-zinc-900 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:shadow-2xl transition-all shadow-zinc-200"

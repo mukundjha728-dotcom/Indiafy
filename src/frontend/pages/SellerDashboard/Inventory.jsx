@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   CloudUpload, Search, Filter, Flame, TrendingUp, 
-  ArrowRight, Save, Trash2, CheckCircle2, Boxes, Edit2, X, ImagePlus, Plus
+  ArrowRight, Save, Trash2, CheckCircle2, Boxes, Edit2, X, ImagePlus, Plus, FileSpreadsheet, AlertCircle, CheckCircle
 } from 'lucide-react';
 
 export default function Inventory({ products = [], setProducts, search: globalSearch = "" }) {
@@ -18,6 +18,12 @@ export default function Inventory({ products = [], setProducts, search: globalSe
   const [editImages, setEditImages] = useState([]);
   const fileInputRef = useRef(null);
 
+  // Bulk Upload State
+  const [isDragging, setIsDragging] = useState(false);
+  const [bulkStatus, setBulkStatus] = useState(null); // { type: 'success'|'error'|'preview', message, data }
+  const [bulkPreview, setBulkPreview] = useState(null);
+  const bulkInputRef = useRef(null);
+
   // Reset page to 1 on search
   useEffect(() => { setCurrentPage(1); }, [activeSearch]);
 
@@ -27,29 +33,135 @@ export default function Inventory({ products = [], setProducts, search: globalSe
     }
   };
 
-  // Quick save for inline edits
   const handleQuickSave = () => alert("Inventory levels saved successfully!");
+
+  // --- BULK UPLOAD LOGIC ---
+  const parseCSV = (text) => {
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) throw new Error("CSV must have a header row and at least one data row.");
+    
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
+    
+    const requiredFields = ['name', 'sku', 'price', 'stock'];
+    const missing = requiredFields.filter(f => !headers.includes(f));
+    if (missing.length > 0) throw new Error(`Missing required columns: ${missing.join(', ')}`);
+
+    return lines.slice(1).filter(line => line.trim()).map((line, idx) => {
+      // Handle quoted commas
+      const values = [];
+      let current = '';
+      let inQuotes = false;
+      for (const char of line) {
+        if (char === '"') { inQuotes = !inQuotes; }
+        else if (char === ',' && !inQuotes) { values.push(current.trim()); current = ''; }
+        else { current += char; }
+      }
+      values.push(current.trim());
+
+      const row = {};
+      headers.forEach((h, i) => { row[h] = (values[i] || '').replace(/['"]/g, '').trim(); });
+
+      const stock = parseInt(row.stock) || 0;
+      return {
+        id: Date.now() + idx,
+        name: row.name || 'Unnamed Product',
+        sku: row.sku?.toUpperCase() || `SKU-${Date.now() + idx}`,
+        price: parseFloat(row.price) || 0,
+        stock,
+        category: row.category || 'General',
+        demand: row.demand || 'stable',
+        status: stock > 10 ? 'Active' : stock > 0 ? 'Low Stock' : 'Out of Stock',
+        image: row.image || 'https://placehold.co/60x60/e2e8f0/94a3b8?text=IMG',
+        images: row.image ? [row.image] : [],
+      };
+    });
+  };
+
+  const processBulkFile = (file) => {
+    setBulkStatus(null);
+    setBulkPreview(null);
+
+    if (!file) return;
+
+    const validTypes = [
+      'text/csv',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/plain'
+    ];
+    const isValid = validTypes.includes(file.type) || file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+    
+    if (!isValid) {
+      setBulkStatus({ type: 'error', message: 'Invalid file type. Please upload a CSV or Excel file.' });
+      return;
+    }
+
+    if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+      setBulkStatus({ type: 'error', message: 'Excel files require server-side processing. Please export your sheet as CSV and re-upload.' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = parseCSV(e.target.result);
+        setBulkPreview({ file: file.name, rows: parsed });
+        setBulkStatus({ type: 'preview', message: `Found ${parsed.length} product(s) in "${file.name}". Review and confirm import.` });
+      } catch (err) {
+        setBulkStatus({ type: 'error', message: err.message });
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const confirmBulkImport = () => {
+    if (!bulkPreview) return;
+    const existingSkus = new Set(products.map(p => p.sku));
+    const newProducts = bulkPreview.rows.filter(p => !existingSkus.has(p.sku));
+    const updatedProducts = bulkPreview.rows.filter(p => existingSkus.has(p.sku));
+
+    const merged = products.map(p => {
+      const updated = updatedProducts.find(u => u.sku === p.sku);
+      return updated ? { ...p, ...updated, id: p.id } : p;
+    });
+
+    setProducts([...merged, ...newProducts]);
+    setBulkStatus({ type: 'success', message: `✓ Imported ${newProducts.length} new & updated ${updatedProducts.length} existing product(s).` });
+    setBulkPreview(null);
+    if (bulkInputRef.current) bulkInputRef.current.value = '';
+  };
+
+  const cancelBulkImport = () => {
+    setBulkPreview(null);
+    setBulkStatus(null);
+    if (bulkInputRef.current) bulkInputRef.current.value = '';
+  };
+
+  // Drag & Drop Handlers
+  const onDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
+  const onDragLeave = () => setIsDragging(false);
+  const onDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) processBulkFile(file);
+  };
 
   // --- EDIT MODAL LOGIC ---
   const openEditModal = (product) => {
-    setEditingProduct({ ...product }); // Copy product to edit state
-    // Ensure images is an array for the previewer
+    setEditingProduct({ ...product });
     setEditImages(product.images || (product.image ? [product.image] : []));
   };
 
   const handleEditImageUpload = (e) => {
     const files = Array.from(e.target.files);
     const validFiles = files.filter(f => f.size <= 2 * 1024 * 1024);
-    
     if (validFiles.length < files.length) alert("Some files were skipped (Max 2MB).");
-
-    Promise.all(validFiles.map(file => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-      });
-    })).then(base64Images => {
+    Promise.all(validFiles.map(file => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    }))).then(base64Images => {
       setEditImages(prev => [...prev, ...base64Images].slice(0, 5));
     });
     e.target.value = '';
@@ -61,9 +173,7 @@ export default function Inventory({ products = [], setProducts, search: globalSe
 
   const handleSaveEdit = (e) => {
     e.preventDefault();
-    
     const updatedStatus = parseInt(editingProduct.stock) > 10 ? "Active" : parseInt(editingProduct.stock) > 0 ? "Low Stock" : "Out of Stock";
-    
     const updatedProduct = {
       ...editingProduct,
       status: updatedStatus,
@@ -72,10 +182,8 @@ export default function Inventory({ products = [], setProducts, search: globalSe
       image: editImages.length > 0 ? editImages[0] : "https://via.placeholder.com/60",
       images: editImages
     };
-
-    // Update global state by replacing the old product with the new one
     setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p));
-    setEditingProduct(null); // Close modal
+    setEditingProduct(null);
   };
 
   const filteredProducts = products.filter(p => 
@@ -101,16 +209,107 @@ export default function Inventory({ products = [], setProducts, search: globalSe
           <p className="text-sm text-slate-500 mt-1">Premium visual management for high-volume sellers.</p>
         </div>
         
-        <div className="flex-1 max-w-md w-full">
-          <div className="rounded-2xl p-4 bg-slate-50 cursor-pointer hover:bg-slate-100 transition-colors border-2 border-dashed border-slate-200">
+        {/* Bulk Upload Zone */}
+        <div className="flex-1 max-w-md w-full flex flex-col gap-2">
+          <div
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+            onClick={() => !bulkPreview && bulkInputRef.current?.click()}
+            className={`rounded-2xl p-4 transition-all border-2 border-dashed cursor-pointer
+              ${isDragging ? 'border-blue-400 bg-blue-50 scale-[1.01]' : 'border-slate-200 bg-slate-50 hover:bg-slate-100'}
+              ${bulkPreview ? 'cursor-default' : ''}
+            `}
+          >
             <div className="flex items-center gap-3">
-              <div className="bg-white p-2.5 rounded-xl shadow-sm border border-slate-200"><CloudUpload className="text-slate-600" size={20} /></div>
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Bulk Upload Magic Zone</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Drag & drop CSV/Excel for instant sync</p>
+              <div className={`p-2.5 rounded-xl shadow-sm border transition-colors ${isDragging ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-200'}`}>
+                <CloudUpload className={isDragging ? 'text-blue-500' : 'text-slate-600'} size={20} />
               </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-slate-900">Bulk Upload Magic Zone</h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {isDragging ? 'Drop your file here!' : 'Drag & drop CSV or click to browse'}
+                </p>
+              </div>
+              <span className="text-[10px] font-bold text-slate-400 bg-white border border-slate-200 px-2 py-1 rounded-lg shrink-0">CSV</span>
             </div>
+            <input
+              ref={bulkInputRef}
+              type="file"
+              accept=".csv,.xlsx,.xls,text/csv"
+              className="hidden"
+              onChange={(e) => processBulkFile(e.target.files[0])}
+            />
           </div>
+
+          {/* Status / Preview Banner */}
+          {bulkStatus && (
+            <div className={`rounded-xl px-4 py-3 text-xs font-medium flex flex-col gap-2 border transition-all
+              ${bulkStatus.type === 'error' ? 'bg-red-50 border-red-200 text-red-700' : ''}
+              ${bulkStatus.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : ''}
+              ${bulkStatus.type === 'preview' ? 'bg-blue-50 border-blue-200 text-blue-800' : ''}
+            `}>
+              <div className="flex items-start gap-2">
+                {bulkStatus.type === 'error' && <AlertCircle size={14} className="shrink-0 mt-0.5" />}
+                {bulkStatus.type === 'success' && <CheckCircle size={14} className="shrink-0 mt-0.5" />}
+                {bulkStatus.type === 'preview' && <FileSpreadsheet size={14} className="shrink-0 mt-0.5" />}
+                <span>{bulkStatus.message}</span>
+              </div>
+
+              {/* Preview table */}
+              {bulkStatus.type === 'preview' && bulkPreview && (
+                <>
+                  <div className="overflow-x-auto rounded-lg border border-blue-200 bg-white mt-1">
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="border-b border-blue-100 bg-blue-50/50">
+                          <th className="px-2 py-1.5 text-left font-bold text-blue-700">Name</th>
+                          <th className="px-2 py-1.5 text-left font-bold text-blue-700">SKU</th>
+                          <th className="px-2 py-1.5 text-right font-bold text-blue-700">Price</th>
+                          <th className="px-2 py-1.5 text-right font-bold text-blue-700">Stock</th>
+                          <th className="px-2 py-1.5 text-left font-bold text-blue-700">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-blue-50">
+                        {bulkPreview.rows.slice(0, 5).map((row, i) => (
+                          <tr key={i}>
+                            <td className="px-2 py-1.5 font-medium text-slate-800 truncate max-w-[100px]">{row.name}</td>
+                            <td className="px-2 py-1.5 font-mono text-slate-500">{row.sku}</td>
+                            <td className="px-2 py-1.5 text-right font-bold text-slate-800">₹{row.price.toFixed(2)}</td>
+                            <td className="px-2 py-1.5 text-right text-slate-700">{row.stock}</td>
+                            <td className="px-2 py-1.5">
+                              <span className={`px-1.5 py-0.5 rounded font-bold uppercase tracking-wide text-[9px]
+                                ${row.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : row.status === 'Low Stock' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}
+                              `}>{row.status}</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {bulkPreview.rows.length > 5 && (
+                      <p className="text-center text-[10px] text-blue-500 font-bold py-1.5 border-t border-blue-100">
+                        +{bulkPreview.rows.length - 5} more rows
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2 mt-1">
+                    <button onClick={cancelBulkImport} className="flex-1 py-2 rounded-lg bg-white border border-blue-200 text-blue-700 font-bold hover:bg-blue-50 transition-colors">Cancel</button>
+                    <button onClick={confirmBulkImport} className="flex-1 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors">Confirm Import</button>
+                  </div>
+                </>
+              )}
+
+              {(bulkStatus.type === 'error' || bulkStatus.type === 'success') && (
+                <button onClick={cancelBulkImport} className="text-[10px] font-bold underline opacity-70 hover:opacity-100 text-left">Dismiss</button>
+              )}
+            </div>
+          )}
+
+          {/* CSV format hint */}
+          <p className="text-[10px] text-slate-400 font-medium px-1">
+            Required columns: <span className="font-bold text-slate-500">name, sku, price, stock</span> · Optional: category, demand, image
+          </p>
         </div>
       </div>
 
@@ -137,7 +336,7 @@ export default function Inventory({ products = [], setProducts, search: globalSe
       {/* Responsive Inventory Table Container */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
         
-        {/* MOBILE VIEW (Cards) */}
+        {/* MOBILE VIEW */}
         <div className="md:hidden divide-y divide-slate-100 flex-1">
           {currentItems.length > 0 ? currentItems.map((product) => (
             <div key={product.id} className="p-4 space-y-4">
@@ -156,18 +355,16 @@ export default function Inventory({ products = [], setProducts, search: globalSe
                   </span>
                 </div>
               </div>
-              
               <div className="grid grid-cols-2 gap-3">
-                 <div>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Stock (Units)</p>
-                   <input type="number" defaultValue={product.stock} className="w-full p-2 text-sm font-bold border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-slate-900/10 outline-none" />
-                 </div>
-                 <div>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Price (₹)</p>
-                   <input type="number" defaultValue={product.price} className="w-full p-2 text-sm font-bold border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-slate-900/10 outline-none" />
-                 </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Stock (Units)</p>
+                  <input type="number" defaultValue={product.stock} className="w-full p-2 text-sm font-bold border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-slate-900/10 outline-none" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Price (₹)</p>
+                  <input type="number" defaultValue={product.price} className="w-full p-2 text-sm font-bold border border-slate-200 rounded-lg text-center focus:ring-2 focus:ring-slate-900/10 outline-none" />
+                </div>
               </div>
-
               <div className="flex gap-2">
                 <button onClick={handleQuickSave} className="flex-1 flex items-center justify-center gap-2 py-2 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 font-bold text-xs rounded-lg transition-colors border border-slate-200 hover:border-emerald-200"><Save size={14}/> Save</button>
                 <button onClick={() => handleDelete(product.id)} className="flex-1 flex items-center justify-center gap-2 py-2 bg-slate-50 hover:bg-red-50 text-slate-700 hover:text-red-700 font-bold text-xs rounded-lg transition-colors border border-slate-200 hover:border-red-200"><Trash2 size={14}/> Delete</button>
@@ -178,7 +375,7 @@ export default function Inventory({ products = [], setProducts, search: globalSe
           )}
         </div>
 
-        {/* DESKTOP VIEW (Table) */}
+        {/* DESKTOP VIEW */}
         <div className="hidden md:block overflow-x-auto w-full flex-1">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -236,7 +433,7 @@ export default function Inventory({ products = [], setProducts, search: globalSe
                   </td>
                 </tr>
               )) : (
-                 <tr><td colSpan="6" className="py-16 text-center text-slate-500"><Boxes size={32} className="mx-auto mb-3 opacity-50" /><p className="font-bold">No products match your search.</p></td></tr>
+                <tr><td colSpan="6" className="py-16 text-center text-slate-500"><Boxes size={32} className="mx-auto mb-3 opacity-50" /><p className="font-bold">No products match your search.</p></td></tr>
               )}
             </tbody>
           </table>
@@ -248,13 +445,13 @@ export default function Inventory({ products = [], setProducts, search: globalSe
             Showing <span className="font-bold text-slate-900">{filteredProducts.length > 0 ? indexOfFirstItem + 1 : 0}</span> to <span className="font-bold text-slate-900">{Math.min(indexOfLastItem, filteredProducts.length)}</span> of <span className="font-bold text-slate-900">{filteredProducts.length}</span> results
           </p>
           <div className="flex gap-2 w-full sm:w-auto">
-             <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1 || filteredProducts.length === 0} className="flex-1 sm:flex-none px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-all">Previous</button>
-             <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage >= totalPages || filteredProducts.length === 0} className="flex-1 sm:flex-none px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-all">Next</button>
+            <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1 || filteredProducts.length === 0} className="flex-1 sm:flex-none px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-all">Previous</button>
+            <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage >= totalPages || filteredProducts.length === 0} className="flex-1 sm:flex-none px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 transition-all">Next</button>
           </div>
         </div>
       </div>
 
-      {/* --- EDIT PRODUCT MODAL --- */}
+      {/* EDIT PRODUCT MODAL */}
       {editingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="absolute inset-0" onClick={() => setEditingProduct(null)}></div>
@@ -265,8 +462,6 @@ export default function Inventory({ products = [], setProducts, search: globalSe
             </div>
             
             <form onSubmit={handleSaveEdit} className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
-              
-              {/* Image Editor */}
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Product Images (Max 5)</label>
                 <div className="flex flex-wrap gap-3 mb-3">
@@ -293,7 +488,6 @@ export default function Inventory({ products = [], setProducts, search: globalSe
                 <input type="file" multiple accept="image/png, image/jpeg" className="hidden" ref={fileInputRef} onChange={handleEditImageUpload} />
               </div>
 
-              {/* Form Fields */}
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Product Name</label>
                 <input required type="text" value={editingProduct.name} onChange={(e) => setEditingProduct({...editingProduct, name: e.target.value})} className="w-full px-3 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 font-medium transition-all" />
@@ -330,7 +524,6 @@ export default function Inventory({ products = [], setProducts, search: globalSe
           </div>
         </div>
       )}
-
     </div>
   );
 }

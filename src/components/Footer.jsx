@@ -1,3 +1,5 @@
+
+import { useNavigate } from "react-router-dom"; // ✅ Added
 import {
   Facebook,
   Instagram,
@@ -9,8 +11,48 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
+// ✅ Route map for every footer link
+const footerSections = [
+  {
+    title: "Platform",
+    links: [
+      { label: "About Indiafy",   href: "/"          },
+      { label: "How it Works",    href: "/"   },
+      { label: "Verified Stores", href: "/local-sellers"  },
+      { label: "Partner Program", href: "/auth"           },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "Help Center",    href: "/support"                },
+      { label: "Order Tracking", href: "/track-order/:orderId"         },
+      { label: "Refund Policy",  href: "/support#refund-policy"  },
+      { label: "Contact Us",     href: "/support#contact"        },
+    ],
+  },
+  {
+    title: "Sellers",
+    links: [
+      { label: "Seller Dashboard",    href: "/auth"          },
+      { label: "Sector Onboarding",   href: "/auth"               },
+      { label: "Video Verification",  href: "/auth" },
+      { label: "Merchant Support",    href: "/support"            },
+    ],
+  },
+];
+
+// ✅ Social media links
+const socialLinks = [
+  { Icon: Facebook,  href: "https://facebook.com/indiafy"  },
+  { Icon: Instagram, href: "https://instagram.com/indiafy" },
+  { Icon: Twitter,   href: "https://twitter.com/indiafy"   },
+  { Icon: Linkedin,  href: "https://linkedin.com/company/indiafy" },
+];
+
 function Footer() {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate(); // ✅ Added
 
   const footerSections = [
     {
