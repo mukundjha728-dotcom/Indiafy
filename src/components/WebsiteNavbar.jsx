@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Search,
   ShoppingBag,
@@ -7,49 +7,77 @@ import {
   Menu,
   X,
   ChevronDown,
+  ChevronRight,
   Zap,
   Package,
   Truck,
   Home,
   Laptop,
   Sparkles,
+  User,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "#", hasDropdown: true },
-  { label: "Track Order", href: "/track" },
-  { label: "Gurugram Specials", href: "/local" },
+  { label: "Track Order", href: "/track-order" },
+  { label: "Verified Nodes", path: "/local-sellers" },
   { label: "Help", href: "/support" },
 ];
 
 const productCategories = [
   {
-    icon: <Zap size={18} />,
+    icon: <Zap size={18} className="text-emerald-500" />,
     label: "Quick Commerce",
     sub: "10-25 Min Delivery",
+    path: "/quick-commerce",
   },
-  { icon: <Package size={18} />, label: "Wholesale", sub: "Bulk B2B Pricing" },
-  { icon: <Truck size={18} />, label: "E-Commerce", sub: "Same Day Shipping" },
   {
-    icon: <Home size={18} />,
+    icon: <Package size={18} className="text-blue-500" />,
+    label: "Wholesale",
+    sub: "Bulk B2B Pricing",
+    path: "/wholesale",
+  },
+  {
+    icon: <Truck size={18} className="text-orange-500" />,
+    label: "Local Sellers",
+    sub: "Verified Ecosystem",
+    path: "/local-sellers",
+  },
+  {
+    icon: <Home size={18} className="text-purple-500" />,
     label: "Home Essentials",
     sub: "Kitchen & Decor",
+    path: "#",
   },
-  { icon: <Laptop size={18} />, label: "Electronics", sub: "Mobiles & Audio" },
   {
-    icon: <Sparkles size={18} />,
+    icon: <Laptop size={18} className="text-zinc-500" />,
+    label: "Electronics",
+    sub: "Mobiles & Audio",
+    path: "#",
+  },
+  {
+    icon: <Sparkles size={18} className="text-pink-500" />,
     label: "Personal Care",
     sub: "Beauty & Wellness",
+    path: "#",
   },
 ];
 
-export default function Navbar() {
+export default function WebsiteNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Detect if we are on the Home page
+  const isHomePage = location.pathname === "/";
+
+  // Light Theme applies if NOT on homepage OR if scrolled
+  const isLightTheme = !isHomePage || scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -57,170 +85,279 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    }; // Cleanup
+  }, [menuOpen]);
+
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-        scrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg py-3"
-          : "bg-transparent py-6"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-14">
-          {/* 1. LOGO */}
-          <div
-            className="flex-shrink-0 cursor-pointer"
-            onClick={() => navigate("/")}
-          >
-            <img
-              src="/Images/logo.png"
-              alt="Indiafy Logo"
-              className={`h-10 w-auto object-contain transition-all ${!scrolled && "brightness-0 invert"}`}
-            />
-          </div>
-
-          {/* 2. DESKTOP NAV LINKS (Centered) */}
-          <div className="hidden lg:flex items-center space-x-10">
-            {navLinks.map((link) => (
-              <div
-                key={link.label}
-                className="relative group"
-                onMouseEnter={() => link.hasDropdown && setDropdownOpen(true)}
-                onMouseLeave={() => link.hasDropdown && setDropdownOpen(false)}
-              >
-                <a
-                  href={link.href}
-                  className={`flex items-center gap-1.5 text-[13px] font-bold uppercase tracking-widest transition-all ${
-                    scrolled ? "text-zinc-900" : "text-white"
-                  } hover:opacity-60`}
-                >
-                  {link.label}
-                  {link.hasDropdown && (
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`}
-                    />
-                  )}
-                </a>
-
-                {/* MEGA DROPDOWN */}
-                {link.hasDropdown && dropdownOpen && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-[650px] pt-6 animate-in fade-in slide-in-from-top-4 duration-300">
-                    <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-zinc-100 overflow-hidden grid grid-cols-2 p-6 gap-2">
-                      {productCategories.map((cat) => (
-                        <div
-                          key={cat.label}
-                          className="flex items-center gap-4 p-4 rounded-2xl hover:bg-zinc-50 transition-all cursor-pointer group/item"
-                        >
-                          <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-900 group-hover/item:bg-zinc-900 group-hover/item:text-white transition-all duration-300">
-                            {cat.icon}
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-zinc-900">
-                              {cat.label}
-                            </p>
-                            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-tighter">
-                              {cat.sub}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* 3. ACTION ICONS */}
-          <div
-            className={`flex items-center gap-3 ${scrolled ? "text-zinc-900" : "text-white"}`}
-          >
-            <div className="hidden md:flex items-center bg-black/5 hover:bg-black/10 rounded-full px-4 py-2 transition-all cursor-pointer group">
-              <Search
-                size={18}
-                className="group-hover:scale-110 transition-transform"
-              />
-              <span className="ml-2 text-[11px] font-bold uppercase tracking-widest opacity-60">
-                Search
-              </span>
-            </div>
-
-            <div className="flex items-center gap-1 border-l border-zinc-500/30 ml-2 pl-4">
-              <button className="p-2 hover:bg-black/5 rounded-full transition-all relative">
-                <Heart size={20} />
-              </button>
-
-              <button className="p-2 hover:bg-black/5 rounded-full transition-all relative">
-                <ShoppingBag size={20} />
-                <span
-                  className={`absolute top-1 right-1 w-4 h-4 text-[10px] flex items-center justify-center rounded-full font-black ${scrolled ? "bg-zinc-900 text-white" : "bg-white text-zinc-900"}`}
-                >
-                  0
-                </span>
-              </button>
-
-              <button
-                className="lg:hidden p-2 ml-2"
-                onClick={() => setMenuOpen(!menuOpen)}
-              >
-                {menuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
-
-            <div className="hidden lg:flex items-center gap-3 ml-4">
-              <button className="text-[12px] font-black uppercase tracking-widest px-4">
-                Login
-              </button>
-              <button
-                className={`px-6 py-2.5 text-[12px] font-black uppercase tracking-widest rounded-full shadow-xl transition-all hover:scale-105 active:scale-95 ${scrolled ? "bg-zinc-900 text-white" : "bg-white text-zinc-900"}`}
-              >
-                Join Indiafy
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* MOBILE SIDEBAR */}
-      <div
-        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] transition-opacity duration-300 ${menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-        onClick={() => setMenuOpen(false)}
+    <>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+          isLightTheme
+            ? "bg-white/95 backdrop-blur-md shadow-sm py-3 border-b border-zinc-100"
+            : "bg-transparent py-5"
+        }`}
       >
-        <div
-          className={`absolute right-0 top-0 h-full w-full max-w-[320px] bg-white p-8 transition-transform duration-500 ease-out ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-center justify-between mb-12">
-            <img src="/Images/logo.png" alt="Logo" className="h-8 w-auto" />
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="text-zinc-900"
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-12">
+            {/* 1. LOGO */}
+            <div
+              className="flex-shrink-0 cursor-pointer"
+              onClick={() => navigate("/")}
             >
-              <X size={24} />
-            </button>
-          </div>
-          <div className="space-y-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="block text-xl font-black text-zinc-900 uppercase tracking-tighter hover:text-zinc-400"
+              <img
+                src="/Images/logo.png"
+                alt="Indiafy Logo"
+                className={`h-8 lg:h-9 w-auto object-contain transition-all duration-300 ${!isLightTheme ? "brightness-0 invert" : ""}`}
+              />
+            </div>
+
+            {/* 2. DESKTOP NAV LINKS (Centered) */}
+            <div className="hidden lg:flex items-center space-x-8">
+              {navLinks.map((link) => (
+                <div
+                  key={link.label}
+                  className="relative group h-12 flex items-center"
+                  onMouseEnter={() => link.hasDropdown && setDropdownOpen(true)}
+                  onMouseLeave={() =>
+                    link.hasDropdown && setDropdownOpen(false)
+                  }
+                >
+                  <a
+                    href={link.href || link.path}
+                    className={`flex items-center gap-1.5 text-[12px] font-black uppercase tracking-[0.1em] transition-all ${
+                      isLightTheme
+                        ? "text-zinc-600 hover:text-emerald-600"
+                        : "text-white/80 hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                    {link.hasDropdown && (
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    )}
+                  </a>
+
+                  {/* MEGA DROPDOWN */}
+                  {link.hasDropdown && dropdownOpen && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[600px] pt-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-zinc-100 overflow-hidden grid grid-cols-2 p-4 gap-2">
+                        {productCategories.map((cat) => (
+                          <div
+                            key={cat.label}
+                            onClick={() => {
+                              setDropdownOpen(false);
+                              navigate(cat.path);
+                            }}
+                            className="flex items-center gap-4 p-4 rounded-2xl hover:bg-zinc-50 transition-all cursor-pointer group/item border border-transparent hover:border-zinc-100"
+                          >
+                            <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-900 group-hover/item:bg-white group-hover/item:shadow-sm transition-all duration-300">
+                              {cat.icon}
+                            </div>
+                            <div>
+                              <p className="text-sm font-black text-zinc-900 leading-tight mb-0.5">
+                                {cat.label}
+                              </p>
+                              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                                {cat.sub}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* 3. ACTION ICONS */}
+            <div
+              className={`flex items-center gap-2 sm:gap-4 ${isLightTheme ? "text-zinc-900" : "text-white"}`}
+            >
+              {/* 🔥 FIX: Added onClick navigate to search page for Desktop */}
+              <div
+                onClick={() => navigate("/search")}
+                className={`hidden md:flex items-center rounded-full px-4 py-2 transition-all cursor-pointer group ${isLightTheme ? "bg-zinc-100 hover:bg-zinc-200" : "bg-white/10 hover:bg-white/20"}`}
               >
-                {link.label}
-              </a>
-            ))}
-          </div>
-          <div className="mt-20 space-y-4">
-            <button className="w-full py-4 text-sm font-black uppercase tracking-widest border-2 border-zinc-100 rounded-2xl">
-              Login
-            </button>
-            <button className="w-full py-4 text-sm font-black uppercase tracking-widest bg-zinc-900 text-white rounded-2xl shadow-2xl shadow-zinc-300">
-              Create Account
-            </button>
+                <Search
+                  size={16}
+                  className="group-hover:scale-110 transition-transform"
+                />
+                <span className="ml-2 text-[10px] font-black uppercase tracking-widest">
+                  Search
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1 sm:gap-2 md:border-l border-zinc-500/30 md:ml-2 md:pl-4">
+                <button
+                  className={`hidden sm:flex p-2 rounded-full transition-all ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
+                >
+                  <Heart size={20} strokeWidth={1.5} />
+                </button>
+
+                <button
+                  className={`p-2 rounded-full transition-all relative ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
+                  onClick={() => navigate("/cart")}
+                >
+                  <ShoppingBag size={20} strokeWidth={1.5} />
+                  <span
+                    className={`absolute top-0.5 right-0.5 w-4 h-4 text-[9px] flex items-center justify-center rounded-full font-black shadow-sm ${isLightTheme ? "bg-emerald-500 text-white" : "bg-white text-emerald-600"}`}
+                  >
+                    0
+                  </span>
+                </button>
+
+                {/* Mobile Menu Toggle */}
+                <button
+                  className={`lg:hidden p-2 ml-1 rounded-full ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
+                  onClick={() => setMenuOpen(true)}
+                >
+                  <Menu size={24} strokeWidth={1.5} />
+                </button>
+              </div>
+
+              {/* Desktop Login/Join */}
+              <div className="hidden lg:flex items-center gap-3 ml-2">
+                <button
+                  onClick={() => navigate("/auth")}
+                  className="text-[11px] font-black uppercase tracking-[0.1em] px-3 hover:text-emerald-500 transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => navigate("/auth")}
+                  className={`px-5 py-2 text-[11px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95 ${
+                    isLightTheme
+                      ? "bg-zinc-900 text-white shadow-lg hover:bg-emerald-500"
+                      : "bg-white text-zinc-900 shadow-lg hover:bg-emerald-500 hover:text-white"
+                  }`}
+                >
+                  Join Indiafy
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* 📱 MOBILE SIDEBAR */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            key="mobile-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm z-[999] lg:hidden"
+            onClick={() => setMenuOpen(false)}
+          >
+            <motion.div
+              key="mobile-sidebar"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "tween", duration: 0.3 }}
+              className="absolute right-0 top-0 h-[100dvh] w-[85%] max-w-[320px] bg-white shadow-2xl flex flex-col pointer-events-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-zinc-100">
+                <img src="/Images/logo.png" alt="Logo" className="h-6 w-auto" />
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="p-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 rounded-full transition-colors"
+                >
+                  <X size={20} strokeWidth={2} />
+                </button>
+              </div>
+
+              {/* Links */}
+              <div className="flex-1 overflow-y-auto py-6 px-6 flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                    Menu
+                  </span>
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href || link.path}
+                      className="text-lg font-black text-zinc-900 tracking-tight flex items-center justify-between"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {link.label}
+                      <ChevronRight size={18} className="text-zinc-300" />
+                    </a>
+                  ))}
+                </div>
+
+                <div className="w-full h-px bg-zinc-100 my-2" />
+
+                <div className="flex flex-col gap-4">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                    Quick Actions
+                  </span>
+
+                  {/* 🔥 FIX: Added onClick navigate to search page for Mobile & auto-close menu */}
+                  <button
+                    onClick={() => {
+                      navigate("/search");
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 text-sm font-bold text-zinc-700 p-3 rounded-xl bg-zinc-50 border border-zinc-100 active:bg-zinc-100 transition-colors"
+                  >
+                    <Search size={18} className="text-zinc-400" /> Search
+                    Products
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/track-order");
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 text-sm font-bold text-zinc-700 p-3 rounded-xl bg-zinc-50 border border-zinc-100 active:bg-zinc-100 transition-colors"
+                  >
+                    <Package size={18} className="text-zinc-400" /> Track My
+                    Order
+                  </button>
+                </div>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="p-6 border-t border-zinc-100 bg-zinc-50 flex flex-col gap-3">
+                <button
+                  onClick={() => {
+                    navigate("/auth");
+                    setMenuOpen(false);
+                  }}
+                  className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-zinc-900 text-white rounded-xl shadow-md hover:bg-emerald-500 transition-colors"
+                >
+                  Login / Sign Up
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/auth");
+                    setMenuOpen(false);
+                  }}
+                  className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-white border border-zinc-200 text-zinc-900 rounded-xl hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2"
+                >
+                  <User size={16} /> Seller Login
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

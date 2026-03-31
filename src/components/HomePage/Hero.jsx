@@ -59,9 +59,10 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full min-h-[100svh] flex items-start lg:items-center bg-[#030303] overflow-hidden selection:bg-emerald-500 selection:text-black">
+    // 🔥 FIX: Changed min-h-[100svh] to h-auto for mobile, and lg:min-h-[100svh] for desktop
+    <section className="relative w-full h-auto lg:min-h-[100svh] flex items-start lg:items-center bg-[#030303] overflow-hidden selection:bg-emerald-500 selection:text-black">
       {/* 🖼️ BACKGROUND LAYER (Fills top on mobile, Right on Desktop) */}
-      <div className="absolute top-0 left-0 w-full h-[70vh] lg:w-[55%] lg:h-full lg:left-auto lg:right-0 z-0">
+      <div className="absolute top-0 left-0 w-full h-full lg:w-[55%] lg:left-auto lg:right-0 z-0">
         <AnimatePresence mode="wait">
           <motion.img
             key={currentImg}
@@ -78,8 +79,9 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#030303]/40 via-transparent to-[#030303] lg:bg-gradient-to-l lg:from-transparent lg:to-[#030303]" />
       </div>
 
-      {/* 📱 CONTENT LAYER (Moved UP for Mobile) */}
-      <div className="w-full max-w-[1400px] mx-auto px-5 sm:px-8 relative z-10 pt-32 lg:pt-0">
+      {/* 📱 CONTENT LAYER */}
+      {/* 🔥 FIX: Kept padding for mobile tight so it doesn't stretch the black background unnecessarily */}
+      <div className="w-full max-w-[1400px] mx-auto px-5 sm:px-8 relative z-10 pt-28 pb-12 lg:pt-32 xl:pt-40 lg:pb-20">
         <div className="grid lg:grid-cols-12 gap-8 items-center">
           {/* ⚡ LEFT: TYPOGRAPHY & INTERACTION */}
           <div className="lg:col-span-7 flex flex-col">
@@ -87,7 +89,7 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2.5 w-fit px-3 py-1.5 mb-6 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-xl"
+              className="flex items-center gap-2.5 w-fit px-3 py-1.5 mb-6 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-xl mt-4 lg:mt-0"
             >
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
               <p className="text-[10px] font-black uppercase tracking-widest text-white">
@@ -131,9 +133,7 @@ export default function Hero() {
                   placeholder="Search essentials, electronics, or bulk..."
                   className="flex-1 py-3.5 bg-transparent border-none outline-none text-white text-sm sm:text-base placeholder:text-zinc-600 font-medium"
                 />
-                <button
-                  onClick={() => navigate("/search?q=hyperlocal+essentials")} 
-                className="bg-white text-black p-3.5 rounded-xl hover:bg-zinc-200 active:scale-95 transition-all flex items-center justify-center group-focus-within:bg-emerald-400">
+                <button className="bg-white text-black p-3.5 rounded-xl hover:bg-zinc-200 active:scale-95 transition-all flex items-center justify-center group-focus-within:bg-emerald-400">
                   <ArrowRight size={18} />
                 </button>
               </div>
@@ -171,9 +171,9 @@ export default function Hero() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
-            className="lg:col-span-5 hidden lg:flex justify-end items-end h-full pb-20"
+            className="lg:col-span-5 hidden lg:flex justify-end items-center h-full"
           >
-            <div className="w-80 bg-zinc-950/80 backdrop-blur-2xl border border-zinc-800 p-8 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative -left-12">
+            <div className="w-80 bg-zinc-950/80 backdrop-blur-2xl border border-zinc-800 p-8 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative -left-12 mt-12">
               <div className="flex justify-between items-start mb-6">
                 <ShieldCheck size={32} className="text-emerald-400" />
                 <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-full">
