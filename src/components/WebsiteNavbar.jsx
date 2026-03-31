@@ -8,13 +8,16 @@ import {
   Menu,
   X,
   ChevronDown,
+  ChevronRight,
   Zap,
   Package,
   Truck,
   Home,
   Laptop,
   Sparkles,
+  User,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -26,7 +29,7 @@ const navLinks = [
 
 const productCategories = [
   {
-    icon: <Zap size={18} />,
+    icon: <Zap size={18} className="text-emerald-500" />,
     label: "Quick Commerce",
     sub: "10-25 Min Delivery",
     href: "/quick-commerce", // ✅ Linked to route
@@ -44,7 +47,19 @@ const productCategories = [
     href: "/category/ecommerce", // ✅ Linked to dynamic category route
   },
   {
-    icon: <Home size={18} />,
+    icon: <Package size={18} className="text-blue-500" />,
+    label: "Wholesale",
+    sub: "Bulk B2B Pricing",
+    path: "/wholesale",
+  },
+  {
+    icon: <Truck size={18} className="text-orange-500" />,
+    label: "Local Sellers",
+    sub: "Verified Ecosystem",
+    path: "/local-sellers",
+  },
+  {
+    icon: <Home size={18} className="text-purple-500" />,
     label: "Home Essentials",
     sub: "Kitchen & Decor",
     href: "/category/home-essentials", // ✅ Linked to dynamic category route
@@ -56,14 +71,20 @@ const productCategories = [
     href: "/category/electronics", // ✅ Linked to dynamic category route
   },
   {
-    icon: <Sparkles size={18} />,
+    icon: <Laptop size={18} className="text-zinc-500" />,
+    label: "Electronics",
+    sub: "Mobiles & Audio",
+    path: "#",
+  },
+  {
+    icon: <Sparkles size={18} className="text-pink-500" />,
     label: "Personal Care",
     sub: "Beauty & Wellness",
     href: "/category/personal-care", // ✅ Linked to dynamic category route
   },
 ];
 
-export default function Navbar() {
+export default function WebsiteNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -71,6 +92,13 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const searchInputRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Detect if we are on the Home page
+  const isHomePage = location.pathname === "/";
+
+  // Light Theme applies if NOT on homepage OR if scrolled
+  const isLightTheme = !isHomePage || scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -193,8 +221,8 @@ export default function Navbar() {
                               {cat.sub}
                             </p>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -267,17 +295,20 @@ export default function Navbar() {
                     scrolled ? "bg-zinc-900 text-white" : "bg-white text-zinc-900"
                   }`}
                 >
-                  0
-                </span>
-              </button>
+                  <Heart size={20} strokeWidth={1.5} />
+                </button>
 
-              <button
-                className="lg:hidden p-2 ml-2"
-                onClick={() => setMenuOpen(!menuOpen)}
-              >
-                {menuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
+                <button
+                  className={`p-2 rounded-full transition-all relative ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
+                  onClick={() => navigate("/cart")}
+                >
+                  <ShoppingBag size={20} strokeWidth={1.5} />
+                  <span
+                    className={`absolute top-0.5 right-0.5 w-4 h-4 text-[9px] flex items-center justify-center rounded-full font-black shadow-sm ${isLightTheme ? "bg-emerald-500 text-white" : "bg-white text-emerald-600"}`}
+                  >
+                    0
+                  </span>
+                </button>
 
             {/* ✅ Login → /auth | Join Indiafy → /signup */}
             <div className="hidden lg:flex items-center gap-3 ml-4">
@@ -298,7 +329,7 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-      </div>
+      </nav>
 
       {/* MOBILE SIDEBAR */}
       <div
