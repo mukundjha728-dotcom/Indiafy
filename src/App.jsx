@@ -8,7 +8,6 @@ import DashboardLayout from "./components/DashboardLayout";
 // ================= PUBLIC WEBSITE PAGES =================
 import Home from "./pages/Home";
 import Wholesalepage from "./components/HomePage/Wholesalepage";
-import About from "./pages/About";
 import Cartpage from "./components/HomePage/Cartpage";
 import Checkoutpage from "./components/HomePage/Checkoutpage";
 import Paymentpage from "./components/HomePage/Paymentpage";
@@ -134,7 +133,6 @@ export default function App() {
         {/* All routes inside this block will have the Main Navbar and Footer */}
         <Route element={<WebsiteLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
           <Route path="/wholesale" element={<Wholesalepage />} />
           <Route path="/quick-commerce" element={<QuickCommerce />} />
           <Route path="/cart" element={<Cartpage />} />
