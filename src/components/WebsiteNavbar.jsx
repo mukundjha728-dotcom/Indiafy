@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   ShoppingBag,
@@ -21,8 +22,8 @@ import { motion, AnimatePresence } from "framer-motion";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "#", hasDropdown: true },
-  { label: "Track Order", href: "/track-order" },
-  { label: "Verified Nodes", path: "/local-sellers" },
+  { label: "Track Order", href: "/track-order/:orderId" }, // ✅ Fixed: no literal :orderId
+  { label: "Gurugram Specials", href: "/local-sellers" }, // ✅ Fixed: was /local
   { label: "Help", href: "/support" },
 ];
 
@@ -31,7 +32,19 @@ const productCategories = [
     icon: <Zap size={18} className="text-emerald-500" />,
     label: "Quick Commerce",
     sub: "10-25 Min Delivery",
-    path: "/quick-commerce",
+    href: "/quick-commerce", // ✅ Linked to route
+  },
+  {
+    icon: <Package size={18} />,
+    label: "Wholesale",
+    sub: "Bulk B2B Pricing",
+    href: "/wholesale", // ✅ Linked to route
+  },
+  {
+    icon: <Truck size={18} />,
+    label: "E-Commerce",
+    sub: "Same Day Shipping",
+    href: "/category/ecommerce", // ✅ Linked to dynamic category route
   },
   {
     icon: <Package size={18} className="text-blue-500" />,
@@ -49,7 +62,13 @@ const productCategories = [
     icon: <Home size={18} className="text-purple-500" />,
     label: "Home Essentials",
     sub: "Kitchen & Decor",
-    path: "#",
+    href: "/category/home-essentials", // ✅ Linked to dynamic category route
+  },
+  {
+    icon: <Laptop size={18} />,
+    label: "Electronics",
+    sub: "Mobiles & Audio",
+    href: "/category/electronics", // ✅ Linked to dynamic category route
   },
   {
     icon: <Laptop size={18} className="text-zinc-500" />,
@@ -61,7 +80,7 @@ const productCategories = [
     icon: <Sparkles size={18} className="text-pink-500" />,
     label: "Personal Care",
     sub: "Beauty & Wellness",
-    path: "#",
+    href: "/category/personal-care", // ✅ Linked to dynamic category route
   },
 ];
 
@@ -69,7 +88,9 @@ export default function WebsiteNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchInputRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -85,59 +106,86 @@ export default function WebsiteNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
+  // Focus input when search bar opens
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+    if (searchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    }; // Cleanup
-  }, [menuOpen]);
+  }, [searchOpen]);
+
+  // ✅ Navigate to /search with query param
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+      setSearchOpen(false);
+    }
+  };
+
+  // ✅ Handle Track Order — prompt for order ID via a simple nav
+  const handleTrackOrder = (e) => {
+    e.preventDefault();
+    const orderId = prompt("Enter your Order ID to track:");
+    if (orderId && orderId.trim()) {
+      navigate(`/track-order/${orderId.trim()}`);
+    }
+  };
 
   return (
-    <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
-          isLightTheme
-            ? "bg-white/95 backdrop-blur-md shadow-sm py-3 border-b border-zinc-100"
-            : "bg-transparent py-5"
-        }`}
-      >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-12">
-            {/* 1. LOGO */}
-            <div
-              className="flex-shrink-0 cursor-pointer"
-              onClick={() => navigate("/")}
-            >
-              <img
-                src="/Images/logo.png"
-                alt="Indiafy Logo"
-                className={`h-8 lg:h-9 w-auto object-contain transition-all duration-300 ${!isLightTheme ? "brightness-0 invert" : ""}`}
-              />
-            </div>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
+        scrolled
+          ? "bg-white/95 backdrop-blur-md shadow-lg py-3"
+          : "bg-transparent py-6"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between h-14">
 
-            {/* 2. DESKTOP NAV LINKS (Centered) */}
-            <div className="hidden lg:flex items-center space-x-8">
-              {navLinks.map((link) => (
-                <div
-                  key={link.label}
-                  className="relative group h-12 flex items-center"
-                  onMouseEnter={() => link.hasDropdown && setDropdownOpen(true)}
-                  onMouseLeave={() =>
-                    link.hasDropdown && setDropdownOpen(false)
-                  }
-                >
+          {/* 1. LOGO */}
+          <div
+            className="flex-shrink-0 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            <img
+              src="/Images/logo.png"
+              alt="Indiafy Logo"
+              className={`h-10 w-auto object-contain transition-all ${!scrolled && "brightness-0 invert"}`}
+            />
+          </div>
+
+          {/* 2. DESKTOP NAV LINKS */}
+          <div className="hidden lg:flex items-center space-x-10">
+            {navLinks.map((link) => (
+              <div
+                key={link.label}
+                className="relative group"
+                onMouseEnter={() => link.hasDropdown && setDropdownOpen(true)}
+                onMouseLeave={() => link.hasDropdown && setDropdownOpen(false)}
+              >
+                {/* ✅ Track Order gets special handler; others use href or navigate */}
+                {link.label === "Track Order" ? (
+                  <button
+                    onClick={handleTrackOrder}
+                    className={`flex items-center gap-1.5 text-[13px] font-bold uppercase tracking-widest transition-all ${
+                      scrolled ? "text-zinc-900" : "text-white"
+                    } hover:opacity-60 bg-transparent border-none cursor-pointer`}
+                  >
+                    {link.label}
+                  </button>
+                ) : (
                   <a
-                    href={link.href || link.path}
-                    className={`flex items-center gap-1.5 text-[12px] font-black uppercase tracking-[0.1em] transition-all ${
-                      isLightTheme
-                        ? "text-zinc-600 hover:text-emerald-600"
-                        : "text-white/80 hover:text-white"
-                    }`}
+                    href={link.href}
+                    onClick={(e) => {
+                      if (link.href !== "#") {
+                        e.preventDefault();
+                        navigate(link.href);
+                      }
+                    }}
+                    className={`flex items-center gap-1.5 text-[13px] font-bold uppercase tracking-widest transition-all ${
+                      scrolled ? "text-zinc-900" : "text-white"
+                    } hover:opacity-60`}
                   >
                     {link.label}
                     {link.hasDropdown && (
@@ -147,61 +195,105 @@ export default function WebsiteNavbar() {
                       />
                     )}
                   </a>
+                )}
 
-                  {/* MEGA DROPDOWN */}
-                  {link.hasDropdown && dropdownOpen && (
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-[600px] pt-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                      <div className="bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-zinc-100 overflow-hidden grid grid-cols-2 p-4 gap-2">
-                        {productCategories.map((cat) => (
-                          <div
-                            key={cat.label}
-                            onClick={() => {
-                              setDropdownOpen(false);
-                              navigate(cat.path);
-                            }}
-                            className="flex items-center gap-4 p-4 rounded-2xl hover:bg-zinc-50 transition-all cursor-pointer group/item border border-transparent hover:border-zinc-100"
-                          >
-                            <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-900 group-hover/item:bg-white group-hover/item:shadow-sm transition-all duration-300">
-                              {cat.icon}
-                            </div>
-                            <div>
-                              <p className="text-sm font-black text-zinc-900 leading-tight mb-0.5">
-                                {cat.label}
-                              </p>
-                              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                                {cat.sub}
-                              </p>
-                            </div>
+                {/* MEGA DROPDOWN */}
+                {link.hasDropdown && dropdownOpen && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-[650px] pt-6 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-zinc-100 overflow-hidden grid grid-cols-2 p-6 gap-2">
+                      {productCategories.map((cat) => (
+                        <div
+                          key={cat.label}
+                          onClick={() => {
+                            navigate(cat.href); // ✅ Navigate to category route
+                            setDropdownOpen(false);
+                          }}
+                          className="flex items-center gap-4 p-4 rounded-2xl hover:bg-zinc-50 transition-all cursor-pointer group/item"
+                        >
+                          <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-900 group-hover/item:bg-zinc-900 group-hover/item:text-white transition-all duration-300">
+                            {cat.icon}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-zinc-900">
+                              {cat.label}
+                            </p>
+                            <p className="text-[11px] font-medium text-zinc-400 uppercase tracking-tighter">
+                              {cat.sub}
+                            </p>
                           </div>
                         ))}
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* 3. ACTION ICONS */}
+          <div
+            className={`flex items-center gap-3 ${scrolled ? "text-zinc-900" : "text-white"}`}
+          >
+            {/* ✅ Search Bar — toggles input, submits to /search */}
+            <div className="hidden md:flex items-center">
+              {searchOpen ? (
+                <form
+                  onSubmit={handleSearch}
+                  className="flex items-center bg-black/10 rounded-full px-4 py-2"
+                >
+                  <Search size={16} className="opacity-60 mr-2 flex-shrink-0" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="bg-transparent text-[12px] font-semibold outline-none w-40 placeholder:opacity-50"
+                    onBlur={() => {
+                      if (!searchQuery) setSearchOpen(false);
+                    }}
+                  />
+                  <button type="submit" className="hidden" />
+                  <X
+                    size={14}
+                    className="opacity-50 cursor-pointer ml-1 hover:opacity-100"
+                    onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+                  />
+                </form>
+              ) : (
+                <div
+                  onClick={() => setSearchOpen(true)}
+                  className="flex items-center bg-black/5 hover:bg-black/10 rounded-full px-4 py-2 transition-all cursor-pointer group"
+                >
+                  <Search size={18} className="group-hover:scale-110 transition-transform" />
+                  <span className="ml-2 text-[11px] font-bold uppercase tracking-widest opacity-60">
+                    Search
+                  </span>
                 </div>
-              ))}
+              )}
             </div>
 
-            {/* 3. ACTION ICONS */}
-            <div
-              className={`flex items-center gap-2 sm:gap-4 ${isLightTheme ? "text-zinc-900" : "text-white"}`}
-            >
-              {/* 🔥 FIX: Added onClick navigate to search page for Desktop */}
-              <div
-                onClick={() => navigate("/search")}
-                className={`hidden md:flex items-center rounded-full px-4 py-2 transition-all cursor-pointer group ${isLightTheme ? "bg-zinc-100 hover:bg-zinc-200" : "bg-white/10 hover:bg-white/20"}`}
+            <div className="flex items-center gap-1 border-l border-zinc-500/30 ml-2 pl-4">
+              {/* ✅ Wishlist — navigate to /profile (wishlist lives in profile) */}
+              <button
+                onClick={() => navigate("/")}
+                className="p-2 hover:bg-black/5 rounded-full transition-all relative"
+                title="Wishlist"
               >
-                <Search
-                  size={16}
-                  className="group-hover:scale-110 transition-transform"
-                />
-                <span className="ml-2 text-[10px] font-black uppercase tracking-widest">
-                  Search
-                </span>
-              </div>
+                <Heart size={20} />
+              </button>
 
-              <div className="flex items-center gap-1 sm:gap-2 md:border-l border-zinc-500/30 md:ml-2 md:pl-4">
-                <button
-                  className={`hidden sm:flex p-2 rounded-full transition-all ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
+              {/* ✅ Cart — navigate to /cart */}
+              <button
+                onClick={() => navigate("/cart")}
+                className="p-2 hover:bg-black/5 rounded-full transition-all relative"
+                title="Cart"
+              >
+                <ShoppingBag size={20} />
+                <span
+                  className={`absolute top-1 right-1 w-4 h-4 text-[10px] flex items-center justify-center rounded-full font-black ${
+                    scrolled ? "bg-zinc-900 text-white" : "bg-white text-zinc-900"
+                  }`}
                 >
                   <Heart size={20} strokeWidth={1.5} />
                 </button>
@@ -218,146 +310,108 @@ export default function WebsiteNavbar() {
                   </span>
                 </button>
 
-                {/* Mobile Menu Toggle */}
-                <button
-                  className={`lg:hidden p-2 ml-1 rounded-full ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
-                  onClick={() => setMenuOpen(true)}
-                >
-                  <Menu size={24} strokeWidth={1.5} />
-                </button>
-              </div>
-
-              {/* Desktop Login/Join */}
-              <div className="hidden lg:flex items-center gap-3 ml-2">
-                <button
-                  onClick={() => navigate("/auth")}
-                  className="text-[11px] font-black uppercase tracking-[0.1em] px-3 hover:text-emerald-500 transition-colors"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => navigate("/auth")}
-                  className={`px-5 py-2 text-[11px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95 ${
-                    isLightTheme
-                      ? "bg-zinc-900 text-white shadow-lg hover:bg-emerald-500"
-                      : "bg-white text-zinc-900 shadow-lg hover:bg-emerald-500 hover:text-white"
-                  }`}
-                >
-                  Join Indiafy
-                </button>
-              </div>
+            {/* ✅ Login → /auth | Join Indiafy → /signup */}
+            <div className="hidden lg:flex items-center gap-3 ml-4">
+              <button
+                onClick={() => navigate("/signup")}
+                className="text-[12px] font-black uppercase tracking-widest px-4 hover:opacity-60 transition-opacity"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => navigate("/auth")}
+                className={`px-6 py-2.5 text-[12px] font-black uppercase tracking-widest rounded-full shadow-xl transition-all hover:scale-105 active:scale-95 ${
+                  scrolled ? "bg-zinc-900 text-white" : "bg-white text-zinc-900"
+                }`}
+              >
+                Join Indiafy
+              </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* 📱 MOBILE SIDEBAR */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            key="mobile-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm z-[999] lg:hidden"
-            onClick={() => setMenuOpen(false)}
-          >
-            <motion.div
-              key="mobile-sidebar"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="absolute right-0 top-0 h-[100dvh] w-[85%] max-w-[320px] bg-white shadow-2xl flex flex-col pointer-events-auto"
-              onClick={(e) => e.stopPropagation()}
+      {/* MOBILE SIDEBAR */}
+      <div
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] transition-opacity duration-300 ${
+          menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMenuOpen(false)}
+      >
+        <div
+          className={`absolute right-0 top-0 h-full w-full max-w-[320px] bg-white p-8 transition-transform duration-500 ease-out ${
+            menuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between mb-12">
+            <img src="/Images/logo.png" alt="Logo" className="h-8 w-auto" />
+            <button onClick={() => setMenuOpen(false)} className="text-zinc-900">
+              <X size={24} />
+            </button>
+          </div>
+
+          {/* ✅ Mobile nav links — all properly navigated */}
+          <div className="space-y-8">
+            {navLinks.map((link) => (
+              link.label === "Track Order" ? (
+                <button
+                  key={link.label}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleTrackOrder({ preventDefault: () => {} });
+                  }}
+                  className="block text-xl font-black text-zinc-900 uppercase tracking-tighter hover:text-zinc-400 bg-transparent border-none w-full text-left cursor-pointer"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href === "#" ? undefined : link.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMenuOpen(false);
+                    if (link.href !== "#") navigate(link.href);
+                  }}
+                  className="block text-xl font-black text-zinc-900 uppercase tracking-tighter hover:text-zinc-400"
+                >
+                  {link.label}
+                </a>
+              )
+            ))}
+
+            {/* ✅ Mobile search */}
+            <form onSubmit={(e) => { setMenuOpen(false); handleSearch(e); }} className="flex items-center border-b-2 border-zinc-100 pb-2">
+              <Search size={16} className="text-zinc-400 mr-2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="flex-1 text-sm font-semibold outline-none text-zinc-900 placeholder:text-zinc-300"
+              />
+            </form>
+          </div>
+
+          <div className="mt-20 space-y-4">
+            {/* ✅ Mobile Login → /auth */}
+            <button
+              onClick={() => { setMenuOpen(false); navigate("/auth"); }}
+              className="w-full py-4 text-sm font-black uppercase tracking-widest border-2 border-zinc-100 rounded-2xl"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-zinc-100">
-                <img src="/Images/logo.png" alt="Logo" className="h-6 w-auto" />
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="p-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 rounded-full transition-colors"
-                >
-                  <X size={20} strokeWidth={2} />
-                </button>
-              </div>
-
-              {/* Links */}
-              <div className="flex-1 overflow-y-auto py-6 px-6 flex flex-col gap-6">
-                <div className="flex flex-col gap-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                    Menu
-                  </span>
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href || link.path}
-                      className="text-lg font-black text-zinc-900 tracking-tight flex items-center justify-between"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {link.label}
-                      <ChevronRight size={18} className="text-zinc-300" />
-                    </a>
-                  ))}
-                </div>
-
-                <div className="w-full h-px bg-zinc-100 my-2" />
-
-                <div className="flex flex-col gap-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                    Quick Actions
-                  </span>
-
-                  {/* 🔥 FIX: Added onClick navigate to search page for Mobile & auto-close menu */}
-                  <button
-                    onClick={() => {
-                      navigate("/search");
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 text-sm font-bold text-zinc-700 p-3 rounded-xl bg-zinc-50 border border-zinc-100 active:bg-zinc-100 transition-colors"
-                  >
-                    <Search size={18} className="text-zinc-400" /> Search
-                    Products
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      navigate("/track-order");
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 text-sm font-bold text-zinc-700 p-3 rounded-xl bg-zinc-50 border border-zinc-100 active:bg-zinc-100 transition-colors"
-                  >
-                    <Package size={18} className="text-zinc-400" /> Track My
-                    Order
-                  </button>
-                </div>
-              </div>
-
-              {/* Footer Actions */}
-              <div className="p-6 border-t border-zinc-100 bg-zinc-50 flex flex-col gap-3">
-                <button
-                  onClick={() => {
-                    navigate("/auth");
-                    setMenuOpen(false);
-                  }}
-                  className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-zinc-900 text-white rounded-xl shadow-md hover:bg-emerald-500 transition-colors"
-                >
-                  Login / Sign Up
-                </button>
-                <button
-                  onClick={() => {
-                    navigate("/auth");
-                    setMenuOpen(false);
-                  }}
-                  className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-white border border-zinc-200 text-zinc-900 rounded-xl hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2"
-                >
-                  <User size={16} /> Seller Login
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+              Login
+            </button>
+            {/* ✅ Mobile Signup → /signup */}
+            <button
+              onClick={() => { setMenuOpen(false); navigate("/signup"); }}
+              className="w-full py-4 text-sm font-black uppercase tracking-widest bg-zinc-900 text-white rounded-2xl shadow-2xl shadow-zinc-300"
+            >
+              Create Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 }
