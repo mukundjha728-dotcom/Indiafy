@@ -979,7 +979,7 @@ const AuthPage = () => {
             style={{ right: "40px", left: "auto", textAlign: "right", opacity: 1 }}
           >
             <h2>WELCOME<br />BACK!</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, rem?</p>
+            <p>Apke BHAROSHE ki DUKAN</p>
           </div>
 
         </div>
