@@ -23,6 +23,8 @@ export default function Sidebar() {
     { name: "Analytics", icon: BarChart2, path: "/admin/analytics" },
     { name: "Inventory", icon: Package, path: "/admin/inventory" },
     { name: "Payments", icon: ShoppingBag, path: "/admin/payments" },
+    { name: "Applications", icon: ShoppingBag, path: "/admin/pending-applications" },
+    { name: "Our Sellers", icon: ShoppingBag, path: "/admin/active-sellers" },
   ];
 
   return (
