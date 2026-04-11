@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "#", hasDropdown: true },
-  { label: "Track Order", href: "/track-order" },
+  { label: "Track Order", href: "/track-order/:orderId" },
   { label: "Verified Nodes", path: "/local-sellers" },
   { label: "Help", href: "/support" },
 ];
@@ -230,7 +230,7 @@ export default function WebsiteNavbar() {
               {/* Desktop Login/Join */}
               <div className="hidden lg:flex items-center gap-3 ml-2">
                 <button
-                  onClick={() => navigate("/auth")}
+                  onClick={() => navigate("/signup")}
                   className="text-[11px] font-black uppercase tracking-[0.1em] px-3 hover:text-emerald-500 transition-colors"
                 >
                   Login

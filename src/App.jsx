@@ -63,6 +63,8 @@ import Payments from "./frontend/pages/admin/Payment";
 import AdminProfile from "./frontend/pages/admin/Profile";
 import Coupons from "./frontend/pages/admin/Coupons";
 import CustomerManagement from "./frontend/pages/admin/CustomerManagement";
+import PendingApplications from "./frontend/pages/admin/PendingApplications";
+import ActiveSellers from "./frontend/pages/admin/ActiveSellers";
 
 export default function App() {
   // --- GLOBAL STORE PROFILE STATE ---
@@ -251,6 +253,8 @@ export default function App() {
         <Route path="/admin/profiles" element={<AdminProfile />} />
         <Route path="/admin/coupons" element={<Coupons />} />
         <Route path="/admin/inventory" element={<AdminInventory />} />
+        <Route path="/admin/active-sellers" element={<ActiveSellers />} />
+        <Route path="/admin/pending-applications" element={<PendingApplications />} />
       </Routes>
     </BrowserRouter>
   );
