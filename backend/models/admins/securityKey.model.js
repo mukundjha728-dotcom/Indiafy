@@ -15,4 +15,6 @@ const securityKeySchema = new Schema({
     { timestamps: true }
 )
 
-const securityKeyModel = mongoose.model("security_Key", securityKeySchema)
+const securityKeyModel = mongoose.model("security_Key", securityKeySchema);
+
+export default securityKeyModel;

@@ -1,7 +1,18 @@
 import mongoose, { Schema } from "mongoose";
-import { passwordEncryption } from "../../utils/bcrypt.js"
+import { passwordEncryption } from "../../utils/bcrypt.js";
+
+const {ObjectId} = mongoose.Schema.Types;
 
 const adminSchema = new Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
     firstName: {
         type: String,
         required: true
@@ -12,15 +23,14 @@ const adminSchema = new Schema({
     lastName: {
         type: String
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
+    role: {
         type: String,
         required: true
     },
+    securityKeyId:{
+        type: ObjectId,
+        required: true
+    }
 },
     { timestamps: true }
 );

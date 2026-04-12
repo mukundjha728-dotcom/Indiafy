@@ -8,22 +8,8 @@ const profileSchema = new Schema({
         required: true,
         ref: "admin"
     },
-    firstName: {
-        type: String,
-        required: true
-    },
-    middleName: {
-        type: String
-    },
-    lastName: {
-        type: String
-    },
     profileImage:{
         type: String
-    },
-    role: {
-        type: String,
-        required: true
     },
     contact: {
         type: Number,
