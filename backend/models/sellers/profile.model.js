@@ -6,7 +6,7 @@ const profileSchema = new Schema({
     customerId: {
         type: ObjectId,
         required: true,
-        ref: ""
+        ref: "seller"
     },
     firstName: {
         type: String,
@@ -52,6 +52,6 @@ const profileSchema = new Schema({
     { timestamps: true }
 )
 
-const customerProfile = mongoose.model("customer_Profile", profileSchema);
+const customerProfile = mongoose.model("seller_Profile", profileSchema);
 
 export default customerProfile;
