@@ -24,13 +24,15 @@ axiosInstance.interceptors.request.use(
 // Response Interceptor
 axiosInstance.interceptors.response.use(
     (response) => {
+        // Backend already wraps response in ApiResponse/ApiError
+        // Just return the full response data
         return response.data;
     },
     (error) => {
         // Handle global error responses, like 401 Unauthorized
         if (error.response && error.response.status === 401) {
             console.error("Unauthorized! Session expired.");
-            // We can emit an event or redirect to login here
+            // Clear auth and redirect if needed
         }
         return Promise.reject(error);
     }

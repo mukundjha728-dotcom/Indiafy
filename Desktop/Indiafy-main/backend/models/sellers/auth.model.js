@@ -31,12 +31,11 @@ const authSchema = new Schema({
     { timestamps: true }
 )
 
-authSchema.pre("save", async function(next) {
-    if(!this.isModified("password")) return next();
+authSchema.pre("save", async function() {
+    if(!this.isModified("password")) return;
 
     const result = await passwordEncryption(this.password);
     this.password = result;
-    return next();
 });
 
 const authModel = mongoose.model("seller", authSchema);

@@ -15,8 +15,10 @@ import {
   Laptop,
   Sparkles,
   User,
+  LogOut,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuthStore } from "../store/authStore";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -69,9 +71,11 @@ export default function WebsiteNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuthStore();
 
   // Detect if we are on the Home page
   const isHomePage = location.pathname === "/";
@@ -227,24 +231,83 @@ export default function WebsiteNavbar() {
                 </button>
               </div>
 
-              {/* Desktop Login/Join */}
+              {/* Desktop Login/Join OR User Profile */}
               <div className="hidden lg:flex items-center gap-3 ml-2">
-                <button
-                  onClick={() => navigate("/signup")}
-                  className="text-[11px] font-black uppercase tracking-[0.1em] px-3 hover:text-emerald-500 transition-colors"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => navigate("/auth")}
-                  className={`px-5 py-2 text-[11px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95 ${
-                    isLightTheme
-                      ? "bg-zinc-900 text-white shadow-lg hover:bg-emerald-500"
-                      : "bg-white text-zinc-900 shadow-lg hover:bg-emerald-500 hover:text-white"
-                  }`}
-                >
-                  Join Indiafy
-                </button>
+                {isAuthenticated && user ? (
+                  // User Profile Dropdown
+                  <div className="relative">
+                    <button
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-zinc-100 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">
+                        {user.firstName?.[0]?.toUpperCase() ||
+                          user.email?.[0]?.toUpperCase()}
+                      </div>
+                      <ChevronDown size={16} />
+                    </button>
+
+                    {userMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 py-2 z-50">
+                        <Link
+                          to="/profile"
+                          className="block px-4 py-2 text-sm hover:bg-zinc-100"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <User size={16} className="inline mr-2" />
+                          My Profile
+                        </Link>
+                        <Link
+                          to="/order-history"
+                          className="block px-4 py-2 text-sm hover:bg-zinc-100"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <Package size={16} className="inline mr-2" />
+                          Orders
+                        </Link>
+                        <Link
+                          to="/addresses"
+                          className="block px-4 py-2 text-sm hover:bg-zinc-100"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <Home size={16} className="inline mr-2" />
+                          Addresses
+                        </Link>
+                        <button
+                          onClick={() => {
+                            logout();
+                            setUserMenuOpen(false);
+                            navigate("/");
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-100 text-red-600 border-t border-zinc-200 mt-2"
+                        >
+                          <LogOut size={16} className="inline mr-2" />
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Login/Signup Buttons
+                  <>
+                    <button
+                      onClick={() => navigate("/login")}
+                      className="text-[11px] font-black uppercase tracking-[0.1em] px-3 hover:text-emerald-500 transition-colors"
+                    >
+                      Login
+                    </button>
+                    <button
+                      onClick={() => navigate("/signup")}
+                      className={`px-5 py-2 text-[11px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95 ${
+                        isLightTheme
+                          ? "bg-zinc-900 text-white shadow-lg hover:bg-emerald-500"
+                          : "bg-white text-zinc-900 shadow-lg hover:bg-emerald-500 hover:text-white"
+                      }`}
+                    >
+                      Join Indiafy
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -335,24 +398,50 @@ export default function WebsiteNavbar() {
 
               {/* Footer Actions */}
               <div className="p-6 border-t border-zinc-100 bg-zinc-50 flex flex-col gap-3">
-                <button
-                  onClick={() => {
-                    navigate("/auth");
-                    setMenuOpen(false);
-                  }}
-                  className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-zinc-900 text-white rounded-xl shadow-md hover:bg-emerald-500 transition-colors"
-                >
-                  Login / Sign Up
-                </button>
-                <button
-                  onClick={() => {
-                    navigate("/auth");
-                    setMenuOpen(false);
-                  }}
-                  className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-white border border-zinc-200 text-zinc-900 rounded-xl hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2"
-                >
-                  <User size={16} /> Seller Login
-                </button>
+                {isAuthenticated && user ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        navigate("/profile");
+                        setMenuOpen(false);
+                      }}
+                      className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <User size={16} /> {user.firstName || "Profile"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setMenuOpen(false);
+                        navigate("/");
+                      }}
+                      className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-red-50 text-red-600 border border-red-200 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        navigate("/login");
+                        setMenuOpen(false);
+                      }}
+                      className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-zinc-900 text-white rounded-xl shadow-md hover:bg-emerald-500 transition-colors"
+                    >
+                      Login / Sign Up
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate("/seller-auth");
+                        setMenuOpen(false);
+                      }}
+                      className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-white border border-zinc-200 text-zinc-900 rounded-xl hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <User size={16} /> Seller Login
+                    </button>
+                  </>
+                )}
               </div>
             </motion.div>
           </motion.div>

@@ -27,6 +27,7 @@ import Storepage from "./pages/public/StorePage";
 
 // User Auth
 import UserAuth from "./pages/auth/UserSignup";
+import UserLogin from "./pages/auth/UserLogin";
 
 // ================= CUSTOMER ACCOUNT PAGES =================
 import Customerprofile from "./pages/customer/Customerprofile";
@@ -163,11 +164,14 @@ export default function App() {
           <Route path="/store/:id" element={<Storepage />} />
 
           {/* Customer Profile Routes */}
-          <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
+          <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
             <Route path="/profile" element={<Customerprofile />} />
             <Route path="/addresses" element={<Savedaddresses />} />
             <Route path="/order-history" element={<Orderhistorypage />} />
-            <Route path="/track-order/:orderId" element={<Ordertrackingpage />} />
+            <Route
+              path="/track-order/:orderId"
+              element={<Ordertrackingpage />}
+            />
             <Route path="/support" element={<Customersupport />} />
           </Route>
         </Route>
@@ -177,70 +181,67 @@ export default function App() {
 
         {/* ================= SELLER DASHBOARD ROUTES ================= */}
         {/* All routes inside this block will have the Dashboard Sidebar and Topbar */}
-        <Route element={<ProtectedRoute allowedRoles={['seller']} />}>
+        <Route element={<ProtectedRoute allowedRoles={["seller"]} />}>
           <Route
             path="/*"
             element={
-            <DashboardLayout storeDetails={storeDetails}>
-              <Routes>
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route
-                  path="orders"
-                  element={<Orders />}
-                />
-                <Route
-                  path="live"
-                  element={<LiveOrders />}
-                />
-                <Route
-                  path="products"
-                  element={
-                    <Products products={products} setProducts={setProducts} />
-                  }
-                />
-                <Route
-                  path="inventory"
-                  element={
-                    <Inventory products={products} setProducts={setProducts} />
-                  }
-                />
-                <Route path="history" element={<History />} />
-                <Route path="finance" element={<Finance />} />
-                <Route
-                  path="settings"
-                  element={
-                    <Settings
-                      storeDetails={storeDetails}
-                      setStoreDetails={setStoreDetails}
-                    />
-                  }
-                />
-                <Route path="notifications" element={<Notifications />} />
-                <Route
-                  path="video-verification/:id"
-                  element={<VideoVerification />}
-                />
+              <DashboardLayout storeDetails={storeDetails}>
+                <Routes>
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="orders" element={<Orders />} />
+                  <Route path="live" element={<LiveOrders />} />
+                  <Route
+                    path="products"
+                    element={
+                      <Products products={products} setProducts={setProducts} />
+                    }
+                  />
+                  <Route
+                    path="inventory"
+                    element={
+                      <Inventory
+                        products={products}
+                        setProducts={setProducts}
+                      />
+                    }
+                  />
+                  <Route path="history" element={<History />} />
+                  <Route path="finance" element={<Finance />} />
+                  <Route
+                    path="settings"
+                    element={
+                      <Settings
+                        storeDetails={storeDetails}
+                        setStoreDetails={setStoreDetails}
+                      />
+                    }
+                  />
+                  <Route path="notifications" element={<Notifications />} />
+                  <Route
+                    path="video-verification/:id"
+                    element={<VideoVerification />}
+                  />
 
-                {/* Fallback to Dashboard if route is not found inside the dashboard */}
-                <Route
-                  path="*"
-                  element={<Navigate to="/dashboard" replace />}
-                />
-              </Routes>
-            </DashboardLayout>
-          }
+                  {/* Fallback to Dashboard if route is not found inside the dashboard */}
+                  <Route
+                    path="*"
+                    element={<Navigate to="/dashboard" replace />}
+                  />
+                </Routes>
+              </DashboardLayout>
+            }
           />
         </Route>
 
         {/* User Auth */}
         <Route path="/signup" element={<UserAuth />} />
-        <Route path="/login" element={<UserAuth />} />
+        <Route path="/login" element={<UserLogin />} />
 
         {/* Admin Auth */}
         <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* Admin Dashboard */}
-        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/analytics" element={<Analytics />} />
           <Route path="/admin/customers" element={<CustomerManagement />} />
@@ -253,7 +254,10 @@ export default function App() {
           <Route path="/admin/coupons" element={<Coupons />} />
           <Route path="/admin/inventory" element={<AdminInventory />} />
           <Route path="/admin/active-sellers" element={<ActiveSellers />} />
-          <Route path="/admin/pending-applications" element={<PendingApplications />} />
+          <Route
+            path="/admin/pending-applications"
+            element={<PendingApplications />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

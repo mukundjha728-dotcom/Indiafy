@@ -41,13 +41,12 @@ const adminSchema = new Schema({
     { timestamps: true }
 );
 
-adminSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+adminSchema.pre("save", async function () {
+    if (!this.isModified("password")) return;
     
     // Hash password using the utility but ensure we don't double hash
     const result = await passwordEncryption(this.password);
     this.password = result;
-    next();
 });
 
 const adminModel = mongoose.model("admin", adminSchema);
