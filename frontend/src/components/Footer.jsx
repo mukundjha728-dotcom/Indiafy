@@ -1,16 +1,6 @@
 import React, { memo } from "react";
-import {
-  Facebook,
-  Instagram,
-  Twitter,
-  Linkedin,
-  MapPin,
-  Globe,
-  ShieldCheck,
-  ChevronRight,
-  Mail,
-} from "lucide-react";
 import { Link } from "react-router-dom";
+import { Facebook, Instagram, Twitter, Linkedin, MapPin, Mail, ArrowRight } from "lucide-react";
 
 const socialLinks = [
   { Icon: Facebook, label: "Facebook" },
@@ -21,29 +11,37 @@ const socialLinks = [
 
 const footerSections = [
   {
-    title: "Indiafy Engine",
+    title: "Shop Categories",
     links: [
-      { label: "About Indiafy", path: "/about" },
+      { label: "Groceries", path: "/category/grocery" },
+      { label: "Electronics", path: "/category/electronics" },
+      { label: "Fashion", path: "/category/garments" },
+      { label: "Home & Living", path: "/category/home-decor" },
+    ],
+  },
+  {
+    title: "Indiafy Services",
+    links: [
       { label: "Quick Commerce", path: "/quick-commerce" },
       { label: "Wholesale B2B", path: "/wholesale" },
-      { label: "Local Verified Nodes", path: "/local-sellers" },
+      { label: "Local Stores", path: "/stores" },
+      { label: "Track Order", path: "/order-history" },
     ],
   },
   {
-    title: "Customer Support",
-    links: [
-      { label: "Help Center", path: "/support" },
-      { label: "Track Payload", path: "/order-history" },
-      { label: "Order History", path: "/order-history" },
-      { label: "Return Policy", path: "/support" },
-    ],
-  },
-  {
-    title: "Partner Network",
+    title: "Partner With Us",
     links: [
       { label: "Sell on Indiafy", path: "/seller-auth" },
-      { label: "Rider Fleet", path: "/about" },
-      { label: "Node Guidelines", path: "/about" },
+      { label: "Seller Dashboard", path: "/seller-hub" },
+      { label: "Delivery Partners", path: "/about" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "About Us", path: "/about" },
+      { label: "Help Center", path: "/support" },
+      { label: "Contact Us", path: "/support" },
     ],
   },
 ];
@@ -52,136 +50,91 @@ function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-zinc-950 text-zinc-400 pt-20 pb-10 border-t border-zinc-900 selection:bg-emerald-500 selection:text-white" role="contentinfo">
-      <div className="max-w-[1400px] mx-auto px-6">
-        {/* TOP SECTION: BRAND & LINKS */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-16">
-          {/* Brand Info */}
-          <div className="lg:col-span-5">
-            <Link to="/" aria-label="Indiafy - Go to homepage">
+    <footer className="bg-brand-background pt-16 pb-8 border-t border-brand-border" role="contentinfo">
+      <div className="section-container">
+        
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12">
+          
+          {/* Brand Column */}
+          <div className="lg:col-span-4">
+            <Link to="/" aria-label="Indiafy - Go to homepage" className="block mb-6">
               <img
                 src="/Images/logo.png"
                 alt="Indiafy"
                 width={120}
                 height={32}
-                className="h-8 w-auto mb-6 brightness-0 invert hover:opacity-80 transition-opacity"
-                loading="lazy"
+                className="h-8 w-auto hover:opacity-80 transition-opacity"
               />
             </Link>
-            <p className="text-zinc-500 text-sm font-medium leading-relaxed max-w-sm mb-8">
-              Indiafy is a trust-first hyperlocal commerce infrastructure. We
-              engineer lightning-fast deliveries and verified B2B sourcing
-              through our unified node network.
+            <p className="text-brand-text-secondary text-sm font-medium leading-relaxed mb-8 max-w-sm">
+              Indiafy is your trusted hyperlocal marketplace. Discover local stores, quick delivery services, and wholesale suppliers near you.
             </p>
 
-            <address className="flex flex-col gap-3 not-italic">
-              <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-zinc-300">
-                <MapPin size={14} className="text-emerald-500" aria-hidden="true" />
-                <span>Base Node: Sector 45, Gurugram</span>
+            <address className="flex flex-col gap-4 not-italic">
+              <div className="flex items-center gap-3 text-sm font-medium text-brand-text-secondary">
+                <MapPin size={16} className="text-brand-accent shrink-0" />
+                <span>Sector 45, Gurugram, Haryana</span>
               </div>
-              <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-zinc-300">
-                <Mail size={14} className="text-emerald-500" aria-hidden="true" />
-                <a href="mailto:operations@indiafy.com" className="hover:text-emerald-400 transition-colors">
-                  operations@indiafy.com
+              <div className="flex items-center gap-3 text-sm font-medium text-brand-text-secondary">
+                <Mail size={16} className="text-brand-accent shrink-0" />
+                <a href="mailto:support@indiafy.com" className="hover:text-brand-primary transition-colors">
+                  support@indiafy.com
                 </a>
               </div>
             </address>
           </div>
 
-          {/* Navigation Links */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-10">
+          {/* Links Columns */}
+          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8">
             {footerSections.map((section) => (
-              <nav key={section.title} aria-label={section.title}>
-                <h4 className="text-white text-[11px] font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-sm" aria-hidden="true" />
-                  {section.title}
-                </h4>
-                <ul className="space-y-3">
+              <div key={section.title}>
+                <h4 className="text-sm font-bold text-brand-primary mb-5">{section.title}</h4>
+                <ul className="space-y-3.5">
                   {section.links.map((link) => (
                     <li key={link.label}>
                       <Link
                         to={link.path}
-                        className="text-[13px] font-medium text-zinc-500 hover:text-emerald-400 hover:pl-2 transition-all duration-300 flex items-center group"
+                        className="text-sm font-medium text-brand-text-secondary hover:text-brand-accent transition-colors flex items-center group"
                       >
-                        <ChevronRight
-                          size={12}
-                          aria-hidden="true"
-                          className="opacity-0 group-hover:opacity-100 -ml-3 group-hover:ml-0 mr-1 transition-all"
-                        />
+                        <ArrowRight size={12} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 mr-1.5 transition-all" />
                         {link.label}
                       </Link>
                     </li>
                   ))}
                 </ul>
-              </nav>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* MIDDLE SECTION: TRUST BAR & SOCIALS */}
-        <div className="py-6 border-y border-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-6 mb-8">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 text-zinc-500">
-              <Globe size={14} aria-hidden="true" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                Global Standards
-              </span>
-            </div>
-            <div className="w-1 h-1 rounded-full bg-zinc-800" aria-hidden="true" />
-            <div className="flex items-center gap-2 text-zinc-500">
-              <ShieldCheck size={14} aria-hidden="true" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                Secure Infrastructure
-              </span>
+        <div className="h-px w-full bg-brand-border mb-8" />
+
+        {/* Bottom Bar */}
+        <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-6">
+          
+          <div className="flex flex-col md:flex-row items-center gap-4 text-xs font-medium text-brand-text-secondary">
+            <span>© {currentYear} Indiafy Commerce. All rights reserved.</span>
+            <div className="hidden md:block w-1 h-1 rounded-full bg-gray-300" />
+            <div className="flex gap-4">
+              <Link to="/privacy-policy" className="hover:text-brand-primary transition-colors">Privacy Policy</Link>
+              <Link to="/terms-and-conditions" className="hover:text-brand-primary transition-colors">Terms of Service</Link>
             </div>
           </div>
 
-          {/* Social Links */}
-          <nav aria-label="Social media links" className="flex gap-3">
+          <div className="flex gap-3">
             {socialLinks.map(({ Icon, label }) => (
               <a
                 key={label}
                 href="#"
                 aria-label={`Follow Indiafy on ${label}`}
-                className="w-9 h-9 flex items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 hover:-translate-y-1 transition-all duration-300"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-brand-border text-brand-text-secondary hover:text-white hover:bg-brand-accent hover:border-brand-accent hover:-translate-y-1 transition-all duration-300 shadow-sm"
               >
-                <Icon size={16} aria-hidden="true" />
+                <Icon size={16} />
               </a>
             ))}
-          </nav>
-        </div>
-
-        {/* BOTTOM SECTION: LEGAL & SYSTEM STATUS */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
-              © {currentYear} Indiafy Commerce Pvt. Ltd.
-            </p>
-            <div className="hidden md:block w-1 h-1 rounded-full bg-zinc-800" aria-hidden="true" />
-            <div className="flex gap-6">
-              <Link
-                to="/privacy-policy"
-                className="text-[10px] font-black text-zinc-600 hover:text-emerald-400 uppercase tracking-widest transition-colors"
-              >
-                Privacy
-              </Link>
-              <Link
-                to="/terms-and-conditions"
-                className="text-[10px] font-black text-zinc-600 hover:text-emerald-400 uppercase tracking-widest transition-colors"
-              >
-                Terms
-              </Link>
-            </div>
           </div>
 
-          {/* System Status Indicator */}
-          <div className="flex items-center gap-2 bg-zinc-900/80 px-4 py-2 rounded-full border border-zinc-800" role="status" aria-label="System status: Online">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" aria-hidden="true" />
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400">
-              Systems Online:{" "}
-              <span className="text-emerald-500 ml-1">Node GGM</span>
-            </span>
-          </div>
         </div>
       </div>
     </footer>

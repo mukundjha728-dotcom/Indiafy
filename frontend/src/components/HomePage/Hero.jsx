@@ -1,117 +1,173 @@
-import { useState, useEffect, useCallback, memo } from "react";
+import { useState, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Search,
   ArrowRight,
   ShoppingBag,
   Zap,
-  Landmark,
   ShieldCheck,
-  ChevronRight,
+  Package,
+  Star,
+  Clock,
+  BadgeCheck,
+  TrendingUp,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
-const verticals = [
-  {
-    id: "quick",
-    label: "Hyperlocal",
-    sub: "10-25 Mins",
-    icon: <Zap size={20} className="text-emerald-400" aria-hidden="true" />,
-    path: "/quick-commerce",
-    bg: "bg-emerald-500/10",
-    border: "border-emerald-500/20",
-  },
-  {
-    id: "eco",
-    label: "India Hub",
-    sub: "Same Day",
-    icon: <ShoppingBag size={20} className="text-blue-400" aria-hidden="true" />,
-    path: "/",
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/20",
-  },
-  {
-    id: "wholesale",
-    label: "Bulk Node",
-    sub: "B2B Volume",
-    icon: <Landmark size={20} className="text-amber-400" aria-hidden="true" />,
-    path: "/wholesale",
-    bg: "bg-amber-500/10",
-    border: "border-amber-500/20",
-  },
-];
+/* ---------- Floating Marketplace Mockup Cards ---------- */
+function FloatingProductCard() {
+  return (
+    <motion.div
+      animate={{ y: [0, -12, 0] }}
+      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+      className="absolute top-8 right-4 lg:right-8 w-52 bg-white rounded-2xl shadow-xl border border-brand-border p-3 z-20"
+    >
+      <div className="w-full h-28 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 mb-3 flex items-center justify-center">
+        <ShoppingBag size={32} className="text-brand-accent" />
+      </div>
+      <p className="text-xs font-bold text-brand-primary truncate">Premium A2 Desi Ghee</p>
+      <div className="flex items-center gap-1 mt-1">
+        <Star size={11} fill="#F59E0B" className="text-amber-400" />
+        <span className="text-[10px] font-semibold text-brand-text-secondary">4.9 · 320 reviews</span>
+      </div>
+      <div className="flex items-baseline gap-1.5 mt-1.5">
+        <span className="text-sm font-bold text-brand-primary">₹1,299</span>
+        <span className="text-[10px] text-brand-text-secondary line-through">₹1,699</span>
+        <span className="text-[10px] font-semibold text-brand-accent ml-auto">23% OFF</span>
+      </div>
+    </motion.div>
+  );
+}
 
-const bentoImages = [
-  "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800",
-  "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=800",
-  "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=800",
-];
+function FloatingOrderCard() {
+  return (
+    <motion.div
+      animate={{ y: [0, -8, 0] }}
+      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      className="absolute bottom-24 left-0 lg:left-4 w-56 bg-white rounded-2xl shadow-lg border border-brand-border p-3.5 z-20"
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+          <Package size={16} className="text-brand-accent" />
+        </div>
+        <div>
+          <p className="text-[10px] font-semibold text-brand-primary">Order #IF-2847</p>
+          <p className="text-[9px] text-brand-text-secondary">Out for delivery</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+          <div className="w-[75%] h-full bg-brand-accent rounded-full" />
+        </div>
+        <span className="text-[10px] font-bold text-brand-accent">12 min</span>
+      </div>
+    </motion.div>
+  );
+}
 
-const bentoAlts = [
-  "Fresh groceries and produce for quick commerce delivery",
-  "Fashion boutique storefront with trending styles",
-  "Warehouse interior for wholesale B2B operations",
-];
+function FloatingRatingCard() {
+  return (
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      className="absolute bottom-8 right-12 w-44 bg-white rounded-xl shadow-lg border border-brand-border p-3 z-20"
+    >
+      <div className="flex items-center gap-2 mb-1.5">
+        <BadgeCheck size={16} className="text-brand-accent" />
+        <span className="text-[10px] font-bold text-brand-primary">Verified Seller</span>
+      </div>
+      <div className="flex gap-0.5">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} size={12} fill="#F59E0B" className="text-amber-400" />
+        ))}
+      </div>
+      <p className="text-[10px] text-brand-text-secondary mt-1">Organic Roots · 4.9★</p>
+    </motion.div>
+  );
+}
 
+/* ---------- Network Route Animation ---------- */
+function NetworkRoute() {
+  return (
+    <div className="absolute inset-0 z-10 pointer-events-none opacity-80">
+      <svg className="w-full h-full" viewBox="0 0 400 500" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="routeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#10B981" stopOpacity="0.15" />
+            <stop offset="50%" stopColor="#10B981" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#10B981" stopOpacity="0.15" />
+          </linearGradient>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Dotted static path */}
+        <path 
+          d="M 280 80 C 380 200, 380 300, 260 430 C 200 480, 80 450, 130 380" 
+          fill="none" 
+          stroke="url(#routeGradient)" 
+          strokeWidth="2" 
+          strokeDasharray="4 8" 
+          strokeLinecap="round"
+        />
+
+        {/* Pulsing Location Markers */}
+        <circle cx="280" cy="80" r="3.5" fill="#10B981" className="animate-pulse" />
+        <circle cx="260" cy="430" r="3.5" fill="#10B981" className="animate-pulse" />
+        <circle cx="130" cy="380" r="3.5" fill="#10B981" className="animate-pulse" />
+
+        <circle cx="280" cy="80" r="10" fill="none" stroke="#10B981" strokeWidth="1" className="animate-ping" style={{ animationDuration: '3s' }} opacity="0.3" />
+        <circle cx="260" cy="430" r="10" fill="none" stroke="#10B981" strokeWidth="1" className="animate-ping" style={{ animationDuration: '3s', animationDelay: '1s' }} opacity="0.3" />
+        <circle cx="130" cy="380" r="10" fill="none" stroke="#10B981" strokeWidth="1" className="animate-ping" style={{ animationDuration: '3s', animationDelay: '2s' }} opacity="0.3" />
+
+        {/* Glowing moving dot */}
+        <circle r="4" fill="#10B981" filter="url(#glow)">
+          <animateMotion 
+            dur="6s" 
+            repeatCount="indefinite"
+            path="M 280 80 C 380 200, 380 300, 260 430 C 200 480, 80 450, 130 380"
+          />
+        </circle>
+      </svg>
+    </div>
+  );
+}
+
+/* ---------- Main Hero ---------- */
 function Hero() {
   const navigate = useNavigate();
-  const [currentImg, setCurrentImg] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImg((prev) => (prev + 1) % bentoImages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const handleSearch = useCallback((e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) navigate(`/search?q=${searchQuery}`);
-  }, [searchQuery, navigate]);
 
   return (
     <section
-      className="relative w-full h-auto lg:min-h-[100svh] flex items-start lg:items-center bg-[#030303] overflow-hidden selection:bg-emerald-500 selection:text-black"
+      className="relative w-full bg-hero-gradient overflow-hidden pt-32 lg:pt-36 pb-16 lg:pb-24"
       aria-label="Hero banner"
     >
-      {/* Background Image Carousel */}
-      <div className="absolute top-0 left-0 w-full h-full lg:w-[55%] lg:left-auto lg:right-0 z-0" aria-hidden="true">
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentImg}
-            src={bentoImages[currentImg]}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-            className="w-full h-full object-cover opacity-50 lg:opacity-70"
-            alt={bentoAlts[currentImg]}
-            width={800}
-            height={600}
-            loading="eager"
-          />
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#030303]/40 via-transparent to-[#030303] lg:bg-gradient-to-l lg:from-transparent lg:to-[#030303]" />
-      </div>
+      {/* Background decoration */}
+      <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-gradient-to-br from-emerald-100/40 to-teal-100/20 rounded-full blur-3xl -z-0" aria-hidden="true" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-blue-100/30 to-indigo-100/10 rounded-full blur-3xl -z-0" aria-hidden="true" />
 
-      {/* Content */}
-      <div className="w-full max-w-[1400px] mx-auto px-5 sm:px-8 relative z-10 pt-28 pb-12 lg:pt-32 xl:pt-40 lg:pb-20">
-        <div className="grid lg:grid-cols-12 gap-8 items-center">
-          {/* LEFT: Text & Search */}
+      <div className="section-container relative z-10">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+
+          {/* LEFT: Text & CTA */}
           <div className="lg:col-span-7 flex flex-col">
-            {/* Live Node Badge */}
+            {/* Live Badge */}
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2.5 w-fit px-3 py-1.5 mb-6 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-xl mt-4 lg:mt-0"
-              role="status"
-              aria-label="Live node: Gurugram"
+              className="inline-flex items-center gap-2 w-fit px-4 py-2 mb-6 rounded-full bg-white border border-brand-border shadow-sm"
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" aria-hidden="true" />
-              <p className="text-[10px] font-black uppercase tracking-widest text-white">
-                GURUGRAM Node
-              </p>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-accent" />
+              </span>
+              <span className="text-xs font-semibold text-brand-primary">
+                Live in Gurugram · 500+ Verified Sellers
+              </span>
             </motion.div>
 
             {/* Headline */}
@@ -119,115 +175,83 @@ function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-[3.5rem] sm:text-7xl lg:text-[6.5rem] font-black text-white tracking-tighter leading-[0.85] mb-6"
+              className="font-display text-hero-mobile lg:text-hero text-brand-primary mb-5"
             >
-              COMMERCE. <br />
-              <span className="text-zinc-500 italic">CODIFIED.</span>
+              India's Trusted{" "}
+              <span className="text-brand-accent">Hyperlocal</span>{" "}
+              Marketplace
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-zinc-300 text-sm sm:text-base font-medium max-w-lg mb-10 leading-relaxed"
+              className="text-brand-text-secondary text-base lg:text-lg font-medium max-w-xl mb-8 leading-relaxed"
             >
-              One unified logistics engine. Discover Hyperlocal 15-min delivery,
-              Pan-India commerce, and verified B2B bulk sourcing from a single
-              terminal.
+              Discover local stores, wholesale suppliers and quick delivery services from verified sellers near you.
             </motion.p>
 
-            {/* Search */}
+            {/* CTAs */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="relative w-full max-w-2xl mb-10 group"
+              className="flex flex-wrap gap-3 mb-10"
             >
-              <form
-                onSubmit={handleSearch}
-                role="search"
-                aria-label="Search products across all verticals"
-                className="flex items-center bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-[1.5rem] p-1.5 focus-within:border-zinc-500 transition-all duration-300 shadow-2xl"
+              <button
+                onClick={() => navigate("/search")}
+                className="btn-primary"
               >
-                <Search size={20} className="text-zinc-500 ml-4 mr-2" aria-hidden="true" />
-                <label htmlFor="hero-search" className="sr-only">Search products</label>
-                <input
-                  id="hero-search"
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search essentials, electronics, or bulk..."
-                  className="flex-1 py-3.5 bg-transparent border-none outline-none text-white text-sm sm:text-base placeholder:text-zinc-600 font-medium"
-                />
-                <button
-                  type="submit"
-                  aria-label="Submit search"
-                  className="bg-white text-black p-3.5 rounded-xl hover:bg-zinc-200 active:scale-95 transition-all flex items-center justify-center group-focus-within:bg-emerald-400"
-                >
-                  <ArrowRight size={18} aria-hidden="true" />
-                </button>
-              </form>
+                Shop Now
+                <ArrowRight size={18} />
+              </button>
+              <button
+                onClick={() => navigate("/seller-auth")}
+                className="btn-secondary"
+              >
+                Become a Seller
+              </button>
             </motion.div>
 
-            {/* Vertical Selectors */}
+            {/* Stat Pills */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="grid grid-cols-3 gap-3 sm:gap-4 max-w-2xl"
-              role="navigation"
-              aria-label="Commerce verticals"
+              className="flex flex-wrap gap-3"
             >
-              {verticals.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => navigate(v.path)}
-                  aria-label={`${v.label} - ${v.sub}`}
-                  className={`cursor-pointer group flex flex-col items-center sm:items-start p-4 sm:p-5 rounded-[1.25rem] sm:rounded-3xl ${v.bg} border ${v.border} hover:scale-[1.02] active:scale-95 transition-all duration-300 backdrop-blur-md text-left`}
+              {[
+                { icon: <Zap size={14} className="text-brand-accent" />, text: "15-min Delivery" },
+                { icon: <ShieldCheck size={14} className="text-brand-accent" />, text: "Verified Sellers" },
+                { icon: <Package size={14} className="text-brand-accent" />, text: "Free Returns" },
+              ].map((stat) => (
+                <div
+                  key={stat.text}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-brand-border text-xs font-semibold text-brand-primary shadow-sm"
                 >
-                  <div className="bg-zinc-950 p-2 sm:p-2.5 rounded-xl border border-zinc-800 mb-3 sm:mb-4 group-hover:scale-110 transition-transform" aria-hidden="true">
-                    {v.icon}
-                  </div>
-                  <h3 className="text-white font-black uppercase tracking-tight text-[10px] sm:text-sm mb-1 text-center sm:text-left w-full">
-                    {v.label}
-                  </h3>
-                  <p className="text-[8px] sm:text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center sm:text-left w-full truncate">
-                    {v.sub}
-                  </p>
-                </button>
+                  {stat.icon}
+                  {stat.text}
+                </div>
               ))}
             </motion.div>
           </div>
 
-          {/* RIGHT: Trust Card (Desktop Only) */}
+          {/* RIGHT: Floating Marketplace Mockup */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="lg:col-span-5 hidden lg:flex justify-end items-center h-full"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="lg:col-span-5 hidden lg:block relative h-[500px]"
           >
-            <div className="w-80 bg-zinc-950/80 backdrop-blur-2xl border border-zinc-800 p-8 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative -left-12 mt-12">
-              <div className="flex justify-between items-start mb-6">
-                <ShieldCheck size={32} className="text-emerald-400" aria-hidden="true" />
-                <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-full">
-                  Audited
-                </span>
-              </div>
-              <h4 className="text-white font-black text-xl mb-3 leading-none">
-                Zero-Trust Infra
-              </h4>
-              <p className="text-zinc-400 text-sm font-medium leading-relaxed mb-6">
-                Every order is video-packaged and verified across all
-                operational nodes before dispatch.
-              </p>
-              <button
-                aria-label="Learn about operational discipline"
-                className="flex items-center gap-2 text-[11px] font-black text-white uppercase tracking-widest hover:text-emerald-400 transition-colors group"
-              >
-                Operational Discipline{" "}
-                <ChevronRight size={16} aria-hidden="true" className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
+            {/* Background blob */}
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50/50 rounded-[3rem] border border-brand-border/50" />
+
+            {/* Subtly Animated Logistics Route */}
+            <NetworkRoute />
+
+            <FloatingProductCard />
+            <FloatingOrderCard />
+            <FloatingRatingCard />
           </motion.div>
         </div>
       </div>

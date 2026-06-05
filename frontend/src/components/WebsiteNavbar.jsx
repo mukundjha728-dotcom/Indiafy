@@ -3,7 +3,6 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Search,
   ShoppingBag,
-  Heart,
   Menu,
   X,
   ChevronDown,
@@ -17,6 +16,11 @@ import {
   User,
   LogOut,
   Store,
+  ShoppingBasket,
+  Heart as HeartIcon,
+  Pill,
+  Scissors,
+  MapPin,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
@@ -24,58 +28,30 @@ import { useSellerAuthStore } from "../store/sellerAuthStore";
 import { useCartStore } from "../store/cartStore";
 import { toast } from "react-toastify";
 
-const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Shop", href: "#", hasDropdown: true },
-  { label: "Track Order", href: "/order-history" },
-  { label: "Verified Nodes", path: "/local-sellers" },
-  { label: "Help", href: "/support" },
+const categoryPills = [
+  { label: "Groceries", path: "/category/grocery", icon: <ShoppingBasket size={16} /> },
+  { label: "Fashion", path: "/category/garments", icon: <ShoppingBag size={16} /> },
+  { label: "Electronics", path: "/category/electronics", icon: <Laptop size={16} /> },
+  { label: "Beauty", path: "/category/beauty", icon: <Sparkles size={16} /> },
 ];
 
-const productCategories = [
-  {
-    icon: <Zap size={18} className="text-emerald-500" aria-hidden="true" />,
-    label: "Quick Commerce",
-    sub: "10-25 Min Delivery",
-    path: "/quick-commerce",
-  },
-  {
-    icon: <Package size={18} className="text-blue-500" aria-hidden="true" />,
-    label: "Wholesale",
-    sub: "Bulk B2B Pricing",
-    path: "/wholesale",
-  },
-  {
-    icon: <Truck size={18} className="text-orange-500" aria-hidden="true" />,
-    label: "Local Sellers",
-    sub: "Verified Ecosystem",
-    path: "/local-sellers",
-  },
-  {
-    icon: <Home size={18} className="text-purple-500" aria-hidden="true" />,
-    label: "Home Essentials",
-    sub: "Kitchen & Decor",
-    path: "#",
-  },
-  {
-    icon: <Laptop size={18} className="text-zinc-500" aria-hidden="true" />,
-    label: "Electronics",
-    sub: "Mobiles & Audio",
-    path: "#",
-  },
-  {
-    icon: <Sparkles size={18} className="text-pink-500" aria-hidden="true" />,
-    label: "Personal Care",
-    sub: "Beauty & Wellness",
-    path: "#",
-  },
+const megaMenuCategories = [
+  { icon: <Zap size={18} className="text-brand-accent" />, label: "Quick Commerce", sub: "15-min Delivery", path: "/quick-commerce" },
+  { icon: <Package size={18} className="text-amber-500" />, label: "Wholesale", sub: "Bulk B2B Pricing", path: "/wholesale" },
+  { icon: <Truck size={18} className="text-blue-500" />, label: "Local Sellers", sub: "Verified Stores", path: "/local-sellers" },
+  { icon: <Home size={18} className="text-purple-500" />, label: "Home & Living", sub: "Kitchen & Decor", path: "/category/home-decor" },
+  { icon: <Laptop size={18} className="text-slate-600" />, label: "Electronics", sub: "Mobiles & Audio", path: "/category/electronics" },
+  { icon: <Sparkles size={18} className="text-pink-500" />, label: "Personal Care", sub: "Beauty & Wellness", path: "/category/beauty" },
+  { icon: <ShoppingBasket size={18} className="text-brand-accent" />, label: "Groceries", sub: "Fresh & Daily Needs", path: "/category/grocery" },
+  { icon: <Pill size={18} className="text-red-500" />, label: "Healthcare", sub: "Medicines & Supplies", path: "/category/pharmacy" },
 ];
 
 function WebsiteNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -86,9 +62,6 @@ function WebsiteNavbar() {
   const isAuthenticated = isCustomerAuthenticated || isSellerAuthenticated;
   const user = isSellerAuthenticated ? sellerUser : customerUser;
 
-  const isHomePage = location.pathname === "/";
-  const isLightTheme = !isHomePage || scrolled;
-
   // Optimistically sync Cart context to enable persistent UI counters across refreshes
   useEffect(() => {
     if (isCustomerAuthenticated) {
@@ -97,7 +70,7 @@ function WebsiteNavbar() {
   }, [isCustomerAuthenticated, fetchCart]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -112,6 +85,7 @@ function WebsiteNavbar() {
   useEffect(() => {
     setUserMenuOpen(false);
     setMenuOpen(false);
+    setMegaOpen(false);
   }, [location.pathname]);
 
   const handleLogout = useCallback(async () => {
@@ -133,261 +107,301 @@ function WebsiteNavbar() {
     navigate("/", { replace: true });
   }, [logoutCustomer, logoutSeller, navigate]);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${searchQuery}`);
+      setSearchQuery("");
+    }
+  };
+
   return (
     <>
       <nav
         role="navigation"
         aria-label="Main navigation"
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
-          isLightTheme
-            ? "bg-white/95 backdrop-blur-md shadow-sm py-3 border-b border-zinc-100"
-            : "bg-transparent py-5"
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 bg-white ${
+          scrolled ? "shadow-nav-scroll" : "shadow-nav"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-12">
-            {/* 1. LOGO */}
-            <Link
-              to="/"
-              className="flex-shrink-0"
-              aria-label="Indiafy - Go to homepage"
-            >
+        {/* Top Bar */}
+        <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 lg:h-[72px]">
+            
+            {/* LEFT: Logo */}
+            <Link to="/" className="flex-shrink-0" aria-label="Indiafy - Go to homepage">
               <img
                 src="/Images/logo.png"
                 alt="Indiafy"
                 width={120}
                 height={32}
-                className={`h-8 lg:h-9 w-auto object-contain transition-all duration-300 ${!isLightTheme ? "brightness-0 invert" : ""}`}
+                className="h-7 lg:h-8 w-auto object-contain"
               />
             </Link>
 
-            {/* 2. DESKTOP NAV LINKS */}
-            <div className="hidden lg:flex items-center space-x-8">
-              {navLinks.map((link) => (
-                <div
-                  key={link.label}
-                  className="relative group h-12 flex items-center"
-                  onMouseEnter={() => link.hasDropdown && setDropdownOpen(true)}
-                  onMouseLeave={() => link.hasDropdown && setDropdownOpen(false)}
-                >
-                  <Link
-                    to={link.path || link.href}
-                    className={`flex items-center gap-1.5 text-[12px] font-black uppercase tracking-[0.1em] transition-all ${
-                      isLightTheme
-                        ? "text-zinc-600 hover:text-emerald-600"
-                        : "text-white/80 hover:text-white"
-                    }`}
-                    aria-expanded={link.hasDropdown ? dropdownOpen : undefined}
-                    aria-haspopup={link.hasDropdown ? "true" : undefined}
-                  >
-                    {link.label}
-                    {link.hasDropdown && (
-                      <ChevronDown
-                        size={14}
-                        aria-hidden="true"
-                        className={`transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`}
-                      />
-                    )}
-                  </Link>
+            {/* CENTER: Search Bar (desktop) */}
+            <form
+              onSubmit={handleSearch}
+              role="search"
+              aria-label="Search products"
+              className="hidden md:flex items-center flex-1 max-w-xl mx-6 lg:mx-10"
+            >
+              <div className="relative w-full group">
+                <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-text-secondary" aria-hidden="true" />
+                <label htmlFor="nav-search" className="sr-only">Search products</label>
+                <input
+                  id="nav-search"
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products, stores, brands..."
+                  className="w-full pl-11 pr-4 py-2.5 bg-brand-background border border-brand-border rounded-full text-sm font-medium text-brand-primary placeholder:text-brand-text-secondary/60 focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent transition-all"
+                />
+              </div>
+            </form>
 
-                  {/* MEGA DROPDOWN */}
-                  {link.hasDropdown && dropdownOpen && (
-                    <div
-                      className="absolute top-full left-1/2 -translate-x-1/2 w-[600px] pt-4 animate-in fade-in slide-in-from-top-2 duration-200"
+            {/* RIGHT: Actions */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              {/* Track Order (desktop only) */}
+              {isAuthenticated && (
+                <Link
+                  to="/order-history"
+                  className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-brand-text-secondary hover:text-brand-primary transition-colors rounded-lg hover:bg-brand-background"
+                >
+                  <Package size={16} />
+                  <span>Orders</span>
+                </Link>
+              )}
+
+              {/* Become Seller (desktop only, when logged out) */}
+              {!isAuthenticated && (
+                <button
+                  onClick={() => navigate("/seller-auth")}
+                  aria-label="Become a seller on Indiafy"
+                  className="hidden xl:flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full border-2 border-brand-accent text-brand-accent hover:bg-brand-accent hover:text-white transition-all duration-200"
+                >
+                  <Store size={14} />
+                  Sell on Indiafy
+                </button>
+              )}
+
+              {/* Cart */}
+              <button
+                aria-label={`Shopping cart${cartItems.length > 0 ? `, ${cartItems.length} items` : ''}`}
+                className="relative p-2.5 rounded-full text-brand-primary hover:bg-brand-background transition-colors"
+                onClick={() => navigate("/cart")}
+              >
+                <ShoppingBag size={20} strokeWidth={1.8} aria-hidden="true" />
+                {cartItems.length > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 text-[10px] flex items-center justify-center rounded-full font-bold bg-brand-accent text-white shadow-sm"
+                  >
+                    {cartItems.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Profile / Login */}
+              {isAuthenticated && user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    aria-label="User menu"
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup="true"
+                    className="flex items-center gap-1.5 p-1.5 rounded-full hover:bg-brand-background transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-brand-accent flex items-center justify-center text-white text-xs font-bold" aria-hidden="true">
+                      {user.firstName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
+                    </div>
+                    <ChevronDown size={14} className="hidden sm:block text-brand-text-secondary" aria-hidden="true" />
+                  </button>
+
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-lg border border-brand-border py-2 z-50 origin-top-right"
+                        role="menu"
+                        aria-label="User menu"
+                      >
+                        {user?.role?.toLowerCase() === 'seller' ? (
+                          <Link
+                            to="/seller-hub"
+                            role="menuitem"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-brand-primary hover:bg-brand-background transition rounded-lg mx-1"
+                          >
+                            <Store size={16} className="text-brand-text-secondary" aria-hidden="true" />
+                            Seller Hub
+                          </Link>
+                        ) : (
+                          <>
+                            <Link
+                              to="/profile"
+                              role="menuitem"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-brand-primary hover:bg-brand-background transition rounded-lg mx-1"
+                            >
+                              <User size={16} className="text-brand-text-secondary" aria-hidden="true" />
+                              My Profile
+                            </Link>
+                            <Link
+                              to="/order-history"
+                              role="menuitem"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-brand-primary hover:bg-brand-background transition rounded-lg mx-1"
+                            >
+                              <Package size={16} className="text-brand-text-secondary" aria-hidden="true" />
+                              Orders
+                            </Link>
+                            <Link
+                              to="/addresses"
+                              role="menuitem"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-brand-primary hover:bg-brand-background transition rounded-lg mx-1"
+                            >
+                              <MapPin size={16} className="text-brand-text-secondary" aria-hidden="true" />
+                              Addresses
+                            </Link>
+                          </>
+                        )}
+
+                        <div className="border-t border-brand-border my-1.5 mx-3" role="separator" />
+
+                        <button
+                          role="menuitem"
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-brand-error hover:bg-red-50 transition rounded-lg mx-1"
+                          style={{ width: 'calc(100% - 8px)' }}
+                        >
+                          <LogOut size={16} aria-hidden="true" />
+                          Logout
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate("/login")}
+                  aria-label="Login to your account"
+                  className="hidden sm:flex items-center gap-1.5 text-sm font-semibold bg-brand-primary text-white py-2 px-5 rounded-full hover:bg-brand-secondary transition-colors active:scale-[0.98]"
+                >
+                  Login
+                </button>
+              )}
+
+              {/* Mobile Menu Toggle */}
+              <button
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
+                className="lg:hidden p-2 rounded-full hover:bg-brand-background text-brand-primary transition-colors"
+                onClick={() => setMenuOpen(true)}
+              >
+                <Menu size={22} strokeWidth={1.8} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Category Bar (desktop only) */}
+        <div className="hidden lg:block border-t border-brand-border/60">
+          <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-1 h-10">
+              {/* All Categories Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setMegaOpen(true)}
+                onMouseLeave={() => setMegaOpen(false)}
+              >
+                <button
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-brand-primary hover:bg-brand-background rounded-lg transition-colors"
+                  aria-expanded={megaOpen}
+                  aria-haspopup="true"
+                >
+                  <Menu size={14} />
+                  All Categories
+                  <ChevronDown size={12} className={`transition-transform ${megaOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                <AnimatePresence>
+                  {megaOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-0 w-[580px] pt-2 z-50"
                       role="menu"
-                      aria-label="Shop categories"
+                      aria-label="All categories"
                     >
-                      <div className="bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-zinc-100 overflow-hidden grid grid-cols-2 p-4 gap-2">
-                        {productCategories.map((cat) => (
+                      <div className="bg-white rounded-2xl shadow-xl border border-brand-border overflow-hidden grid grid-cols-2 p-3 gap-1">
+                        {megaMenuCategories.map((cat) => (
                           <button
                             key={cat.label}
                             role="menuitem"
                             onClick={() => {
-                              setDropdownOpen(false);
+                              setMegaOpen(false);
                               navigate(cat.path);
                             }}
-                            className="flex items-center gap-4 p-4 rounded-2xl hover:bg-zinc-50 transition-all cursor-pointer group/item border border-transparent hover:border-zinc-100 text-left w-full"
+                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-brand-background transition-all text-left w-full group"
                           >
-                            <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-900 group-hover/item:bg-white group-hover/item:shadow-sm transition-all duration-300">
+                            <div className="w-10 h-10 rounded-xl bg-brand-background flex items-center justify-center group-hover:bg-white group-hover:shadow-sm transition-all">
                               {cat.icon}
                             </div>
                             <div>
-                              <p className="text-sm font-black text-zinc-900 leading-tight mb-0.5">
-                                {cat.label}
-                              </p>
-                              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                                {cat.sub}
-                              </p>
+                              <p className="text-sm font-semibold text-brand-primary leading-tight">{cat.label}</p>
+                              <p className="text-[11px] text-brand-text-secondary mt-0.5">{cat.sub}</p>
                             </div>
                           </button>
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
                   )}
-                </div>
+                </AnimatePresence>
+              </div>
+
+              <div className="w-px h-5 bg-brand-border mx-1" />
+
+              {/* Quick Category Pills */}
+              {categoryPills.map((pill) => (
+                <Link
+                  key={pill.label}
+                  to={pill.path}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-brand-text-secondary hover:text-brand-primary hover:bg-brand-background rounded-lg transition-colors"
+                >
+                  {pill.label}
+                </Link>
               ))}
-            </div>
 
-            {/* 3. ACTION ICONS */}
-            <div className={`flex items-center gap-2 sm:gap-4 ${isLightTheme ? "text-zinc-900" : "text-white"}`}>
-              {/* Search button */}
-              <button
-                onClick={() => navigate("/search")}
-                aria-label="Search products"
-                className={`hidden md:flex items-center rounded-full px-4 py-2 transition-all cursor-pointer group ${isLightTheme ? "bg-zinc-100 hover:bg-zinc-200" : "bg-white/10 hover:bg-white/20"}`}
+              <div className="w-px h-5 bg-brand-border mx-1" />
+
+              <Link
+                to="/quick-commerce"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-brand-accent hover:bg-emerald-50 rounded-lg transition-colors"
               >
-                <Search size={16} aria-hidden="true" className="group-hover:scale-110 transition-transform" />
-                <span className="ml-2 text-[10px] font-black uppercase tracking-widest">Search</span>
-              </button>
+                <Zap size={13} className="fill-current" />
+                15-Min Delivery
+              </Link>
 
-              <div className="flex items-center gap-1 sm:gap-2 md:border-l border-zinc-500/30 md:ml-2 md:pl-4">
-                {/* Wishlist */}
-                <button
-                  aria-label="View wishlist"
-                  className={`p-2 rounded-full transition-all ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
-                  onClick={() => navigate("/cart")}
-                >
-                  <Heart size={20} strokeWidth={1.5} aria-hidden="true" />
-                </button>
+              <Link
+                to="/wholesale"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-brand-text-secondary hover:text-brand-primary hover:bg-brand-background rounded-lg transition-colors"
+              >
+                Wholesale
+              </Link>
 
-                {/* Cart */}
-                <button
-                  aria-label={`Shopping cart${cartItems.length > 0 ? `, ${cartItems.length} items` : ''}`}
-                  className={`p-2 rounded-full transition-all relative ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
-                  onClick={() => navigate("/cart")}
-                >
-                  <ShoppingBag size={20} strokeWidth={1.5} aria-hidden="true" />
-                  {cartItems.length > 0 && (
-                    <span
-                      aria-hidden="true"
-                      className={`absolute top-0.5 right-0.5 w-4 h-4 text-[9px] flex items-center justify-center rounded-full font-black shadow-sm ${isLightTheme ? "bg-emerald-500 text-white" : "bg-white text-emerald-600"}`}
-                    >
-                      {cartItems.length}
-                    </span>
-                  )}
-                </button>
-
-                {/* Mobile Menu Toggle */}
-                <button
-                  aria-label={menuOpen ? "Close menu" : "Open menu"}
-                  aria-expanded={menuOpen}
-                  className={`lg:hidden p-2 ml-1 rounded-full ${isLightTheme ? "hover:bg-zinc-100" : "hover:bg-white/10"}`}
-                  onClick={() => setMenuOpen(true)}
-                >
-                  <Menu size={24} strokeWidth={1.5} aria-hidden="true" />
-                </button>
-              </div>
-
-              {/* Desktop Login/Join OR User Profile */}
-              <div className="hidden lg:flex items-center gap-3 ml-2">
-                {isAuthenticated && user ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => setUserMenuOpen(!userMenuOpen)}
-                      aria-label="User menu"
-                      aria-expanded={userMenuOpen}
-                      aria-haspopup="true"
-                      className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-zinc-100 transition-colors"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold" aria-hidden="true">
-                        {user.firstName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
-                      </div>
-                      <ChevronDown size={16} aria-hidden="true" />
-                    </button>
-
-                    <AnimatePresence>
-                      {userMenuOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                          transition={{ duration: 0.2 }}
-                          className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-zinc-200 py-2 z-50 origin-top-right"
-                          role="menu"
-                          aria-label="User menu"
-                        >
-                          {user?.role?.toLowerCase() === 'seller' ? (
-                            <Link
-                              to="/seller-hub"
-                              role="menuitem"
-                              onClick={() => setUserMenuOpen(false)}
-                              className="group flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100 transition"
-                            >
-                              <Store size={16} aria-hidden="true" />
-                              Seller Hub
-                            </Link>
-                          ) : (
-                            <>
-                              <Link
-                                to="/profile"
-                                role="menuitem"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="group flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100 transition"
-                              >
-                                <User size={16} aria-hidden="true" />
-                                My Profile
-                              </Link>
-
-                              <Link
-                                to="/order-history"
-                                role="menuitem"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="group flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100 transition"
-                              >
-                                <Package size={16} aria-hidden="true" />
-                                Orders
-                              </Link>
-
-                              <Link
-                                to="/addresses"
-                                role="menuitem"
-                                onClick={() => setUserMenuOpen(false)}
-                                className="group flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100 transition"
-                              >
-                                <Home size={16} aria-hidden="true" />
-                                Addresses
-                              </Link>
-                            </>
-                          )}
-
-                          <div className="border-t my-2" role="separator" />
-
-                          <button
-                            role="menuitem"
-                            onClick={handleLogout}
-                            className="group w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
-                          >
-                            <LogOut size={16} aria-hidden="true" />
-                            Logout
-                          </button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => navigate("/seller-auth")}
-                      aria-label="Become a seller on Indiafy"
-                      className={`hidden xl:flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.1em] px-5 py-2.5 rounded-full transition-all border-2 ${
-                        isLightTheme 
-                          ? "border-emerald-500 text-emerald-600 hover:bg-emerald-50" 
-                          : "border-white/30 text-white hover:bg-white/10"
-                      }`}
-                    >
-                      <Zap size={14} className="fill-current" aria-hidden="true" />
-                      Become a Seller
-                    </button>
-                    <button
-                      onClick={() => navigate("/login")}
-                      aria-label="Login to your account"
-                      className="text-[11px] font-black uppercase tracking-[0.1em] bg-zinc-900 text-white py-2.5 px-8 rounded-full hover:bg-emerald-500 transition-colors shadow-lg active:scale-[0.98]"
-                    >
-                      Login
-                    </button>
-                  </>
-                )}
-              </div>
+              <Link
+                to="/stores"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-brand-text-secondary hover:text-brand-primary hover:bg-brand-background rounded-lg transition-colors"
+              >
+                Stores
+              </Link>
             </div>
           </div>
         </div>
@@ -401,7 +415,7 @@ function WebsiteNavbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm z-[999] lg:hidden"
+            className="fixed inset-0 bg-brand-primary/40 backdrop-blur-sm z-[999] lg:hidden"
             onClick={() => setMenuOpen(false)}
             role="dialog"
             aria-modal="true"
@@ -413,116 +427,104 @@ function WebsiteNavbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="absolute right-0 top-0 h-[100dvh] w-[85%] max-w-[320px] bg-white shadow-2xl flex flex-col pointer-events-auto"
+              className="absolute right-0 top-0 h-[100dvh] w-[85%] max-w-[360px] bg-white shadow-2xl flex flex-col pointer-events-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-zinc-100">
+              <div className="flex items-center justify-between p-5 border-b border-brand-border">
                 <img src="/Images/logo.png" alt="Indiafy" width={96} height={24} className="h-6 w-auto" />
                 <button
                   onClick={() => setMenuOpen(false)}
                   aria-label="Close navigation menu"
-                  className="p-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 rounded-full transition-colors"
+                  className="p-2 bg-brand-background hover:bg-gray-100 text-brand-primary rounded-full transition-colors"
                 >
-                  <X size={20} strokeWidth={2} aria-hidden="true" />
+                  <X size={18} strokeWidth={2} aria-hidden="true" />
                 </button>
               </div>
 
-              {/* Links */}
-              <div className="flex-1 overflow-y-auto py-6 px-6 flex flex-col gap-6 no-scrollbar">
-                <div className="flex flex-col gap-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                    Menu
-                  </span>
-                  {navLinks.filter(link => {
-                    if (link.label === "Track Order" && !isAuthenticated) return false;
-                    return true;
-                  }).map((link) => (
-                    link.hasDropdown ? (
-                      <div key={link.label} className="space-y-3">
-                        <div className="text-lg font-black text-zinc-900 tracking-tight flex items-center justify-between">
-                          {link.label}
-                          <ChevronDown size={18} className="text-zinc-300" aria-hidden="true" />
-                        </div>
-                        <nav className="grid grid-cols-1 gap-2 pl-4" aria-label="Shop categories">
-                          {productCategories.map(cat => (
-                            <Link 
-                              key={cat.label} 
-                              to={cat.path} 
-                              onClick={() => setMenuOpen(false)}
-                              className="flex items-center gap-3 py-2 text-sm font-bold text-zinc-600 hover:text-emerald-600"
-                            >
-                              <span className="p-1.5 bg-zinc-100 rounded-lg" aria-hidden="true">{cat.icon}</span>
-                              {cat.label}
-                            </Link>
-                          ))}
-                        </nav>
-                      </div>
-                    ) : (
-                      <Link
-                        key={link.label}
-                        to={link.path || link.href}
-                        className="text-lg font-black text-zinc-900 tracking-tight flex items-center justify-between"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        {link.label}
-                        <ChevronRight size={18} className="text-zinc-300" aria-hidden="true" />
-                      </Link>
-                    )
-                  ))}
-                </div>
-
-                <div className="w-full h-px bg-zinc-100 my-2" role="separator" />
-
-                <div className="flex flex-col gap-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                    Quick Access
-                  </span>
-
-                  <form 
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      const q = e.target.search.value;
-                      if (q) {
-                        navigate(`/search?q=${q}`);
-                        setMenuOpen(false);
-                      }
-                    }}
-                    className="relative group"
-                    role="search"
-                    aria-label="Search products"
-                  >
+              {/* Search */}
+              <div className="px-5 pt-4">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const q = e.target.search.value;
+                    if (q) {
+                      navigate(`/search?q=${q}`);
+                      setMenuOpen(false);
+                    }
+                  }}
+                  role="search"
+                  aria-label="Search products"
+                >
+                  <div className="relative">
                     <label htmlFor="mobile-search" className="sr-only">Search products</label>
+                    <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-text-secondary" aria-hidden="true" />
                     <input
                       id="mobile-search"
                       name="search"
                       type="text"
-                      placeholder="Search items..."
-                      className="w-full p-4 pl-12 rounded-2xl bg-zinc-100 border border-zinc-200 text-sm font-bold focus:bg-white focus:border-emerald-500 transition-all outline-none"
+                      placeholder="Search products..."
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-brand-background border border-brand-border text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-accent/30 transition-all"
                     />
-                    <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" aria-hidden="true" />
-                  </form>
-                </div>
+                  </div>
+                </form>
+              </div>
+
+              {/* Links */}
+              <div className="flex-1 overflow-y-auto py-4 px-5 flex flex-col gap-1 no-scrollbar">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary mb-2 px-1">Quick Links</p>
+
+                <Link to="/" onClick={() => setMenuOpen(false)} className="flex items-center justify-between px-3 py-3 text-sm font-semibold text-brand-primary hover:bg-brand-background rounded-xl transition-colors">
+                  Home <ChevronRight size={16} className="text-brand-text-secondary" />
+                </Link>
+
+                <Link to="/quick-commerce" onClick={() => setMenuOpen(false)} className="flex items-center justify-between px-3 py-3 text-sm font-semibold text-brand-accent hover:bg-emerald-50 rounded-xl transition-colors">
+                  <span className="flex items-center gap-2"><Zap size={16} className="fill-current" /> 15-Min Delivery</span>
+                  <ChevronRight size={16} />
+                </Link>
+
+                {isAuthenticated && (
+                  <Link to="/order-history" onClick={() => setMenuOpen(false)} className="flex items-center justify-between px-3 py-3 text-sm font-semibold text-brand-primary hover:bg-brand-background rounded-xl transition-colors">
+                    <span className="flex items-center gap-2"><Package size={16} /> Orders</span>
+                    <ChevronRight size={16} className="text-brand-text-secondary" />
+                  </Link>
+                )}
+
+                <div className="h-px bg-brand-border my-2" />
+
+                <p className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary mb-2 px-1">Categories</p>
+
+                {megaMenuCategories.map(cat => (
+                  <Link
+                    key={cat.label}
+                    to={cat.path}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-brand-primary hover:bg-brand-background rounded-xl transition-colors"
+                  >
+                    <span className="p-1.5 bg-brand-background rounded-lg">{cat.icon}</span>
+                    <span>{cat.label}</span>
+                  </Link>
+                ))}
               </div>
 
               {/* Footer Actions */}
-              <div className="p-6 border-t border-zinc-100 bg-zinc-50 flex flex-col gap-3">
+              <div className="p-5 border-t border-brand-border bg-brand-background/50 flex flex-col gap-2.5">
                 {isAuthenticated && user ? (
                   <>
                     <button
                       onClick={() => { navigate(user?.role?.toLowerCase() === 'seller' ? "/seller-hub" : "/profile"); setMenuOpen(false); }}
                       aria-label={`Go to ${user.firstName || 'your'} profile`}
-                      className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-3 text-sm font-semibold bg-brand-primary text-white rounded-xl hover:bg-brand-secondary transition-colors flex items-center justify-center gap-2"
                     >
-                      {user?.role?.toLowerCase() === 'seller' ? <Store size={16} aria-hidden="true" /> : <User size={16} aria-hidden="true" />} 
+                      {user?.role?.toLowerCase() === 'seller' ? <Store size={16} /> : <User size={16} />}
                       {user.firstName || "Dashboard"}
                     </button>
                     <button
                       onClick={handleLogout}
                       aria-label="Logout from your account"
-                      className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-red-50 text-red-600 border border-red-200 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-3 text-sm font-semibold bg-white text-brand-error border border-red-200 rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
                     >
-                      <LogOut size={16} aria-hidden="true" /> Logout
+                      <LogOut size={16} /> Logout
                     </button>
                   </>
                 ) : (
@@ -530,16 +532,16 @@ function WebsiteNavbar() {
                     <button
                       onClick={() => { navigate("/seller-auth"); setMenuOpen(false); }}
                       aria-label="Become a seller on Indiafy"
-                      className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-emerald-500 text-white rounded-xl shadow-md hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-3 text-sm font-semibold bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-colors flex items-center justify-center gap-2"
                     >
-                      <Store size={16} aria-hidden="true" /> Become a Seller
+                      <Store size={16} /> Sell on Indiafy
                     </button>
                     <button
                       onClick={() => { navigate("/login"); setMenuOpen(false); }}
                       aria-label="Login or signup as customer"
-                      className="w-full py-3.5 text-xs font-black uppercase tracking-widest bg-zinc-900 text-white rounded-xl shadow-md hover:bg-zinc-800 transition-colors"
+                      className="w-full py-3 text-sm font-semibold bg-brand-primary text-white rounded-xl hover:bg-brand-secondary transition-colors"
                     >
-                      Customer Login / Signup
+                      Login / Sign Up
                     </button>
                   </>
                 )}

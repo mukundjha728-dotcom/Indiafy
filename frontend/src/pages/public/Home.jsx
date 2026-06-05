@@ -10,54 +10,89 @@ import Hero from "../../components/HomePage/Hero";
 // Below-the-fold: lazy loaded for performance
 const BrowseCategories = lazy(() => import("../../components/HomePage/BrowseCategories"));
 const TrendingProducts = lazy(() => import("../../components/HomePage/TrendingProducts"));
+const FlashSale = lazy(() => import("../../components/HomePage/FlashSale"));
 const VerifiedStores = lazy(() => import("../../components/HomePage/VerifiedStores"));
+const QuickCommerceStrip = lazy(() => import("../../components/HomePage/QuickCommerceStrip"));
+const WholesaleStrip = lazy(() => import("../../components/HomePage/WholesaleStrip"));
 const RecentlyViewed = lazy(() => import("../../components/HomePage/RecentlyViewed"));
+const NearbyStores = lazy(() => import("../../components/HomePage/NearbyStores"));
 const TrustSection = lazy(() => import("../../components/HomePage/TrustSection"));
 const Testimonials = lazy(() => import("../../components/HomePage/Testimonials"));
+const AppDownload = lazy(() => import("../../components/HomePage/AppDownload"));
 
 // Lightweight section fallback
 const SectionLoader = () => (
   <div className="py-20 flex items-center justify-center" role="status" aria-label="Loading section">
-    <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+    <div className="w-8 h-8 border-4 border-gray-200 border-t-brand-accent rounded-full animate-spin" />
   </div>
 );
 
 const Home = memo(() => {
   return (
     <>
-      {/* Top Navigation */}
       <WebsiteNavbar />
 
       <main className="overflow-hidden">
-        {/* Hero: eagerly loaded for fast LCP */}
+        {/* 02 Hero */}
         <Hero />
 
-        {/* Below-fold sections: lazy loaded */}
+        {/* 03 Categories */}
         <Suspense fallback={<SectionLoader />}>
           <BrowseCategories />
         </Suspense>
 
+        {/* 04 Trending Products */}
         <Suspense fallback={<SectionLoader />}>
           <TrendingProducts />
         </Suspense>
 
+        {/* 05 Flash Sale */}
+        <Suspense fallback={<SectionLoader />}>
+          <FlashSale />
+        </Suspense>
+
+        {/* 06 Featured Stores */}
         <Suspense fallback={<SectionLoader />}>
           <VerifiedStores />
         </Suspense>
 
+        {/* 07 Quick Commerce */}
+        <Suspense fallback={<SectionLoader />}>
+          <QuickCommerceStrip />
+        </Suspense>
+
+        {/* 08 Wholesale */}
+        <Suspense fallback={<SectionLoader />}>
+          <WholesaleStrip />
+        </Suspense>
+
+        {/* 09 Recommended Products (Recently Viewed) */}
         <Suspense fallback={<SectionLoader />}>
           <RecentlyViewed />
         </Suspense>
 
+        {/* 10 Nearby Stores */}
+        <Suspense fallback={<SectionLoader />}>
+          <NearbyStores />
+        </Suspense>
+
+        {/* 11 Trust Section */}
         <Suspense fallback={<SectionLoader />}>
           <TrustSection />
         </Suspense>
 
+        {/* 12 Testimonials */}
         <Suspense fallback={<SectionLoader />}>
           <Testimonials />
         </Suspense>
+
+        {/* 13 App Download */}
+        {/* <Suspense fallback={<SectionLoader />}>
+          <AppDownload />
+        </Suspense> */}
       </main>
 
+      {/* 14 Footer */}
       <Footer />
     </>
   );

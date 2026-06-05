@@ -1,18 +1,61 @@
 import { create } from 'zustand';
 import axiosInstance from '../utils/axiosInstance';
 
-export const useWholesaleStore = create((set) => ({
+export const useWholesaleStore = create((set, get) => ({
   wholesaleProducts: [],
   distributors: [],
   isLoading: false,
   error: null,
+  
+  // V3: Filter State
+  filters: {
+    search: '',
+    category: [],
+    moq: '',
+    location: [],
+    rating: '',
+    gstVerified: false,
+    videoVerified: false,
+    delivery: ''
+  },
 
-  fetchWholesaleProducts: async (filters = {}) => {
+  setFilter: (key, value) => set((state) => ({
+    filters: {
+      ...state.filters,
+      [key]: value
+    }
+  })),
+
+  clearFilters: () => set({
+    filters: {
+      search: '',
+      category: [],
+      moq: '',
+      location: [],
+      rating: '',
+      gstVerified: false,
+      videoVerified: false,
+      delivery: ''
+    }
+  }),
+
+  removeFilterArrayItem: (key, valueToRemove) => set((state) => ({
+    filters: {
+      ...state.filters,
+      [key]: state.filters[key].filter(val => val !== valueToRemove)
+    }
+  })),
+
+  fetchWholesaleProducts: async () => {
     set({ isLoading: true, error: null });
     try {
-      const { category, search, minQty } = filters;
+      const { filters } = get();
+      // Pass filters to backend if supported, but also we can mock/filter client-side in the component
       const res = await axiosInstance.get('/wholesale/products', {
-        params: { category, search, minQty }
+        params: { 
+          search: filters.search || undefined,
+          category: filters.category.length > 0 ? filters.category.join(',') : undefined
+        }
       });
       set({ wholesaleProducts: res.data?.data || [] });
     } catch (err) {

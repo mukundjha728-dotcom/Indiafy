@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import {
   ShoppingBag,
   ShoppingBasket,
@@ -7,13 +7,35 @@ import {
   Lamp,
   Scissors,
   ArrowRight,
-  ChevronRight,
   Box,
+  Heart,
+  Wrench,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../../store/productStore";
-import { useEffect } from "react";
+
+const categoryStyles = [
+  { bg: "bg-gradient-to-br from-emerald-50 to-teal-50", iconBg: "bg-emerald-100", iconColor: "text-emerald-600" },
+  { bg: "bg-gradient-to-br from-rose-50 to-pink-50", iconBg: "bg-rose-100", iconColor: "text-rose-600" },
+  { bg: "bg-gradient-to-br from-blue-50 to-indigo-50", iconBg: "bg-blue-100", iconColor: "text-blue-600" },
+  { bg: "bg-gradient-to-br from-amber-50 to-orange-50", iconBg: "bg-amber-100", iconColor: "text-amber-600" },
+  { bg: "bg-gradient-to-br from-purple-50 to-violet-50", iconBg: "bg-purple-100", iconColor: "text-purple-600" },
+  { bg: "bg-gradient-to-br from-red-50 to-rose-50", iconBg: "bg-red-100", iconColor: "text-red-600" },
+  { bg: "bg-gradient-to-br from-cyan-50 to-sky-50", iconBg: "bg-cyan-100", iconColor: "text-cyan-600" },
+  { bg: "bg-gradient-to-br from-slate-50 to-gray-100", iconBg: "bg-slate-100", iconColor: "text-slate-600" },
+];
+
+const fallbackCategories = [
+  { name: "Groceries", slug: "grocery", icon: <ShoppingBasket size={24} /> },
+  { name: "Fashion", slug: "garments", icon: <ShoppingBag size={24} /> },
+  { name: "Electronics", slug: "electronics", icon: <Tv size={24} /> },
+  { name: "Home & Living", slug: "home-decor", icon: <Lamp size={24} /> },
+  { name: "Beauty", slug: "beauty", icon: <Scissors size={24} /> },
+  { name: "Healthcare", slug: "pharmacy", icon: <Pill size={24} /> },
+  { name: "Wholesale", slug: "wholesale", icon: <Box size={24} /> },
+  { name: "Services", slug: "services", icon: <Wrench size={24} /> },
+];
 
 const BrowseCategories = memo(function BrowseCategories() {
   const { categories, fetchCategories } = useProductStore();
@@ -25,137 +47,112 @@ const BrowseCategories = memo(function BrowseCategories() {
   const getIcon = (name) => {
     if (!name || typeof name !== 'string') return <Box size={24} />;
     const lower = name.toLowerCase();
-    if (lower.includes('garment') || lower.includes('cloth')) return <ShoppingBag size={24} />;
+    if (lower.includes('garment') || lower.includes('cloth') || lower.includes('fashion')) return <ShoppingBag size={24} />;
     if (lower.includes('grocery') || lower.includes('food')) return <ShoppingBasket size={24} />;
-    if (lower.includes('pharm') || lower.includes('med')) return <Pill size={24} />;
+    if (lower.includes('pharm') || lower.includes('med') || lower.includes('health')) return <Pill size={24} />;
     if (lower.includes('elect')) return <Tv size={24} />;
     if (lower.includes('home') || lower.includes('decor')) return <Lamp size={24} />;
     if (lower.includes('care') || lower.includes('beauty')) return <Scissors size={24} />;
+    if (lower.includes('wholesale') || lower.includes('bulk')) return <Box size={24} />;
     return <Box size={24} />;
   };
 
-  const validCategories = Array.isArray(categories) 
+  const validCategories = Array.isArray(categories)
     ? categories.filter(cat => cat && typeof cat === 'string')
     : [];
 
-  const displayCategories = validCategories.length > 0 
+  const displayCategories = validCategories.length > 0
     ? validCategories.map(cat => ({
         name: cat,
         slug: cat.toLowerCase().replace(/\s+/g, '-'),
-        stores: "Verified Node",
         icon: getIcon(cat)
       }))
-    : [
-        { name: "Garments", slug: "garments", stores: "12 Stores", icon: <ShoppingBag size={24} /> },
-        { name: "Grocery", slug: "grocery", stores: "45 Stores", icon: <ShoppingBasket size={24} /> },
-        { name: "Pharmacy", slug: "pharmacy", stores: "8 Stores", icon: <Pill size={24} /> },
-        { name: "Electronics", slug: "electronics", stores: "15 Stores", icon: <Tv size={24} /> },
-      ];
+    : fallbackCategories;
 
   return (
-    <section className="relative pt-24 pb-20 bg-white overflow-hidden">
-      {/* Background Decorative Element */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-zinc-50 rounded-full blur-3xl opacity-50" />
-
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        {/* Header Section */}
+    <section className="py-section-mobile md:py-section-tablet lg:py-20 bg-white" id="categories">
+      <div className="section-container">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
+          className="flex items-end justify-between mb-10"
         >
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="h-px w-8 bg-zinc-900" />
-              <span className="text-xs font-bold tracking-[0.2em] uppercase text-zinc-500">
-                Explore Gurugram
-              </span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-zinc-900 tracking-tight">
-              Browse Categories
-            </h2>
-            <p className="text-zinc-500 mt-4 text-lg font-medium max-w-md">
-              Discover verified local sellers across the platform's vertical
-              ecosystem.
+            <h2 className="section-heading mb-2">Shop by Category</h2>
+            <p className="text-brand-text-secondary text-base font-medium max-w-md">
+              Explore verified local sellers across every category
             </p>
           </div>
-
           <Link
             to="/local-sellers"
-            className="group inline-flex items-center gap-3 px-6 py-3 bg-zinc-900 text-white rounded-full text-sm font-bold hover:bg-zinc-800 transition-all shadow-lg hover:shadow-zinc-200"
+            className="hidden md:flex items-center gap-2 text-sm font-semibold text-brand-accent hover:text-brand-accent-hover transition-colors"
           >
-            View All Nodes
-            <ArrowRight
-              size={16}
-              className="transition-transform group-hover:translate-x-1"
-            />
+            View All
+            <ArrowRight size={16} />
           </Link>
         </motion.div>
 
-        {/* Desktop Grid Layout */}
-        <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-          {displayCategories.map((category, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <Link
-                to={`/category/${category.slug}`}
-                className="group relative block bg-zinc-50 border border-zinc-100 rounded-[2rem] p-8 transition-all duration-500 hover:bg-white hover:shadow-2xl hover:shadow-zinc-200 hover:-translate-y-2 overflow-hidden"
+        {/* Desktop Grid */}
+        <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {displayCategories.slice(0, 8).map((category, index) => {
+            const style = categoryStyles[index % categoryStyles.length];
+            return (
+              <motion.div
+                key={category.slug}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.4 }}
+                viewport={{ once: true }}
               >
-                {/* Background Pattern */}
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                  <ChevronRight size={80} strokeWidth={1} />
-                </div>
-
-                <div className="relative z-10">
-                  <div className="w-14 h-14 mb-8 flex items-center justify-center rounded-2xl bg-white text-zinc-900 shadow-sm border border-zinc-100 group-hover:bg-zinc-900 group-hover:text-white transition-all duration-500">
+                <Link
+                  to={category.slug === 'wholesale' ? '/wholesale' : `/category/${category.slug}`}
+                  className={`group block ${style.bg} rounded-card p-6 border border-brand-border/50 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300`}
+                >
+                  <div className={`w-12 h-12 mb-5 flex items-center justify-center rounded-2xl ${style.iconBg} ${style.iconColor} group-hover:scale-110 transition-transform duration-300`}>
                     {category.icon}
                   </div>
-
-                  <h3 className="text-xl font-bold text-zinc-900 group-hover:tracking-wide transition-all">
+                  <h3 className="text-base font-bold text-brand-primary mb-1">
                     {category.name}
                   </h3>
-
-                  <div className="mt-2 flex items-center gap-2 text-zinc-400 group-hover:text-zinc-600 transition-colors">
-                    <span className="text-xs font-semibold uppercase tracking-wider">
-                      {category.stores}
-                    </span>
-                    <ArrowRight
-                      size={12}
-                      className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"
-                    />
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                  <span className="text-xs font-medium text-brand-text-secondary flex items-center gap-1 group-hover:text-brand-accent transition-colors">
+                    Explore
+                    <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" />
+                  </span>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* Mobile Horizontal Scroll */}
-        <div className="md:hidden flex gap-4 overflow-x-auto pb-8 snap-x no-scrollbar">
-          {displayCategories.map((category, index) => (
-            <motion.div key={index} className="min-w-[200px] snap-center">
+        <div className="md:hidden flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar -mx-2 px-2">
+          {displayCategories.slice(0, 8).map((category, index) => {
+            const style = categoryStyles[index % categoryStyles.length];
+            return (
               <Link
-                to={`/category/${category.slug}`}
-                className="block bg-zinc-50 border border-zinc-100 rounded-3xl p-6"
+                key={category.slug}
+                to={category.slug === 'wholesale' ? '/wholesale' : `/category/${category.slug}`}
+                className={`flex-none w-[140px] snap-start ${style.bg} rounded-2xl p-4 border border-brand-border/50`}
               >
-                <div className="w-12 h-12 mb-6 flex items-center justify-center rounded-xl bg-white text-zinc-900 shadow-sm border border-zinc-100">
+                <div className={`w-10 h-10 mb-3 flex items-center justify-center rounded-xl ${style.iconBg} ${style.iconColor}`}>
                   {category.icon}
                 </div>
-                <h3 className="font-bold text-zinc-900">{category.name}</h3>
-                <p className="text-xs text-zinc-400 font-bold mt-1 uppercase tracking-tighter">
-                  {category.stores}
-                </p>
+                <h3 className="text-sm font-bold text-brand-primary">{category.name}</h3>
               </Link>
-            </motion.div>
-          ))}
+            );
+          })}
         </div>
+
+        {/* Mobile View All */}
+        <Link
+          to="/local-sellers"
+          className="md:hidden flex items-center justify-center gap-2 mt-4 text-sm font-semibold text-brand-accent"
+        >
+          View All Categories <ArrowRight size={16} />
+        </Link>
       </div>
     </section>
   );
