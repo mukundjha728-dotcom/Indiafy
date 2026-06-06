@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 
-const salt = 12; // Standard salt rounds
+const salt = 10; // Standard salt rounds
 
 export const passwordEncryption = async (password) => {
     try {
