@@ -222,7 +222,7 @@ function OrderCard({ order }) {
                   key={i}
                   className="w-16 h-16 rounded-2xl border-4 border-zinc-900 overflow-hidden bg-zinc-800 shadow-xl"
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={item.img}
                     className="w-full h-full object-cover"
                     alt="item"
@@ -310,7 +310,7 @@ function OrderCard({ order }) {
                     className="flex justify-between items-center p-4 bg-zinc-950/50 rounded-2xl border border-zinc-800/50"
                   >
                     <div className="flex items-center gap-4">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={item.img}
                         className="w-10 h-10 rounded-lg object-cover"
                         alt=""

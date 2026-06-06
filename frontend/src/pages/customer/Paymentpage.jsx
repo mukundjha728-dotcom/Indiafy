@@ -225,7 +225,7 @@ export default function PaymentPage() {
                     className="flex justify-between items-center bg-slate-950/50 p-4 rounded-2xl border border-slate-800/50"
                   >
                     <div className="flex items-center gap-4">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={item.img}
                         className="w-10 h-10 rounded-lg object-cover grayscale opacity-60"
                         alt=""

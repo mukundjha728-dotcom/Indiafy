@@ -126,7 +126,7 @@ export default function Navbar({ setSidebarOpen, storeDetails }) {
         >
           {storeDetails?.logo ? (
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border border-slate-200 shrink-0 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
-               <img src={storeDetails.logo} alt="Store" className="w-full h-full object-cover" />
+               <img loading="lazy" decoding="async" src={storeDetails.logo} alt="Store" className="w-full h-full object-cover" />
             </div>
           ) : (
             <div className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-900 shadow-[inset_0_2px_5px_rgba(255,255,255,0.2)] rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-extrabold shrink-0 group-hover:bg-slate-800 transition-colors">

@@ -323,7 +323,7 @@ export default function OrderTrackingPage() {
                 {(order.orderItems || []).map((item, i) => (
                   <div key={i} className="flex items-center gap-4 p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800/50">
                     <div className="w-14 h-14 rounded-xl overflow-hidden bg-zinc-800 shrink-0 border border-zinc-700">
-                      <img 
+                      <img loading="lazy" decoding="async" 
                         src={item.product?.productImage?.[0] || "https://placehold.co/100x100"} 
                         className="w-full h-full object-cover" 
                         alt={item.product?.productName || "Product"} 

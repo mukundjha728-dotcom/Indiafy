@@ -120,7 +120,7 @@ function TrendingBulkProducts() {
 
                   {/* Image & Badges */}
                   <div className="relative aspect-[4/3] bg-brand-background rounded-2xl mb-4 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={p.productImage?.[0] || "https://placehold.co/600x400?text=B2B"}
                       alt={p.productName}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

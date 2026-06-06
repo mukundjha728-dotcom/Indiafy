@@ -102,7 +102,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-5">
             <div className="w-20 h-20 rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 shadow-sm">
               {activeNode?.logo ? (
-                <img src={activeNode.logo} alt="Store Logo" className="w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src={activeNode.logo} alt="Store Logo" className="w-full h-full object-cover" />
               ) : (
                 <Store className="text-slate-400" size={36} />
               )}

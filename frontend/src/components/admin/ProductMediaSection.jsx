@@ -30,7 +30,7 @@ function ImageCard({ label, type, large, images, setImages, handleUpload }) {
     >
       {images[type] ? (
         <>
-          <img
+          <img loading="lazy" decoding="async"
             src={images[type]}
             alt={type}
             className="object-cover w-full h-full rounded-xl"

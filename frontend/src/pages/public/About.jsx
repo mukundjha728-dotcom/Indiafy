@@ -182,7 +182,7 @@ export default function About() {
             >
               {/* Abstract image card */}
               <div className="absolute inset-4 bg-white rounded-[3rem] shadow-xl border border-zinc-100 overflow-hidden group">
-                <img
+                <img loading="lazy" decoding="async"
                   src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1200"
                   alt="Operations"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700grayscale-[0.5] hover:grayscale-0"
@@ -330,7 +330,7 @@ export default function About() {
                   transition={{ delay: i * 0.1 }}
                   className="flex flex-col items-center text-center bg-zinc-50 p-8 rounded-3xl border border-zinc-100"
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={member.img}
                     alt={member.name}
                     className="w-24 h-24 rounded-full mb-6 object-cover border-4 border-white shadow-lg"

@@ -194,7 +194,7 @@ export default function CustomerProfile() {
           <div className="relative z-10 flex flex-col lg:flex-row items-center lg:items-end gap-8 bg-zinc-900/40 border border-zinc-800/50 backdrop-blur-xl rounded-[3.5rem] p-8 lg:p-12 shadow-2xl">
             <div className="relative group">
               <div className="w-40 h-40 rounded-[3rem] bg-gradient-to-br from-zinc-800 to-zinc-900 border-4 border-zinc-950 overflow-hidden shadow-2xl relative">
-                <img
+                <img loading="lazy" decoding="async"
                   src={profile.profileImage || `https://api.dicebear.com/7.x/notionists/svg?seed=${profile.firstName}&backgroundColor=b6e3f4`}
                   alt="User"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -362,7 +362,7 @@ export default function CustomerProfile() {
                                {order.orderItems.map((item, idx) => (
                                  <div key={idx} className="flex items-center gap-4">
                                    <div className="w-10 h-10 rounded-xl overflow-hidden border border-zinc-800">
-                                      <img src={item.product?.productImage?.[0] || "https://placehold.co/100x100"} alt="" className="w-full h-full object-cover" />
+                                      <img loading="lazy" decoding="async" src={item.product?.productImage?.[0] || "https://placehold.co/100x100"} alt="" className="w-full h-full object-cover" />
                                    </div>
                                    <div className="flex-1 min-w-0">
                                       <p className="text-xs font-bold text-zinc-300 truncate uppercase">{item.product?.productName || "Sony WH-1000XM5"}</p>

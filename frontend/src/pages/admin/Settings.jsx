@@ -34,7 +34,7 @@ export default function Settings() {
               <h2 className="font-bold text-gray-900 mb-6">Identity</h2>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                <img
+                <img loading="lazy" decoding="async"
                   src="https://res.cloudinary.com/dttjgnypq/image/upload/v1770481020/Aamir_Passport_Picture_llwlzj.jpg"
                   alt="avatar"
                   className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border"

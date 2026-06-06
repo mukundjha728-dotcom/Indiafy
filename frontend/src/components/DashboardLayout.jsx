@@ -167,7 +167,7 @@ export default function DashboardLayout({ storeDetails, activeNode }) {
       <div className="p-5 border-b border-slate-100">
         <div className="flex items-center gap-3 mb-3">
           {storeDetails?.logo ? (
-            <img
+            <img loading="lazy" decoding="async"
               src={storeDetails.logo}
               alt={storeName}
               className="w-12 h-12 rounded-2xl object-cover border border-slate-200 shadow-sm shrink-0"

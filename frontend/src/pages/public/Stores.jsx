@@ -92,7 +92,7 @@ function StoreCard({ store, onClick }) {
         {/* Logo overlay */}
         {store.logo && (
           <div className="absolute -bottom-5 left-4">
-            <img src={store.logo} alt={store.storeName}
+            <img loading="lazy" decoding="async" src={store.logo} alt={store.storeName}
               className="w-10 h-10 rounded-xl border-2 border-white shadow-md object-cover bg-white" />
           </div>
         )}

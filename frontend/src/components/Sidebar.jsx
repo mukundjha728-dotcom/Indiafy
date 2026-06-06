@@ -91,7 +91,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, activeNode }) {
         {/* Inner shadow at the bottom of the header */}
         <div className="p-6 border-b border-slate-100 shadow-[inset_0_-20px_20px_-20px_rgba(0,0,0,0.08)] relative z-10">
           <div className="flex items-center gap-3">
-            <img 
+            <img loading="lazy" decoding="async" 
               src="/Images/logo.png" 
               alt="Indiafy Logo" 
               className="h-10 w-auto object-contain drop-shadow-sm" 
@@ -135,7 +135,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, activeNode }) {
             {/* Inner shadow at the bottom of the header */}
             <div className="p-4 flex justify-between items-center border-b border-slate-100 shadow-[inset_0_-20px_20px_-20px_rgba(0,0,0,0.08)] relative z-10">
               <div className="flex items-center gap-2">
-                <img 
+                <img loading="lazy" decoding="async" 
                   src="/Images/logo.png" 
                   alt="Indiafy Logo" 
                   className="h-8 w-auto object-contain drop-shadow-sm" 

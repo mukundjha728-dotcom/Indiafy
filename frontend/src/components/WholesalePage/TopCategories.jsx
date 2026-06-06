@@ -36,7 +36,7 @@ function TopCategories() {
               key={cat.id}
               className="group relative h-[240px] lg:h-[320px] rounded-[24px] overflow-hidden cursor-pointer hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
             >
-              <img 
+              <img loading="lazy" decoding="async" 
                 src={cat.img} 
                 alt={cat.name}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"

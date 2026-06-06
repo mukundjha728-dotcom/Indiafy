@@ -59,7 +59,7 @@ function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-4">
             <Link to="/" aria-label="Indiafy - Go to homepage" className="block mb-6">
-              <img
+              <img loading="lazy" decoding="async"
                 src="/Images/logo.png"
                 alt="Indiafy"
                 width={120}

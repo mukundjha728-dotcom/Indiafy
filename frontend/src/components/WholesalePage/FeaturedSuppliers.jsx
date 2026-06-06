@@ -74,7 +74,7 @@ function FeaturedSuppliers() {
                   <div className="flex items-start gap-4 mb-6 relative z-10">
                     <div className="w-16 h-16 bg-white border border-brand-border rounded-2xl flex items-center justify-center p-2 shadow-sm shrink-0 group-hover:scale-105 transition-transform">
                       {dist.profilePic ? (
-                        <img src={dist.profilePic} alt={dist.businessName} className="w-full h-full object-contain" />
+                        <img loading="lazy" decoding="async" src={dist.profilePic} alt={dist.businessName} className="w-full h-full object-contain" />
                       ) : (
                         <span className="text-2xl font-black text-brand-text-secondary uppercase">{dist.businessName?.charAt(0) || 'S'}</span>
                       )}

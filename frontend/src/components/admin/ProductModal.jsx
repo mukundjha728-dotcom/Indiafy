@@ -77,7 +77,7 @@ export default function ProductModal({
 
             <label className="border-2 border-dashed rounded-xl h-56 sm:h-64 md:h-80 flex items-center justify-center cursor-pointer overflow-hidden relative">
               {form.imagePreview ? (
-                <img
+                <img loading="lazy" decoding="async"
                   src={form.imagePreview}
                   alt="Preview"
                   className="w-full h-full object-cover"

@@ -117,7 +117,7 @@ export default function CartPage() {
                           onClick={() => navigate(`/product/${item.productId?._id}`)}
                           className="w-full sm:w-40 aspect-square rounded-[1.8rem] overflow-hidden bg-white border border-zinc-100 shrink-0 cursor-pointer"
                         >
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={item.productId?.productImage?.[0] || "https://placehold.co/400x400?text=No+Image"}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             alt={item.productId?.name || "Product"}
@@ -227,7 +227,7 @@ export default function CartPage() {
                           onClick={() => navigate(`/product/${item.productId?._id}`)}
                           className="w-16 h-16 rounded-2xl overflow-hidden bg-white border border-zinc-100 shrink-0 cursor-pointer"
                         >
-                          <img src={item.productId?.productImage?.[0] || "https://placehold.co/400x400?text=No+Image"} className="w-full h-full object-cover" alt={item.productId?.name} />
+                          <img loading="lazy" decoding="async" src={item.productId?.productImage?.[0] || "https://placehold.co/400x400?text=No+Image"} className="w-full h-full object-cover" alt={item.productId?.name} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p

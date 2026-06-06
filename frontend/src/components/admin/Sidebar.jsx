@@ -72,7 +72,7 @@ export default function Sidebar() {
       >
         {/* Mobile Header */}
         <div className="flex items-center justify-between mb-6 lg:hidden">
-          {/* <img
+          {/* <img loading="lazy" decoding="async"
             src={graphuraLogo}
             alt="Graphura"
             className="h-9 sm:h-10 cursor-pointer"
@@ -93,7 +93,7 @@ export default function Sidebar() {
           onClick={() => navigate("/admin/dashboard")}
           className="hidden lg:flex justify-center mb-6 cursor-pointer"
         >
-          {/* <img
+          {/* <img loading="lazy" decoding="async"
             src={graphuraLogo}
             alt="Graphura"
             className="h-14 object-contain"

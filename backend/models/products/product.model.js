@@ -310,6 +310,15 @@ productSchema.index({
 });
 
 productSchema.index({
+  isActive: 1,
+  isPublished: 1,
+});
+
+productSchema.index({
+  nodeType: 1,
+});
+
+productSchema.index({
   productName: "text",
   description: "text",
 });

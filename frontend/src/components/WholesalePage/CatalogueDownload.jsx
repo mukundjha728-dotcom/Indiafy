@@ -45,7 +45,7 @@ function CatalogueDownload() {
           <div className="lg:col-span-6 relative">
              <div className="relative w-full aspect-[4/5] max-w-[400px] mx-auto bg-white rounded-3xl p-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] border border-white/10 rotate-2 hover:rotate-0 transition-transform duration-500">
                <div className="w-full h-full border border-brand-border rounded-xl bg-brand-background overflow-hidden relative">
-                 <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=600" alt="Cover" className="w-full h-1/2 object-cover" />
+                 <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=600" alt="Cover" className="w-full h-1/2 object-cover" />
                  <div className="p-6">
                     <p className="text-[10px] font-black text-brand-accent uppercase tracking-widest mb-2">B2B Procurement</p>
                     <h3 className="text-3xl font-black text-brand-primary leading-tight mb-4">Sourcing <br/> India 2026</h3>

@@ -49,7 +49,7 @@ function StoreCard({ store, onClick, index }) {
           {/* Store Logo */}
           <div className="absolute bottom-3 left-3">
             {store.logo ? (
-              <img src={store.logo} alt={store.storeName} className="w-10 h-10 rounded-xl object-cover bg-white border-2 border-white shadow-md" />
+              <img loading="lazy" decoding="async" src={store.logo} alt={store.storeName} className="w-10 h-10 rounded-xl object-cover bg-white border-2 border-white shadow-md" />
             ) : (
               <div className="w-10 h-10 rounded-xl bg-white border-2 border-white shadow-md flex items-center justify-center text-sm font-bold text-brand-primary">
                 {store.storeName?.[0]}

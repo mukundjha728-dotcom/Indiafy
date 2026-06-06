@@ -188,7 +188,7 @@ export default function Products() {
           {currentItems.length > 0 ? currentItems.map((p) => (
             <div key={p._id || p.id} className="p-4 flex items-start gap-4">
               <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
-                <img src={p.productImage?.[0] || p.image} alt={p.productName || p.name} className="w-full h-full object-cover"/>
+                <img loading="lazy" decoding="async" src={p.productImage?.[0] || p.image} alt={p.productName || p.name} className="w-full h-full object-cover"/>
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-slate-900 truncate">{p.productName || p.name}</h3>
@@ -237,7 +237,7 @@ export default function Products() {
                 <tr key={p._id || p.id} className="hover:bg-slate-50 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200"><img src={p.productImage?.[0] || p.image} alt={p.productName || p.name} className="w-full h-full object-cover"/></div>
+                      <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200"><img loading="lazy" decoding="async" src={p.productImage?.[0] || p.image} alt={p.productName || p.name} className="w-full h-full object-cover"/></div>
                       <div>
                         <p className="font-bold text-slate-900">{p.productName || p.name}</p>
                         <p className="text-xs font-bold text-slate-500 bg-slate-100 w-fit px-1.5 py-0.5 rounded mt-0.5">{p.subCategoryId?.subCategoryName || p.category || 'General'}</p>
@@ -314,7 +314,7 @@ export default function Products() {
                   <div className="flex flex-wrap gap-3 mb-3">
                     {imagePreviews.map((img, idx) => (
                       <div key={idx} className="relative w-20 h-20 rounded-xl overflow-hidden border border-slate-200 group shadow-sm">
-                        <img src={img} alt="preview" className="w-full h-full object-cover" />
+                        <img loading="lazy" decoding="async" src={img} alt="preview" className="w-full h-full object-cover" />
                         <button 
                           type="button" 
                           onClick={() => removeImage(idx)}

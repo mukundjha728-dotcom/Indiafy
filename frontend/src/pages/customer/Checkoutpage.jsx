@@ -608,7 +608,7 @@ export default function CheckoutPage() {
                   {displayItems.map((item, idx) => (
                     <div key={idx} className="flex gap-4">
                       <div className="w-12 h-12 bg-white rounded-xl overflow-hidden shrink-0 border border-zinc-800">
-                        <img 
+                        <img loading="lazy" decoding="async" 
                           src={item.productId?.productImage?.[0] || "https://via.placeholder.com/100"} 
                           className="w-full h-full object-cover"
                         />

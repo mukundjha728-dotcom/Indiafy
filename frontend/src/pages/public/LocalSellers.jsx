@@ -179,7 +179,7 @@ export default function LocalSellers() {
                 >
                   {/* Card Image area */}
                   <div className="relative w-full aspect-video md:aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-4 bg-zinc-100 shrink-0">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={seller.img}
                       alt={seller.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

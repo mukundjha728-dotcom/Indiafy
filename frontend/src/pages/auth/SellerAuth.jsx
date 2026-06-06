@@ -134,7 +134,7 @@ export default function SellerAuth() {
 
           {/* DESKTOP LOGO IMAGE */}
           <div className="relative z-10 flex items-center">
-            <img src="/Images/logo.png" alt="Indiafy Logo" className="h-12 w-auto object-contain" />
+            <img loading="lazy" decoding="async" src="/Images/logo.png" alt="Indiafy Logo" className="h-12 w-auto object-contain" />
           </div>
 
           <div className="relative z-10 w-full max-w-md space-y-8">
@@ -186,7 +186,7 @@ export default function SellerAuth() {
               
               {/* MOBILE LOGO IMAGE */}
               <div className="flex lg:hidden items-center justify-center mb-8 sm:mb-12 pb-6 border-b border-slate-100 shrink-0">
-                <img src="/Images/logo.png" alt="Indiafy Logo" className="h-10 sm:h-12 w-auto object-contain" />
+                <img loading="lazy" decoding="async" src="/Images/logo.png" alt="Indiafy Logo" className="h-10 sm:h-12 w-auto object-contain" />
               </div>
 
               {/* Form Headers */}

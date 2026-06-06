@@ -136,7 +136,7 @@ export default function StorePage() {
         <section className="relative w-full">
           {/* Banner */}
           <div className="relative w-full h-48 md:h-64 bg-zinc-200">
-            <img
+            <img loading="lazy" decoding="async"
               src={storeInfo.banner || "https://images.unsplash.com/photo-1604719312566-8912e9c8a213?q=80&w=1600"}
               alt="Banner"
               className="w-full h-full object-cover"
@@ -156,7 +156,7 @@ export default function StorePage() {
             <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-xl shadow-zinc-200/50 border border-zinc-100 flex flex-col md:flex-row gap-5 md:gap-8 items-start md:items-center">
               {/* Logo */}
               <div className="w-20 h-20 md:w-28 md:h-28 rounded-[1.5rem] overflow-hidden border-4 border-white shadow-lg shrink-0 bg-zinc-100">
-                <img
+                <img loading="lazy" decoding="async"
                   src={storeInfo.logo || "https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?q=80&w=200"}
                   alt="Logo"
                   className="w-full h-full object-cover"
@@ -273,7 +273,7 @@ export default function StorePage() {
 
                     {/* Product Image */}
                     <div className="w-full aspect-square bg-zinc-50 rounded-xl md:rounded-2xl mb-3 overflow-hidden relative p-4">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={product.img}
                         alt={product.name}
                         className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500"

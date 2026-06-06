@@ -60,7 +60,7 @@ function ProfitOpportunities() {
               
               {/* Header */}
               <div className="flex items-center gap-4 mb-8">
-                <img src={opp.img} alt={opp.product} className="w-16 h-16 rounded-xl object-cover border border-brand-border shadow-sm" />
+                <img loading="lazy" decoding="async" src={opp.img} alt={opp.product} className="w-16 h-16 rounded-xl object-cover border border-brand-border shadow-sm" />
                 <div>
                   <p className="text-[10px] font-bold text-brand-text-secondary uppercase tracking-widest mb-1">{opp.category}</p>
                   <h3 className="text-lg font-black text-brand-primary leading-tight">{opp.product}</h3>

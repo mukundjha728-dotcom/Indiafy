@@ -339,7 +339,7 @@ function PCard({ p, i, query }) {
     >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-[#0d1422]">
-        <img
+        <img loading="lazy" decoding="async"
           src={p.img}
           alt={p.name}
           className="cimg w-full h-full object-cover"
@@ -980,7 +980,7 @@ export default function SearchResultsPage() {
                   style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-[#0d1422] border border-white/[.05] shrink-0 relative">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={p.img}
                       alt={p.name}
                       className="cimg w-full h-full object-cover"

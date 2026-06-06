@@ -24,7 +24,7 @@ function MiniStoreCard({ store, onClick }) {
       {/* Avatar */}
       <div className="relative shrink-0">
         {store.logo ? (
-          <img src={store.logo} alt={store.storeName} className="w-12 h-12 rounded-xl object-cover border border-brand-border" />
+          <img loading="lazy" decoding="async" src={store.logo} alt={store.storeName} className="w-12 h-12 rounded-xl object-cover border border-brand-border" />
         ) : (
           <div className="w-12 h-12 rounded-xl bg-brand-background flex items-center justify-center text-base font-bold text-brand-primary border border-brand-border">
             {store.storeName?.[0]}

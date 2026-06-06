@@ -323,7 +323,7 @@ export default function Settings({ storeDetails, setStoreDetails }) {
             >
               {/* If logo exists, show image. Else show initials */}
               {formData.logo ? (
-                 <img src={formData.logo} alt="Store Logo" className="w-24 h-24 rounded-2xl object-cover shadow-inner border border-slate-200" />
+                 <img loading="lazy" decoding="async" src={formData.logo} alt="Store Logo" className="w-24 h-24 rounded-2xl object-cover shadow-inner border border-slate-200" />
               ) : (
                  <div className="w-24 h-24 rounded-2xl bg-slate-900 flex items-center justify-center text-white text-3xl font-bold overflow-hidden shadow-inner">
                    {formData.initials}

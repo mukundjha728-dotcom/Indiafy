@@ -230,7 +230,7 @@ export default function ProductDetailPage() {
                 layoutId="main-img"
                 className="relative aspect-[4/3] rounded-[3rem] overflow-hidden bg-zinc-50 border border-zinc-100 shadow-sm"
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src={pImages[activeImg]}
                   className="w-full h-full object-cover"
                   alt="Main"
@@ -267,7 +267,7 @@ export default function ProductDetailPage() {
                         : "border-transparent opacity-60"
                     }`}
                   >
-                    <img src={img} className="w-full h-full object-cover" alt="thumb" />
+                    <img loading="lazy" decoding="async" src={img} className="w-full h-full object-cover" alt="thumb" />
                   </button>
                 ))}
               </div>
@@ -528,7 +528,7 @@ export default function ProductDetailPage() {
                 className="group cursor-pointer"
               >
                 <div className="aspect-square rounded-[2rem] overflow-hidden bg-zinc-50 border border-zinc-100 mb-4">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={p.img}
                     className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
                     alt={p.name}

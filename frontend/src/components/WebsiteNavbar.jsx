@@ -130,7 +130,7 @@ function WebsiteNavbar() {
             
             {/* LEFT: Logo */}
             <Link to="/" className="flex-shrink-0" aria-label="Indiafy - Go to homepage">
-              <img
+              <img loading="lazy" decoding="async"
                 src="/Images/logo.png"
                 alt="Indiafy"
                 width={120}
@@ -432,7 +432,7 @@ function WebsiteNavbar() {
             >
               {/* Header */}
               <div className="flex items-center justify-between p-5 border-b border-brand-border">
-                <img src="/Images/logo.png" alt="Indiafy" width={96} height={24} className="h-6 w-auto" />
+                <img loading="lazy" decoding="async" src="/Images/logo.png" alt="Indiafy" width={96} height={24} className="h-6 w-auto" />
                 <button
                   onClick={() => setMenuOpen(false)}
                   aria-label="Close navigation menu"

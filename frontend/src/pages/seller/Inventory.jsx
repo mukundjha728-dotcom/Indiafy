@@ -384,7 +384,7 @@ export default function Inventory({ search: globalSearch = "" }) {
             <div key={product._id || product.id} className="p-4 space-y-4">
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
-                  <img src={product.productImage?.[0] || product.image} alt={product.productName || product.name} className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={product.productImage?.[0] || product.image} alt={product.productName || product.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
@@ -448,7 +448,7 @@ export default function Inventory({ search: globalSearch = "" }) {
                   <td className="p-4 whitespace-nowrap">
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
-                        <img src={product.productImage?.[0] || product.image} alt={product.productName || product.name} className="w-full h-full object-cover" />
+                        <img loading="lazy" decoding="async" src={product.productImage?.[0] || product.image} alt={product.productName || product.name} className="w-full h-full object-cover" />
                       </div>
                       <div>
                         <div className="text-sm font-bold text-slate-900">{product.productName || product.name}</div>
@@ -534,7 +534,7 @@ export default function Inventory({ search: globalSearch = "" }) {
                 <div className="flex flex-wrap gap-3 mb-3">
                   {editImages.map((img, idx) => (
                     <div key={idx} className="relative w-16 h-16 rounded-xl overflow-hidden border border-slate-200 group shadow-sm">
-                      <img src={img} alt="preview" className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={img} alt="preview" className="w-full h-full object-cover" />
                       <button type="button" onClick={() => removeEditImage(idx)} className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[1px]">
                         <X size={18} className="text-white" />
                       </button>

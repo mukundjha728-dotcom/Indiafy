@@ -77,7 +77,7 @@ export default function Inventory() {
           {/* Page Header */}
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 mb-6">
             <div className="flex gap-4 items-start">
-              <img
+              <img loading="lazy" decoding="async"
                 src="../../assets/products/women/Jaket1.webp"
                 alt="Product"
                 className="w-16 h-20 sm:w-20 sm:h-24 md:w-28 md:h-32 object-cover rounded-xl border"

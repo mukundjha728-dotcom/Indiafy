@@ -300,7 +300,7 @@ const ProductCard = ({ product }) => {
       className="group bg-zinc-50/50 rounded-[2rem] p-3 md:p-4 border border-zinc-100 hover:bg-white hover:shadow-2xl transition-all cursor-pointer"
     >
       <div className="relative aspect-square rounded-[1.5rem] overflow-hidden bg-white mb-4 md:mb-6">
-        <img
+        <img loading="lazy" decoding="async"
           src={product.img}
           className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
           alt={product.name}

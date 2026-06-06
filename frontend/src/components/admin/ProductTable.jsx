@@ -178,7 +178,7 @@ export default function ProductTable() {
 
                     <td className="p-4">
                       <div className="flex items-center gap-4">
-                        <img
+                        <img loading="lazy" decoding="async"
                           src={product.image}
                           alt={product.name}
                           className="w-14 h-14 rounded-lg object-cover"
@@ -227,7 +227,7 @@ export default function ProductTable() {
           {paginatedProducts.map((product) => (
             <div key={product.id} className="border rounded-xl p-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <img
+                <img loading="lazy" decoding="async"
                   src={product.image}
                   alt={product.name}
                   className="w-16 h-16 rounded-lg object-cover"

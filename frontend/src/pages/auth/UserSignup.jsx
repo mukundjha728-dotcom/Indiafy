@@ -522,7 +522,7 @@ const AuthPage = () => {
             <div className="pt-6 border-t border-white/10 flex items-center gap-4">
               <div className="flex -space-x-2">
                 {[1, 2, 3].map((i) => (
-                  <img
+                  <img loading="lazy" decoding="async"
                     key={i}
                     src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`}
                     className="w-8 h-8 rounded-full border-2 border-[#0f172a]"

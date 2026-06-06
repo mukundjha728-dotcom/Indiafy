@@ -158,7 +158,7 @@ export default function OrderSuccessPage() {
                   key={item._id || idx}
                   className="flex gap-4 p-4 bg-zinc-50 rounded-2xl border border-zinc-100"
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={item.product?.productImage?.[0] || "https://placehold.co/200x200?text=Product"}
                     className="w-16 h-16 rounded-xl object-cover"
                     alt="item"

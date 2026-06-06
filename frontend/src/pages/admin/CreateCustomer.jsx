@@ -83,7 +83,7 @@ export default function CreateCustomer() {
               />
 
               {avatar ? (
-                <img
+                <img loading="lazy" decoding="async"
                   src={avatar}
                   className="w-full h-full rounded-full object-cover"
                 />
