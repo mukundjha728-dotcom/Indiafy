@@ -202,7 +202,6 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/wholesale" element={<Wholesalepage />} />
-            <Route path="/quick-commerce" element={<QuickCommerce />} />
             <Route path="/cart" element={<Cartpage />} />
             <Route path="/checkout" element={<Checkoutpage />} />
             <Route path="/payment" element={<Paymentpage />} />
@@ -218,6 +217,9 @@ export default function App() {
 
           {/* Marketplace stores page — has its own Navbar/Footer */}
           <Route path="/stores" element={<Stores />} />
+
+          {/* Quick Commerce — standalone app-like experience */}
+          <Route path="/quick-commerce" element={<QuickCommerce />} />
 
           {/* =====================================================
               CUSTOMER (protected)
