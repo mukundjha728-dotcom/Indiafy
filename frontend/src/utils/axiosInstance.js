@@ -52,11 +52,11 @@ axiosInstance.interceptors.request.use(
             };
 
             if (isSellerRoute) {
-                // Prefer seller token for seller endpoints
-                token = getSellerToken() || getCustomerToken();
+                // Strictly use seller token for seller endpoints
+                token = getSellerToken();
             } else {
-                // Prefer customer token for customer endpoints
-                token = getCustomerToken() || getSellerToken();
+                // Strictly use customer token for customer endpoints
+                token = getCustomerToken();
             }
 
             if (token) {
