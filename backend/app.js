@@ -132,7 +132,17 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
 // Data Sanitization against NoSQL query injection
-app.use(mongoSanitize());
+app.use((req, res, next) => {
+  ['body', 'params', 'headers', 'query'].forEach((key) => {
+    if (req[key]) {
+      const sanitized = mongoSanitize.sanitize(req[key]);
+      if (key !== 'query') {
+        req[key] = sanitized;
+      }
+    }
+  });
+  next();
+});
 
 // Prevent HTTP parameter pollution
 app.use(hpp());
