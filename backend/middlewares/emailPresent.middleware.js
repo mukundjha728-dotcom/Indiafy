@@ -12,7 +12,7 @@ const signupEmailPresent = async (req, res, next ) => {
         const seller = await sellerAuthModel.findOne({email: email});
 
         if(admin || customer || seller){
-            return res.status(401).json(new ApiError(401, "Email already registration"));
+            return res.status(409).json(new ApiError(409, "Email already registered"));
         }
 
         return next();

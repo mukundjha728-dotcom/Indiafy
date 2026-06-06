@@ -23,8 +23,6 @@ import {
   LogOut,
   ChevronRight,
 } from "lucide-react";
-import WebsiteNavbar from "../../components/WebsiteNavbar";
-import Footer from "../../components/Footer";
 import StoreCreationWizard from "./components/StoreCreationWizard";
 
 /* ----------------------------------------------------------
@@ -235,9 +233,7 @@ export default function SellerHub() {
   ---------------------------------------------------------- */
   return (
     <div className="bg-[#050505] min-h-screen text-zinc-400 font-sans selection:bg-blue-500 selection:text-white">
-      <WebsiteNavbar />
-
-      <main className="pt-32 pb-24 px-4 sm:px-6 max-w-7xl mx-auto">
+      <main className="pt-12 pb-24 px-4 sm:px-6 max-w-7xl mx-auto">
 
         {/* =====================================================
             HEADER
@@ -488,8 +484,6 @@ export default function SellerHub() {
           </span>
         </div>
       </main>
-
-      <Footer />
 
       {/* =====================================================
           STORE CREATION WIZARD
