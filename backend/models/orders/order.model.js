@@ -138,11 +138,6 @@ const orderSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// --- INDEXES ---
-orderSchema.index({ customer: 1, createdAt: -1 });
-orderSchema.index({ "orderItems.seller": 1, createdAt: -1 });
-orderSchema.index({ status: 1 });
-
 const OrderModel = mongoose.model("order", orderSchema);
 
 export default OrderModel;

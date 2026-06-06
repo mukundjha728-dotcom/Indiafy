@@ -6,7 +6,6 @@ import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import hpp from "hpp";
 import mongoSanitize from "express-mongo-sanitize";
-import compression from "compression";
 import { databaseConfig } from "./config/db.config.js";
  
 // Initialize database connection
@@ -128,13 +127,9 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Middlewares
-app.use(compression());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
-
-import apicache from "apicache";
-const cache = apicache.middleware;
 
 // Data Sanitization against NoSQL query injection
 app.use((req, res, next) => {
@@ -189,12 +184,12 @@ app.use("/seller/auth", authLimiter, sellerAuthRoutes);
 app.use("/api/v1/indiafy/seller/nodes", sellerNodeRoutes);
 app.use("/seller/nodes", sellerNodeRoutes);
 
-// Public marketplace routes (no auth required) - CACHED for 5 minutes for performance
-app.use("/api/v1/indiafy/public", cache("5 minutes"), publicStoreRoutes);
-app.use("/public", cache("5 minutes"), publicStoreRoutes);
+// Public marketplace routes (no auth required)
+app.use("/api/v1/indiafy/public", publicStoreRoutes);
+app.use("/public", publicStoreRoutes);
 
-app.use("/api/v1/indiafy/products", cache("5 minutes"), productRoutes);
-app.use("/products", cache("5 minutes"), productRoutes);
+app.use("/api/v1/indiafy/products", productRoutes);
+app.use("/products", productRoutes);
 
 app.use("/api/v1/indiafy/orders", orderRoutes);
 app.use("/orders", orderRoutes);
@@ -249,16 +244,5 @@ app.use((err, req, res, next) => {
     stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
   });
 });
-
-// Self-ping to prevent Render free-tier sleep
-if (process.env.NODE_ENV === 'production') {
-  setInterval(() => {
-    try {
-      fetch('https://indiafy-1.onrender.com/health')
-        .then(res => res.json())
-        .catch(() => {});
-    } catch (err) {}
-  }, 14 * 60 * 1000); // 14 minutes
-}
 
 export default app;
