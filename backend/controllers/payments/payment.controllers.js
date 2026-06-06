@@ -17,16 +17,25 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
     }
 
     // Safety check for test accounts: amounts > 10 Lakhs might fail
-    const key_id = process.env.Razorpay_Key_Id || "rzp_test_Sm5HFLdh2qH4N1";
-    const key_secret = process.env.Razorpay_Key_Secret || "CIXwT8ZWQYU6j19hIqzmgeX1";
+    const key_id = process.env.Razorpay_Key_Id;
+    const key_secret = process.env.Razorpay_Key_Secret;
 
-    if (amount > 1000000 && key_id.includes("test")) {
+    if (!key_id || !key_secret) {
+        if (process.env.NODE_ENV === "production") {
+            throw new ApiError(500, "Razorpay credentials are not defined in production.");
+        }
+    }
+
+    const activeKeyId = key_id || "rzp_test_Sm5HFLdh2qH4N1";
+    const activeSecret = key_secret || "CIXwT8ZWQYU6j19hIqzmgeX1";
+
+    if (amount > 1000000 && activeKeyId.includes("test")) {
         console.warn("Test Amount Warning: Amount is very high for a test account. This might be blocked by Razorpay.");
     }
 
     const instance = new Razorpay({
-        key_id,
-        key_secret,
+        key_id: activeKeyId,
+        key_secret: activeSecret,
     });
 
     const options = {
@@ -58,20 +67,30 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
 export const verifyPayment = asyncHandler(async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
 
-    const key_secret = process.env.Razorpay_Key_Secret || "CIXwT8ZWQYU6j19hIqzmgeX1";
-    const key_id = process.env.Razorpay_Key_Id || "rzp_test_Sm5HFLdh2qH4N1";
+    const key_secret = process.env.Razorpay_Key_Secret;
+    const key_id = process.env.Razorpay_Key_Id;
+
+    if (!key_secret || !key_id) {
+        if (process.env.NODE_ENV === "production") {
+            throw new ApiError(500, "Razorpay API keys are not configured on the production server.");
+        }
+    }
+
+    const activeSecret = key_secret || "CIXwT8ZWQYU6j19hIqzmgeX1";
+    const activeKeyId = key_id || "rzp_test_Sm5HFLdh2qH4N1";
 
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
-        .createHmac("sha256", key_secret)
+        .createHmac("sha256", activeSecret)
         .update(sign.toString())
         .digest("hex");
 
-    // 🔒 STRICT PRODUCTION SECURITY LOCK: Only allow simulator bypass if active key is genuinely a TEST key.
-    const isKeyInTestMode = !process.env.Razorpay_Key_Secret || key_id.includes("test") || key_id.startsWith("rzp_test");
+    // 🔒 STRICT PRODUCTION SECURITY LOCK: Only allow simulator bypass in non-production, test-key mode.
+    const isProd = process.env.NODE_ENV === "production";
+    const isKeyInTestMode = activeKeyId.includes("test") || activeKeyId.startsWith("rzp_test");
     const hasOverrideParameters = razorpay_signature === "test_manual_override" || razorpay_order_id === "manual";
     
-    const isTestSimulatorVerified = isKeyInTestMode && hasOverrideParameters;
+    const isTestSimulatorVerified = !isProd && isKeyInTestMode && hasOverrideParameters;
 
     if (razorpay_signature !== expectedSign && !isTestSimulatorVerified) {
         throw new ApiError(400, "Invalid payment signature. Live transaction verification failed.");
@@ -137,6 +156,12 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 // @route   GET /api/v1/indiafy/payments/get-key
 // @access  Private (Customer/Seller)
 export const getRazorpayKey = asyncHandler(async (req, res) => {
-    const key_id = process.env.Razorpay_Key_Id || "rzp_test_Sm5HFLdh2qH4N1";
-    return res.status(200).json(new ApiResponse(200, { key: key_id }, "Razorpay Key ID fetched successfully"));
+    const key_id = process.env.Razorpay_Key_Id;
+    if (!key_id) {
+        if (process.env.NODE_ENV === "production") {
+            throw new ApiError(500, "Razorpay Key ID is not configured on production.");
+        }
+    }
+    const activeKeyId = key_id || "rzp_test_Sm5HFLdh2qH4N1";
+    return res.status(200).json(new ApiResponse(200, { key: activeKeyId }, "Razorpay Key ID fetched successfully"));
 });

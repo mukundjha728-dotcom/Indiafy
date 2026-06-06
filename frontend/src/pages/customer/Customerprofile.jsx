@@ -41,7 +41,7 @@ const fmtDate = (date) => {
 };
 
 export default function CustomerProfile() {
-  const { profile, fetchProfile, isLoading, deleteAddress, updateProfile, addAddress } = useProfileStore();
+  const { profile, fetchProfile, isLoading, deleteAddress, updateProfile, addAddress, deleteAccount } = useProfileStore();
   const { user: authUser, logout } = useAuthStore();
   const { orders, fetchMyOrders, deleteOrder } = useOrderStore();
   const navigate = useNavigate();
@@ -133,6 +133,19 @@ export default function CustomerProfile() {
     } catch (err) {
       console.error("Logout issue:", err);
       navigate("/", { replace: true });
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm("WARNING: Are you sure you want to permanently delete your account? All your order history, profile data, and saved addresses will be deleted permanently in accordance with GDPR Right to be Forgotten. This action is irreversible.")) {
+      try {
+        await deleteAccount();
+        toast.success("Account permanently deleted. Hope to see you again!");
+        logout();
+        navigate("/", { replace: true });
+      } catch (err) {
+        toast.error("Failed to delete account. Please try again.");
+      }
     }
   };
 
@@ -563,6 +576,27 @@ export default function CustomerProfile() {
                        </div>
                        <ChevronRight size={20} className="text-zinc-800 group-hover:text-white" />
                     </button>
+
+                    {/* GDPR Danger Zone */}
+                    <div className="p-8 bg-red-950/10 border border-red-500/20 rounded-[2.5rem] space-y-6 mt-8">
+                       <div className="flex items-start gap-4">
+                          <div className="bg-red-500/10 p-3 rounded-2xl shrink-0 border border-red-500/20">
+                             <Trash2 className="w-6 h-6 text-red-500" />
+                          </div>
+                          <div>
+                             <h4 className="text-white font-bold text-base mb-1 tracking-tight">Danger Zone: GDPR Data Erasure</h4>
+                             <p className="text-zinc-500 text-xs font-semibold leading-relaxed">
+                                In accordance with GDPR (General Data Protection Regulation), you have the Right to Erasure ("Right to be Forgotten"). Clicking the button below will immediately and permanently delete your account, order history, profile details, and address records.
+                             </p>
+                          </div>
+                       </div>
+                       <button
+                         onClick={handleDeleteAccount}
+                         className="w-full py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.2)]"
+                       >
+                          <Trash2 size={14} /> Request Permanent Account Erasure
+                       </button>
+                    </div>
                   </div>
                 )}
               </motion.div>

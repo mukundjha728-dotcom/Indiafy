@@ -60,5 +60,14 @@ export const useProfileStore = create((set, get) => ({
     } catch (err) {
       throw err;
     }
+  },
+
+  deleteAccount: async () => {
+    try {
+      await axiosInstance.delete('/customer/profile');
+      set({ profile: null });
+    } catch (err) {
+      throw err;
+    }
   }
 }));

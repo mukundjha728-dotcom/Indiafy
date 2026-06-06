@@ -123,3 +123,32 @@ export const deleteAddress = async (req, res) => {
         return res.status(500).json(new ApiError(500, error.message, [error]));
     }
 };
+
+// @desc    Delete user account (GDPR compliance)
+// @route   DELETE /api/v1/indiafy/customer/profile
+export const deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const role = req.user.role;
+
+        // Delete profile
+        await CustomerProfile.findOneAndDelete({ customerId: userId });
+
+        // Delete auth account
+        if (role === "Seller") {
+            const SellerModel = (await import("../../models/sellers/auth.model.js")).default;
+            await SellerModel.findByIdAndDelete(userId);
+        } else {
+            await CustomerModel.findByIdAndDelete(userId);
+        }
+
+        // Clear cookies if session exists
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");
+
+        return res.status(200).json(new ApiResponse(200, null, "Account and all associated data deleted successfully in accordance with GDPR regulations."));
+    } catch (error) {
+        console.error("deleteAccount Error:", error);
+        return res.status(500).json(new ApiError(500, error.message, [error]));
+    }
+};

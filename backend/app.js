@@ -5,6 +5,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import hpp from "hpp";
+import mongoSanitize from "express-mongo-sanitize";
 import { databaseConfig } from "./config/db.config.js";
  
 // Initialize database connection
@@ -112,23 +113,26 @@ app.use(
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 // Global Rate Limiting
-// const limiter = rateLimit({
-//     windowMs: 15 * 60 * 1000, // 15 minutes
-//     max: 10000, // Increased for development/testing to prevent 429 errors
-//     handler: (req, res) => {
-//         res.status(429).json({
-//             success: false,
-//             message: "Too many requests from this IP, please try again later.",
-//             statusCode: 429
-//         });
-//     }
-// });
-// app.use(limiter);
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000, // Limit each IP to 1000 requests per windowMs
+    handler: (req, res) => {
+        res.status(429).json({
+            success: false,
+            message: "Too many requests from this IP, please try again later.",
+            statusCode: 429
+        });
+    }
+});
+app.use(limiter);
 
 // Middlewares
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+
+// Data Sanitization against NoSQL query injection
+app.use(mongoSanitize());
 
 // Prevent HTTP parameter pollution
 app.use(hpp());
@@ -136,7 +140,7 @@ app.use(hpp());
 // Auth Rate Limiting (Brute Force Protection)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10000, // Increased for development/testing
+  max: 20, // Limit each IP to 20 auth attempts per windowMs
   handler: (req, res) => {
     res.status(429).json({
       success: false,
@@ -158,14 +162,14 @@ app.get("/health", (req, res) => {
 });
 
 // Routes
-app.use("/api/v1/indiafy/admin/auth", adminAuthRoutes);
-app.use("/admin/auth", adminAuthRoutes);
+app.use("/api/v1/indiafy/admin/auth", authLimiter, adminAuthRoutes);
+app.use("/admin/auth", authLimiter, adminAuthRoutes);
 
-app.use("/api/v1/indiafy/customer/auth", customerAuthRoutes);
-app.use("/customer/auth", customerAuthRoutes);
+app.use("/api/v1/indiafy/customer/auth", authLimiter, customerAuthRoutes);
+app.use("/customer/auth", authLimiter, customerAuthRoutes);
 
-app.use("/api/v1/indiafy/seller/auth", sellerAuthRoutes);
-app.use("/seller/auth", sellerAuthRoutes);
+app.use("/api/v1/indiafy/seller/auth", authLimiter, sellerAuthRoutes);
+app.use("/seller/auth", authLimiter, sellerAuthRoutes);
 
 app.use("/api/v1/indiafy/seller/nodes", sellerNodeRoutes);
 app.use("/seller/nodes", sellerNodeRoutes);
@@ -192,21 +196,6 @@ app.use("/customer/profile", customerProfileRoutes);
 // Wholesale Routes
 app.use("/api/v1/indiafy/wholesale", wholesaleRoutes);
 app.use("/wholesale", wholesaleRoutes);
-
-// DEV WIPE ROUTE
-app.get("/api/v1/dev/wipe", async (req, res) => {
-  try {
-    const mongoose = await import("mongoose");
-    const db = mongoose.connection.db;
-    const collections = ["sellers", "products", "sellernodes", "localstores", "wholesalestores", "orders"];
-    for (const name of collections) {
-      try { await db.collection(name).deleteMany({}); } catch (e) {}
-    }
-    res.json({ message: "Seller data wiped successfully!" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {

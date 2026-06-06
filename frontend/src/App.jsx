@@ -16,6 +16,7 @@ import {
 import { Toaster } from "react-hot-toast";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import CookieConsent from "./components/CookieConsent";
 
 import { useAuthStore } from "./store/authStore";
 import { useSellerAuthStore } from "./store/sellerAuthStore";
@@ -190,6 +191,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Toaster position="top-right" />
+      <CookieConsent />
 
       <Suspense fallback={<PageLoader />}>
         <Routes>
