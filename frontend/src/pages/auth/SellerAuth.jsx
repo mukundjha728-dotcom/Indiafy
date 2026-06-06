@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
@@ -10,20 +8,40 @@ import {
   ShieldCheck, Zap, Phone, MapPin, Building, CreditCard, CheckCircle, 
   X 
 } from 'lucide-react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
+const loginSchema = z.object({
+  email: z.string().email("Invalid email format").nonempty("Email is required"),
+  password: z.string().nonempty("Password is required"),
+});
 
-const InputField = ({ label, icon: Icon, required, className = "", ...props }) => (
-  <div className={`space-y-2 w-full ${className}`}>
+const signupSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().optional(),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+const InputField = ({ label, icon: Icon, required, error, register, name, className = "", ...props }) => (
+  <div className={`space-y-1.5 w-full ${className}`}>
     <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest pl-1">
       {label} {required && <span className="text-blue-500">*</span>}
     </label>
     <div className="relative group">
       {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={20} />}
       <input 
+        {...(register ? register(name) : {})}
         {...props} 
-        className={`w-full bg-slate-50 hover:bg-slate-100 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl py-4 ${Icon ? 'pl-12' : 'pl-5'} pr-5 text-sm font-medium text-slate-900 outline-none transition-all shadow-sm focus:shadow-md focus:ring-4 focus:ring-blue-500/10`} 
+        className={`w-full bg-slate-50 hover:bg-slate-100 focus:bg-white border ${error ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-500'} rounded-2xl py-4 ${Icon ? 'pl-12' : 'pl-5'} pr-5 text-sm font-medium text-slate-900 outline-none transition-all shadow-sm focus:shadow-md focus:ring-4 ${error ? 'focus:ring-red-500/10' : 'focus:ring-blue-500/10'}`} 
       />
     </div>
+    {error && <p className="text-[10px] text-red-500 font-bold pl-1 uppercase tracking-wider">{error}</p>}
   </div>
 );
 
@@ -31,94 +49,69 @@ export default function SellerAuth() {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [tagInput, setTagInput] = useState('');
   
   const navigate = useNavigate();
   const loginAuth = useSellerAuthStore((state) => state.login);
   
-  const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '', phone: '', password: '', confirmPassword: '',
-    sellerType: 'Retail', bizType: 'individual', bizName: '', gstin: '', pan: '', address: '', city: '', state: '', pincode: '',
-    accHolder: '', accNumber: '', ifsc: '', bankName: '',
-    storeName: '', storeDesc: '', tags: [],
-    cod: true, whatsapp: true, terms1: false, terms2: false
+  const {
+    register: registerLogin,
+    handleSubmit: handleLoginSubmit,
+    formState: { errors: loginErrors },
+    reset: resetLogin
+  } = useForm({
+    resolver: zodResolver(loginSchema)
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
-  };
+  const {
+    register: registerSignup,
+    handleSubmit: handleSignupSubmit,
+    formState: { errors: signupErrors },
+    reset: resetSignup
+  } = useForm({
+    resolver: zodResolver(signupSchema)
+  });
 
-  const handleAddTag = (e) => {
-    if ((e.key === 'Enter' || e.key === ',') && tagInput.trim()) {
-      e.preventDefault();
-      const newTag = tagInput.trim().replace(/,$/, '');
-      if (!formData.tags.includes(newTag)) {
-        setFormData({ ...formData, tags: [...formData.tags, newTag] });
+  const onLogin = async (data) => {
+    setIsLoading(true);
+    try {
+      const res = await axiosInstance.post('/seller/auth/login', data);
+      const sellerData = res?.data;
+      const accessToken = res?.data?.accessToken;
+
+      if (sellerData?._id) {
+        loginAuth(sellerData, accessToken);
+        toast.success("Login successful! Welcome back.");
+        navigate('/seller-hub');
+      } else {
+        toast.error("Login failed — invalid response. Please try again.");
       }
-      setTagInput('');
+    } catch(err) {
+      console.error("Seller login error:", err);
+      const msg = err?.response?.data?.message || err?.message || "Login failed. Check your credentials.";
+      toast.error(msg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const removeTag = (indexToRemove) => {
-    setFormData({ ...formData, tags: formData.tags.filter((_, index) => index !== indexToRemove) });
-  };
-
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    
-    if (isLogin) {
-      setIsLoading(true);
-      try {
-        // axiosInstance interceptor returns response.data directly
-        // Backend sends: { statusCode, data: { seller, accessToken }, message, success }
-        // So res = { statusCode, data: { seller, accessToken }, message, success }
-        const res = await axiosInstance.post('/seller/auth/login', {
-          email: formData.email,
-          password: formData.password
-        });
-
-        // Backend ApiResponse shape:
-        // { statusCode: 200, data: { _id, email, role, accessToken, ...seller }, message, success }
-        // axiosInstance returns response.data directly, so:
-        // res = { statusCode, data: sellerObject, message, success }
-        const sellerData = res?.data; // The actual seller object
-        const accessToken = res?.data?.accessToken;
-
-        if (sellerData?._id) {
-          loginAuth(sellerData, accessToken);
-          toast.success("Login successful! Welcome back.");
-          navigate('/seller-hub');
-        } else {
-          toast.error("Login failed — invalid response. Please try again.");
-        }
-      } catch(err) {
-        console.error("Seller login error:", err);
-        const msg = err?.response?.data?.message || err?.message || "Login failed. Check your credentials.";
-        toast.error(msg);
-      } finally {
-        setIsLoading(false);
+  const onSignup = async (data) => {
+    setIsLoading(true);
+    try {
+      const res = await axiosInstance.post('/seller/auth/signup', data);
+      if (res.success || res.statusCode === 200 || res.data) {
+        toast.success("Account created! Please log in.");
+        setIsLogin(true);
+        resetSignup();
       }
-    } else {
-      setIsLoading(true);
-      try {
-        const res = await axiosInstance.post('/seller/auth/signup', formData);
-        if (res.success || res.statusCode === 200) {
-          toast.success("Account created! Please log in.");
-          setIsLogin(true);
-        }
-      } catch(err) {
-        toast.error(err.response?.data?.message || "Registration failed");
-      } finally {
-        setIsLoading(false);
-      }
+    } catch(err) {
+      toast.error(err.response?.data?.message || "Registration failed");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
-    setCurrentStep(1);
   };
 
 
@@ -215,19 +208,19 @@ export default function SellerAuth() {
               <div className="w-full shrink-0">
                 {isLogin ? (
                   /* LOGIN FORM */
-                  <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
+                  <form onSubmit={handleLoginSubmit(onLogin)} className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
                     <InputField 
                       label="Email Address" 
                       icon={Mail} 
                       name="email" 
                       type="email" 
-                      value={formData.email}
-                      onChange={handleChange}
+                      register={registerLogin}
+                      error={loginErrors.email?.message}
                       placeholder="store@example.com" 
                       required 
                     />
                     
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       <div className="flex items-center justify-between pl-1">
                         <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Password</label>
                         <button type="button" className="text-xs font-bold text-blue-600 hover:text-blue-800">Forgot password?</button>
@@ -235,18 +228,16 @@ export default function SellerAuth() {
                       <div className="relative group">
                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={20} />
                         <input 
-                          required 
-                          name="password" 
+                          {...registerLogin("password")}
                           type={showPassword ? "text" : "password"} 
-                          value={formData.password}
-                          onChange={handleChange}
                           placeholder="••••••••" 
-                          className="w-full bg-slate-50 hover:bg-slate-100 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl py-4 pl-12 pr-12 text-sm font-medium text-slate-900 outline-none transition-all shadow-sm focus:shadow-md focus:ring-4 focus:ring-blue-500/10" 
+                          className={`w-full bg-slate-50 hover:bg-slate-100 focus:bg-white border ${loginErrors.password ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 focus:border-blue-500 focus:ring-blue-500/10'} rounded-2xl py-4 pl-12 pr-12 text-sm font-medium text-slate-900 outline-none transition-all shadow-sm focus:shadow-md focus:ring-4`} 
                         />
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1.5">
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
                       </div>
+                      {loginErrors.password && <p className="text-[10px] text-red-500 font-bold pl-1 uppercase tracking-wider">{loginErrors.password.message}</p>}
                     </div>
                     
                     <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-3 py-4 mt-10 bg-slate-900 text-white rounded-2xl font-bold text-base hover:bg-slate-800 transition-all active:scale-[0.98] shadow-xl shadow-slate-900/20 disabled:opacity-70 h-[60px]">
@@ -255,16 +246,16 @@ export default function SellerAuth() {
                   </form>
                 ) : (
                   /* REGISTRATION FORM */
-                  <form onSubmit={handleSubmit} className="space-y-7 animate-in fade-in zoom-in-95 duration-500">
+                  <form onSubmit={handleSignupSubmit(onSignup)} className="space-y-7 animate-in fade-in zoom-in-95 duration-500">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-7">
-                      <InputField label="First Name" icon={User} name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" required />
-                      <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" required />
+                      <InputField label="First Name" icon={User} name="firstName" register={registerSignup} error={signupErrors.firstName?.message} placeholder="First Name" required />
+                      <InputField label="Last Name" name="lastName" register={registerSignup} error={signupErrors.lastName?.message} placeholder="Last Name" />
                     </div>
-                    <InputField label="Email Address" icon={Mail} name="email" type="email" value={formData.email} onChange={handleChange} placeholder="you@business.com" required />
+                    <InputField label="Email Address" icon={Mail} name="email" type="email" register={registerSignup} error={signupErrors.email?.message} placeholder="you@business.com" required />
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-7">
-                      <InputField label="Password" icon={Lock} name="password" type="password" value={formData.password} onChange={handleChange} placeholder="Min 6 chars" required />
-                      <InputField label="Confirm Password" icon={Lock} name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} placeholder="Re-enter" required />
+                      <InputField label="Password" icon={Lock} name="password" type="password" register={registerSignup} error={signupErrors.password?.message} placeholder="Min 6 chars" required />
+                      <InputField label="Confirm Password" icon={Lock} name="confirmPassword" type="password" register={registerSignup} error={signupErrors.confirmPassword?.message} placeholder="Re-enter" required />
                     </div>
                     
                     <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-3 py-4 mt-8 bg-blue-600 text-white rounded-2xl font-bold text-base hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/30 active:scale-[0.98] disabled:opacity-70 h-[60px]">

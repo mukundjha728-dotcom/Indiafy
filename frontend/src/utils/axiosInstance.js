@@ -78,29 +78,53 @@ axiosInstance.interceptors.response.use(
         return response.data;
     },
     (error) => {
-        // Handle global error responses, like 401 Unauthorized
-        if (error.response && error.response.status === 401) {
-            console.error("Unauthorized! Session expired.");
+        // Handle Network Errors (Offline, CORS, Timeout)
+        if (error.message === 'Network Error' || error.code === 'ECONNABORTED') {
+            if (window.location.pathname !== '/network-error') {
+                window.location.href = '/network-error';
+            }
+            return Promise.reject(error);
+        }
+
+        if (error.response) {
+            const status = error.response.status;
+
+            // Handle 401 Unauthorized
+            if (status === 401) {
+                // Don't redirect for auth/me or login/signup calls
+                const isAuthCall = error.config.url.includes('/auth/me') || error.config.url.includes('/login') || error.config.url.includes('/signup');
+                if (isAuthCall) return Promise.reject(error);
+
+                const publicPaths = [
+                    '/', '/about', '/product/', '/category/', '/search',
+                    '/store/', '/cart', '/login', '/signup',
+                    '/seller-auth', '/admin/login',
+                ];
+                const currentPath = window.location.pathname;
+                const isPublicPage = publicPaths.some(path =>
+                    path === '/' ? currentPath === '/' : currentPath.startsWith(path)
+                );
+
+                if (!isPublicPage && currentPath !== '/session-expired') {
+                    window.location.href = '/session-expired';
+                }
+            }
             
-            // 1. Don't redirect for auth/me calls (handled by authStore)
-            const isMeCall = error.config.url.includes('/auth/me');
-            if (isMeCall) return Promise.reject(error);
-
-            // 2. Only redirect if NOT on a public or auth page
-            const publicPaths = [
-                '/', '/about', '/product/', '/category/', '/search',
-                '/store/', '/cart', '/login', '/signup',
-                '/seller-auth', '/admin/login',
-            ];
-            const currentPath = window.location.pathname;
-            const isPublicPage = publicPaths.some(path =>
-                path === '/' ? currentPath === '/' : currentPath.startsWith(path)
-            );
-
-            if (!isPublicPage) {
-                window.location.href = '/';
+            // Handle 403 Forbidden
+            else if (status === 403) {
+                if (window.location.pathname !== '/403') {
+                    window.location.href = '/403';
+                }
+            }
+            
+            // Handle 500 Internal Server Error
+            else if (status >= 500) {
+                if (window.location.pathname !== '/500') {
+                    window.location.href = '/500';
+                }
             }
         }
+
         return Promise.reject(error);
     }
 );

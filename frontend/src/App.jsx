@@ -17,6 +17,7 @@ import { Toaster } from "react-hot-toast";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import CookieConsent from "./components/CookieConsent";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 import { useAuthStore } from "./store/authStore";
 import { useSellerAuthStore } from "./store/sellerAuthStore";
@@ -37,11 +38,17 @@ import SellerDashboardWrapper from "./pages/seller/components/SellerDashboardWra
 ========================================================= */
 
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-    <div className="flex flex-col items-center gap-4">
-      <div className="w-10 h-10 border-4 border-zinc-200 border-t-black rounded-full animate-spin" />
-      <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">
-        Loading...
+  <div className="min-h-screen flex items-center justify-center bg-zinc-50 relative overflow-hidden">
+    <div className="absolute top-[30%] left-[40%] w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] animate-pulse pointer-events-none" />
+    <div className="absolute top-[40%] right-[30%] w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] animate-pulse pointer-events-none" style={{ animationDelay: "1s" }} />
+    <div className="flex flex-col items-center gap-6 relative z-10">
+      <div className="relative flex items-center justify-center">
+        <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+        <div className="w-14 h-14 border-4 border-indigo-600 border-t-transparent border-l-transparent rounded-full animate-spin"></div>
+        <div className="absolute w-6 h-6 bg-indigo-600 rounded-full blur-sm animate-pulse opacity-50"></div>
+      </div>
+      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-900/60 bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100 shadow-sm">
+        Initializing
       </p>
     </div>
   </div>
@@ -63,7 +70,17 @@ const Storepage = lazy(() => import("./pages/public/StorePage"));
 const Stores = lazy(() => import("./pages/public/Stores"));
 const PrivacyPolicy = lazy(() => import("./pages/public/PrivacyPolicy"));
 const TermsAndConditions = lazy(() => import("./pages/public/TermsAndConditions"));
-const NotFound = lazy(() => import("./pages/public/NotFound"));
+
+/* =========================================================
+   ERROR PAGES
+========================================================= */
+
+const NotFound = lazy(() => import("./pages/errors/NotFound"));
+const ServerError = lazy(() => import("./pages/errors/ServerError"));
+const NetworkError = lazy(() => import("./pages/errors/NetworkError"));
+const AccessDenied = lazy(() => import("./pages/errors/AccessDenied"));
+const Maintenance = lazy(() => import("./pages/errors/Maintenance"));
+const SessionExpired = lazy(() => import("./pages/errors/SessionExpired"));
 
 /* =========================================================
    CUSTOMER PAGES
@@ -193,8 +210,9 @@ export default function App() {
       <Toaster position="top-right" />
       <CookieConsent />
 
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
+      <ErrorBoundary>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
 
           {/* =====================================================
               PUBLIC WEBSITE
@@ -334,13 +352,23 @@ export default function App() {
           </Route>
 
           {/* =====================================================
+              ERRORS
+          ===================================================== */}
+          <Route path="/500" element={<ServerError />} />
+          <Route path="/403" element={<AccessDenied />} />
+          <Route path="/network-error" element={<NetworkError />} />
+          <Route path="/maintenance" element={<Maintenance />} />
+          <Route path="/session-expired" element={<SessionExpired />} />
+
+          {/* =====================================================
               404
           ===================================================== */}
 
           <Route path="*" element={<NotFound />} />
 
         </Routes>
-      </Suspense>
+        </Suspense>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
