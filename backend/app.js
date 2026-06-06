@@ -250,4 +250,15 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Self-ping to prevent Render free-tier sleep
+if (process.env.NODE_ENV === 'production') {
+  setInterval(() => {
+    try {
+      fetch('https://indiafy-1.onrender.com/health')
+        .then(res => res.json())
+        .catch(() => {});
+    } catch (err) {}
+  }, 14 * 60 * 1000); // 14 minutes
+}
+
 export default app;
