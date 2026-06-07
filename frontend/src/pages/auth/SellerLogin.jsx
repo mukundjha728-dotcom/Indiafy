@@ -64,7 +64,7 @@ const SellerLogin = () => {
       if (sellerData?._id) {
         loginAuth(sellerData, accessToken);
         // Removed success toast per user request
-        navigate('/seller-hub');
+        navigate('/seller-hub', { replace: true });
       } else {
         toast.error("Login failed — invalid response. Please try again.");
       }

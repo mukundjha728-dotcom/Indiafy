@@ -62,7 +62,6 @@ const UserLogin = () => {
       const res = await axiosInstance.post("/customer/auth/login", data);
       if (res.success && res.data) {
         loginAuth(res.data, res.data.accessToken);
-        // Removed success toast per user request
 
         const pendingPurchase = localStorage.getItem("pending_purchase");
         const urlParams = new URLSearchParams(window.location.search);
@@ -73,12 +72,12 @@ const UserLogin = () => {
           localStorage.removeItem("pending_purchase");
           try {
             await addToCart(productId, quantity);
-            navigate("/checkout", { state: { testProduct: product } });
+            navigate("/checkout", { state: { testProduct: product }, replace: true });
           } catch (err) {
-            navigate("/checkout", { state: { testProduct: product } });
+            navigate("/checkout", { state: { testProduct: product }, replace: true });
           }
         } else {
-          navigate("/dashboard");
+          navigate("/", { replace: true });
         }
       } else {
         toast.error(res.message || "Login failed");
