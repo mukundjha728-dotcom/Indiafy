@@ -150,7 +150,7 @@ app.use(hpp());
 // Auth Rate Limiting (Brute Force Protection)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // Limit each IP to 20 auth attempts per windowMs
+  max: 500, // Limit each IP to 500 auth attempts per windowMs
   handler: (req, res) => {
     res.status(429).json({
       success: false,
