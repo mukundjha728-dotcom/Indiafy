@@ -62,7 +62,7 @@ export default function BecomeSellerInfo() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/seller-auth" className="px-8 py-4 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors shadow-xl">
+                <Link to="/seller/login" className="px-8 py-4 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors shadow-xl">
                   Register Now <ArrowRight size={16} />
                 </Link>
                 <Link to="/seller-guidelines" className="px-8 py-4 bg-white text-slate-900 border border-slate-200 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center hover:bg-slate-50 transition-colors">
@@ -162,7 +162,7 @@ export default function BecomeSellerInfo() {
         {/* CTA BOTTOM */}
         <section className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl lg:text-6xl font-black tracking-tight mb-8">Ready to grow?</h2>
-          <Link to="/seller-auth" className="inline-flex items-center gap-2 px-10 py-5 bg-brand-primary text-white rounded-xl font-black uppercase tracking-widest text-sm hover:bg-emerald-600 transition-colors shadow-xl shadow-brand-primary/20">
+          <Link to="/seller/login" className="inline-flex items-center gap-2 px-10 py-5 bg-brand-primary text-white rounded-xl font-black uppercase tracking-widest text-sm hover:bg-emerald-600 transition-colors shadow-xl shadow-brand-primary/20">
             Create Seller Account <ArrowRight size={20} />
           </Link>
         </section>

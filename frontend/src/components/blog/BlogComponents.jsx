@@ -156,7 +156,7 @@ export const CTASection = () => {
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
         <Link 
-          to="/seller-auth" 
+          to="/seller/login" 
           className="px-8 py-3 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-colors w-full sm:w-auto shadow-xl shadow-black/10"
         >
           Become a Seller

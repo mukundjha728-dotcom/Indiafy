@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SEOHead from "../../components/seo/SEOHead";
-import { Mail, Lock, Eye, EyeOff, Loader2, Users, Store, MapPin, ShoppingCart, Truck, User } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, Store, Banknote, Package, Boxes, LineChart, Users } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axiosInstance from "../../utils/axiosInstance";
-import { useAuthStore } from "../../store/authStore";
+import { useSellerAuthStore } from "../../store/sellerAuthStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useCartStore } from "../../store/cartStore";
 import { motion, AnimatePresence } from "framer-motion";
 
 const loginSchema = z.object({
@@ -34,14 +33,13 @@ const FloatingNode = ({ icon: Icon, delay, x, y, duration = 4, size = 20 }) => (
   </motion.div>
 );
 
-const UserLogin = () => {
+const SellerLogin = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
-  const loginAuth = useAuthStore((state) => state.login);
-  const addToCart = useCartStore((state) => state.addToCart);
+  const loginAuth = useSellerAuthStore((state) => state.login);
 
   const {
     register,
@@ -59,35 +57,20 @@ const UserLogin = () => {
   const onLogin = async (data) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post("/customer/auth/login", data);
-      if (res.success && res.data) {
-        loginAuth(res.data, res.data.accessToken);
-        toast.success("Welcome back to Indiafy!");
+      const res = await axiosInstance.post('/seller/auth/login', data);
+      const sellerData = res?.data;
+      const accessToken = res?.data?.accessToken;
 
-        const pendingPurchase = localStorage.getItem("pending_purchase");
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get("redirect");
-
-        if (pendingPurchase && redirect === "checkout") {
-          const { productId, quantity, product } = JSON.parse(pendingPurchase);
-          localStorage.removeItem("pending_purchase");
-          try {
-            await addToCart(productId, quantity);
-            navigate("/checkout", { state: { testProduct: product } });
-          } catch (err) {
-            navigate("/checkout", { state: { testProduct: product } });
-          }
-        } else {
-          navigate("/dashboard");
-        }
+      if (sellerData?._id) {
+        loginAuth(sellerData, accessToken);
+        toast.success("Login successful! Welcome back.");
+        navigate('/seller-hub');
       } else {
-        toast.error(res.message || "Login failed");
+        toast.error("Login failed — invalid response. Please try again.");
       }
-    } catch (err) {
-      console.error("Login error:", err);
-      toast.error(
-        err.response?.data?.message || "Invalid credentials. Please try again.",
-      );
+    } catch(err) {
+      console.error("Seller login error:", err);
+      toast.error(err?.response?.data?.message || err?.message || "Login failed. Check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -95,12 +78,12 @@ const UserLogin = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 px-4 py-6 sm:p-8 font-sans transition-colors duration-500 relative overflow-hidden">
-      <SEOHead title="Login | Indiafy" noindex={true} />
+      <SEOHead title="Seller Login | Indiafy" noindex={true} />
       
-      {/* Background Blobs (Hero Theme) */}
+      {/* Background Blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-emerald-100/60 to-teal-100/40 rounded-full blur-3xl -z-0" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-3xl -z-0" />
+        <div className="absolute top-0 right-[20%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/60 to-teal-100/40 rounded-full blur-3xl -z-0" />
+        <div className="absolute bottom-0 left-[10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-3xl -z-0" />
       </div>
 
       <motion.div 
@@ -110,23 +93,28 @@ const UserLogin = () => {
         className="relative z-10 w-full max-w-[1100px] bg-white backdrop-blur-2xl rounded-2xl sm:rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-200 overflow-hidden flex flex-col lg:flex-row min-h-[600px]"
       >
         {/* --- BRANDING / ILLUSTRATION SIDE --- */}
-        <div className="hidden lg:flex lg:w-5/12 bg-gradient-to-br from-emerald-50/50 to-teal-50/30 border-r border-slate-100 relative flex-col justify-between p-12 overflow-hidden shrink-0 text-brand-primary">
+        <div className="hidden lg:flex lg:w-5/12 bg-gradient-to-br from-emerald-50/50 to-teal-50/30 border-r border-slate-100 relative flex-col justify-between p-12 overflow-hidden shrink-0">
+          
           <div className="relative z-20">
-            <img src="/Images/logo.png" alt="Indiafy Logo" className="h-10 mb-8 object-contain" />
-            <h2 className="text-3xl xl:text-4xl font-black tracking-tight leading-[1.2] mb-4">
-              Shop <span className="text-brand-accent">Local.</span><br />
-              Delivered Faster.
+            <div className="flex items-center gap-3 mb-8">
+              <img src="/Images/logo.png" alt="Indiafy Logo" className="h-9 object-contain" />
+              <span className="text-brand-accent font-black uppercase tracking-[0.2em] text-[10px] border border-brand-accent/30 px-2 py-1 rounded bg-brand-accent/5">Seller Central</span>
+            </div>
+            <h2 className="text-3xl xl:text-4xl font-black tracking-tight leading-[1.2] mb-4 text-brand-primary">
+              Grow Your <br />
+              <span className="text-brand-accent">Business.</span><br />
+              Sell Smarter.
             </h2>
             <p className="text-brand-text-secondary font-medium text-sm max-w-[280px] leading-relaxed">
-              Discover nearby stores, exclusive deals, verified sellers, and lightning-fast local delivery.
+              Manage products, receive orders, track analytics, and scale your local business with Indiafy.
             </p>
           </div>
 
-          {/* Network Visualization Container (Hero Match) */}
-          <div className="relative h-56 w-full mt-auto mb-8">
+          {/* Network Ecosystem Visualization Container */}
+          <div className="relative h-48 w-full mt-auto mb-8">
              <svg className="absolute inset-0 w-full h-full opacity-60" viewBox="0 0 400 300" preserveAspectRatio="none">
                <defs>
-                 <linearGradient id="routeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                 <linearGradient id="routeGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
                    <stop offset="0%" stopColor="#10B981" stopOpacity="0.2" />
                    <stop offset="50%" stopColor="#10B981" stopOpacity="0.8" />
                    <stop offset="100%" stopColor="#10B981" stopOpacity="0.2" />
@@ -136,39 +124,43 @@ const UserLogin = () => {
                  initial={{ pathLength: 0 }}
                  animate={{ pathLength: 1 }}
                  transition={{ duration: 2.5, ease: "easeInOut" }}
-                 d="M 50 150 Q 150 50 250 120 T 350 80" stroke="url(#routeGrad)" strokeWidth="2" fill="none" strokeDasharray="4,6" 
+                 d="M 40 100 Q 150 20 280 120 T 360 80" stroke="url(#routeGrad2)" strokeWidth="2" fill="none" strokeDasharray="4,6" 
                />
                <motion.path 
                  initial={{ pathLength: 0 }}
                  animate={{ pathLength: 1 }}
                  transition={{ duration: 2.5, delay: 0.5, ease: "easeInOut" }}
-                 d="M 50 150 Q 100 200 200 150 T 350 180" stroke="url(#routeGrad)" strokeWidth="2" fill="none" strokeDasharray="4,6" 
+                 d="M 60 160 Q 150 200 250 140 T 360 160" stroke="url(#routeGrad2)" strokeWidth="2" fill="none" strokeDasharray="4,6" 
                />
              </svg>
              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-brand-accent/10 rounded-full blur-[40px]"></div>
              
-             <FloatingNode icon={Store} delay={0.2} x="10%" y="20%" duration={3.5} />
-             <FloatingNode icon={ShoppingCart} delay={0.5} x="75%" y="15%" duration={4} />
-             <FloatingNode icon={User} delay={0.7} x="45%" y="45%" duration={3.8} size={28} />
-             <FloatingNode icon={Truck} delay={0.9} x="20%" y="75%" duration={4.2} />
-             <FloatingNode icon={MapPin} delay={1.1} x="85%" y="70%" duration={3.5} />
+             {/* Floating Elements */}
+             <FloatingNode icon={Store} delay={0.2} x="5%" y="25%" duration={3.5} />
+             <FloatingNode icon={Banknote} delay={0.5} x="70%" y="15%" duration={4} size={24} />
+             <FloatingNode icon={LineChart} delay={0.7} x="45%" y="45%" duration={3.8} size={28} />
+             <FloatingNode icon={Package} delay={0.9} x="20%" y="75%" duration={4.2} />
+             <FloatingNode icon={Users} delay={1.1} x="80%" y="65%" duration={3.5} />
+             <FloatingNode icon={Boxes} delay={1.3} x="35%" y="10%" duration={3.9} />
           </div>
 
           {/* Statistics Section */}
-          <div className="relative z-20 flex gap-4 xl:gap-8 pt-6 border-t border-slate-200">
+          <div className="relative z-20 grid grid-cols-2 gap-y-4 gap-x-2 pt-6 border-t border-slate-200">
             <div>
-              <div className="text-xl font-bold text-brand-primary flex items-center gap-1"><Users size={16} className="text-brand-accent"/> 10K+</div>
-              <div className="text-[10px] text-brand-text-secondary font-bold uppercase tracking-wider mt-0.5">Active Buyers</div>
+              <div className="text-lg font-bold text-brand-primary flex items-center gap-1">500+</div>
+              <div className="text-[10px] text-brand-text-secondary font-bold uppercase tracking-wider mt-0.5">Active Sellers</div>
             </div>
-            <div className="w-px h-8 bg-slate-200 mt-1"></div>
             <div>
-              <div className="text-xl font-bold text-brand-primary flex items-center gap-1"><Store size={16} className="text-brand-accent"/> 500+</div>
-              <div className="text-[10px] text-brand-text-secondary font-bold uppercase tracking-wider mt-0.5">Seller Nodes</div>
-            </div>
-            <div className="w-px h-8 bg-slate-200 mt-1 hidden xl:block"></div>
-            <div className="hidden xl:block">
-              <div className="text-xl font-bold text-brand-primary flex items-center gap-1"><MapPin size={16} className="text-brand-accent"/> 50+</div>
+              <div className="text-lg font-bold text-brand-primary flex items-center gap-1">50+</div>
               <div className="text-[10px] text-brand-text-secondary font-bold uppercase tracking-wider mt-0.5">Cities</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-brand-primary flex items-center gap-1">10K+</div>
+              <div className="text-[10px] text-brand-text-secondary font-bold uppercase tracking-wider mt-0.5">Orders Monthly</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-brand-primary flex items-center gap-1">₹50L+</div>
+              <div className="text-[10px] text-brand-text-secondary font-bold uppercase tracking-wider mt-0.5">Seller Revenue</div>
             </div>
           </div>
         </div>
@@ -179,14 +171,15 @@ const UserLogin = () => {
             
             <div className="flex justify-between items-center lg:hidden mb-4">
               <img src="/Images/logo.png" alt="Indiafy" className="h-8 object-contain" />
+              <span className="text-brand-accent font-black uppercase tracking-[0.2em] text-[10px] border border-brand-accent/30 px-2 py-1 rounded bg-brand-accent/5">Seller</span>
             </div>
 
             <div className="space-y-2 text-center lg:text-left">
               <h1 className="text-3xl sm:text-4xl font-black text-brand-primary tracking-tight">
-                Welcome Back
+                Seller Login
               </h1>
               <p className="text-[15px] font-medium text-brand-text-secondary">
-                Sign in to your Indiafy account.
+                Access your Seller Dashboard.
               </p>
             </div>
 
@@ -209,7 +202,7 @@ const UserLogin = () => {
                     className={`absolute left-[44px] top-[14px] text-slate-500 font-medium origin-left pointer-events-none transition-all duration-200
                       ${(focusedField === 'email' || emailValue) ? 'translate-y-[-12px] scale-75 opacity-100' : 'translate-y-0 scale-100 opacity-80'}`}
                   >
-                    Email Address
+                    Business Email
                   </label>
                   
                   <input
@@ -268,7 +261,6 @@ const UserLogin = () => {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-accent p-2 rounded-lg hover:bg-slate-200 transition-colors focus:outline-none"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -287,7 +279,7 @@ const UserLogin = () => {
 
               <div className="flex justify-end pt-2 pb-2">
                 <Link
-                  to="/forgot-password"
+                  to="/seller/forgot-password"
                   className="text-[13px] font-bold text-brand-accent hover:text-brand-accent-hover transition-colors"
                 >
                   Forgot Password?
@@ -305,7 +297,7 @@ const UserLogin = () => {
                   {loading ? (
                     <Loader2 size={20} className="animate-spin" />
                   ) : (
-                    "Continue"
+                    "Login to Dashboard"
                   )}
                 </motion.button>
 
@@ -334,12 +326,12 @@ const UserLogin = () => {
 
             <div className="text-center pt-2">
               <p className="text-[14px] font-medium text-brand-text-secondary">
-                New to Indiafy?{" "}
+                New Seller?{" "}
                 <Link
-                  to="/signup"
+                  to="/seller/signup"
                   className="text-brand-accent font-bold hover:underline underline-offset-4"
                 >
-                  Create Account
+                  Create Seller Account
                 </Link>
               </p>
             </div>
@@ -350,4 +342,4 @@ const UserLogin = () => {
   );
 };
 
-export default UserLogin;
+export default SellerLogin;

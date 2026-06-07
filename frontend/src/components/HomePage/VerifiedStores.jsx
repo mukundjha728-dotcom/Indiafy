@@ -172,7 +172,7 @@ export default function VerifiedStores() {
             <h2 className="text-xl font-bold text-brand-primary mb-2">No stores yet</h2>
             <p className="text-brand-text-secondary text-sm mb-6">Be the first to create a store on Indiafy!</p>
             <button
-              onClick={() => navigate("/seller-auth")}
+              onClick={() => navigate("/seller/login")}
               className="btn-primary"
             >
               Open Your Store

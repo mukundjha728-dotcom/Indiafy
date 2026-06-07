@@ -8,6 +8,9 @@ const getBaseURL = () => {
     if (!import.meta.env.VITE_API_URL && typeof window !== "undefined" && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1")) {
         return "https://indiafy-1.onrender.com/api/v1/indiafy";
     }
+    if (API_URL.endsWith('/api/v1/indiafy')) {
+        return API_URL;
+    }
     return `${API_URL}/api/v1/indiafy`;
 };
 
@@ -95,7 +98,7 @@ axiosInstance.interceptors.response.use(
                 const publicPaths = [
                     '/', '/about', '/product/', '/category/', '/search',
                     '/store/', '/cart', '/login', '/signup',
-                    '/seller-auth', '/admin/login',
+                    '/seller/login', '/admin/login',
                 ];
                 const currentPath = window.location.pathname;
                 const isPublicPage = publicPaths.some(path =>

@@ -28,7 +28,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
       return <Outlet />;
     }
     // Not authenticated as seller → redirect to seller auth
-    return <Navigate to="/seller-auth" replace />;
+    return <Navigate to="/seller/login" replace />;
   }
 
   /* ----------------------------------------------------------

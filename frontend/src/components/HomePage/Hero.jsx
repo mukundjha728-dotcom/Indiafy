@@ -205,7 +205,7 @@ function Hero() {
                 <ArrowRight size={18} />
               </button>
               <button
-                onClick={() => navigate("/seller-auth")}
+                onClick={() => navigate("/seller/login")}
                 className="btn-secondary"
               >
                 Become a Seller

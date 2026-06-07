@@ -126,7 +126,8 @@ const Customersupport = lazy(() => import("./pages/customer/Customersupport"));
 
 const UserAuth = lazy(() => import("./pages/auth/UserSignup"));
 const UserLogin = lazy(() => import("./pages/auth/UserLogin"));
-const SellerAuth = lazy(() => import("./pages/auth/SellerAuth"));
+const SellerLogin = lazy(() => import("./pages/auth/SellerLogin"));
+const SellerSignup = lazy(() => import("./pages/auth/SellerSignup"));
 const AdminLogin = lazy(() => import("./pages/auth/AdminLogin"));
 
 /* =========================================================
@@ -341,15 +342,23 @@ export default function App() {
           />
 
           <Route
-            path="/seller-auth"
+            path="/seller/login"
             element={
-              // Wait for auth init before deciding to redirect
-              // This prevents stale persisted isAuthenticated from causing incorrect redirect
               !authReady
                 ? <PageLoader />
                 : (isSellerAuthenticated && sellerUser?._id)
                   ? <Navigate to="/seller-hub" replace />
-                  : <SellerAuth />
+                  : <SellerLogin />
+            }
+          />
+          <Route
+            path="/seller/signup"
+            element={
+              !authReady
+                ? <PageLoader />
+                : (isSellerAuthenticated && sellerUser?._id)
+                  ? <Navigate to="/seller-hub" replace />
+                  : <SellerSignup />
             }
           />
 

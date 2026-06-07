@@ -330,7 +330,7 @@ export default function Stores() {
                   Clear Filters
                 </button>
               ) : (
-                <button onClick={() => navigate("/seller-auth")}
+                <button onClick={() => navigate("/seller/login")}
                   className="px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-zinc-800 transition-all">
                   Open Your Store →
                 </button>
@@ -362,7 +362,7 @@ export default function Stores() {
                 Launch your store in minutes. Reach thousands of local customers instantly.
               </p>
               <button
-                onClick={() => navigate("/seller-auth")}
+                onClick={() => navigate("/seller/login")}
                 className="px-8 py-4 bg-white text-zinc-900 font-black rounded-2xl hover:bg-blue-50 transition-all shadow-2xl text-sm flex items-center gap-2 mx-auto"
               >
                 Start Selling for Free <ArrowRight size={16} />

@@ -1,40 +1,28 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SEOHead from "../../components/seo/SEOHead";
-import {
-  Mail,
-  Lock,
-  User,
-  Eye,
-  EyeOff,
-  Loader2,
-  ArrowRight,
-  ShieldCheck,
-  CheckCircle,
-  ChevronLeft,
-  Store,
-  Truck,
-  CreditCard
+import { 
+  Mail, Lock, User, Eye, EyeOff, Loader2, ArrowRight, Store, 
+  Phone, TrendingUp, ShieldCheck, Megaphone, FileText, Briefcase, 
+  ChevronLeft, CheckCircle, Boxes, LineChart
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axiosInstance from "../../utils/axiosInstance";
-import { useAuthStore } from "../../store/authStore";
+import { useSellerAuthStore } from "../../store/sellerAuthStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useCartStore } from "../../store/cartStore";
 import { motion, AnimatePresence } from "framer-motion";
 
 const signupSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().optional(),
+  ownerName: z.string().min(2, "Name is required"),
   email: z.string().email("Invalid email format"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
     .regex(
       /^(?=.*[A-Za-z])(?=.*\d)/,
-      "Password must contain letters and numbers",
+      "Must contain letters and numbers",
     ),
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
@@ -43,11 +31,28 @@ const signupSchema = z.object({
 });
 
 const STEPS = [
-  { id: 1, title: "Personal Details" },
-  { id: 2, title: "Account Setup" }
+  { id: 1, title: "Personal Info" },
+  { id: 2, title: "Security" }
 ];
 
-const UserSignup = () => {
+const FeatureCard = ({ title, icon: Icon, delay }) => (
+  <motion.div 
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay: 0.2 + delay }}
+    className="flex gap-4 items-start"
+  >
+    <div className="mt-1 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200">
+      <Icon size={20} className="text-brand-accent" />
+    </div>
+    <div>
+      <h4 className="font-bold text-brand-primary text-[15px]">{title}</h4>
+      <p className="text-xs text-brand-text-secondary font-medium mt-1.5 leading-relaxed">Grow your audience and scale your sales with powerful tools.</p>
+    </div>
+  </motion.div>
+);
+
+const SellerSignup = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
@@ -55,8 +60,7 @@ const UserSignup = () => {
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
-  const loginAuth = useAuthStore((state) => state.login);
-  const addToCart = useCartStore((state) => state.addToCart);
+  const loginAuth = useSellerAuthStore((state) => state.login);
 
   const {
     register,
@@ -74,7 +78,7 @@ const UserSignup = () => {
   const handleNext = async () => {
     let isValid = false;
     if (step === 1) {
-      isValid = await trigger(["firstName", "lastName"]);
+      isValid = await trigger(["ownerName", "email"]);
     }
     if (isValid) {
       setDirection(1);
@@ -90,42 +94,29 @@ const UserSignup = () => {
   const onSignup = async (data) => {
     setLoading(true);
     try {
+      const nameParts = data.ownerName.trim().split(" ");
+      const firstName = nameParts[0];
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : null;
+
       const payload = {
-        firstName: data.firstName,
-        lastName: data.lastName,
+        firstName,
+        lastName,
         email: data.email,
         password: data.password
       };
 
-      const res = await axiosInstance.post("/customer/auth/signup", payload);
-      if (res.success && res.data) {
+      const res = await axiosInstance.post('/seller/auth/signup', payload);
+      
+      if (res?.success && res?.data) {
         loginAuth(res.data, res.data.accessToken);
-        toast.success("Account created successfully!");
-        
-        const pendingPurchase = localStorage.getItem("pending_purchase");
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get("redirect");
-
-        if (pendingPurchase && redirect === "checkout") {
-          const { productId, quantity, product } = JSON.parse(pendingPurchase);
-          localStorage.removeItem("pending_purchase");
-          try {
-            await addToCart(productId, quantity);
-            navigate("/checkout", { state: { testProduct: product } });
-          } catch (err) {
-            navigate("/checkout", { state: { testProduct: product } });
-          }
-        } else {
-          navigate("/dashboard");
-        }
+        toast.success("Registration successful! Welcome to Indiafy Sellers.");
+        navigate('/seller/store-setup');
       } else {
-        toast.error(res.message || "Signup failed");
+        toast.error("Registration failed — invalid response.");
       }
-    } catch (err) {
-      console.error("Signup error:", err);
-      toast.error(
-        err.response?.data?.message || err.message || "Registration failed. Please try again.",
-      );
+    } catch(err) {
+      console.error("Seller signup error:", err);
+      toast.error(err?.response?.data?.message || err?.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -137,7 +128,7 @@ const UserSignup = () => {
     exit: (direction) => ({ zIndex: 0, x: direction < 0 ? 50 : -50, opacity: 0 })
   };
 
-  const renderField = (name, label, icon, type = "text", placeholder) => {
+  const renderField = (name, label, icon, type = "text", placeholder, optional = false) => {
     const isFocused = focusedField === name;
     const hasValue = formValues[name] && formValues[name].length > 0;
     const hasError = errors[name];
@@ -160,7 +151,7 @@ const UserSignup = () => {
             className={`absolute left-[44px] top-[14px] text-slate-500 font-medium origin-left pointer-events-none transition-all duration-200
               ${(isFocused || hasValue) ? 'translate-y-[-12px] scale-75 opacity-100' : 'translate-y-0 scale-100 opacity-80'}`}
           >
-            {label}
+            {label} {optional && <span className="text-[10px] text-slate-400 font-normal">(Optional)</span>}
           </label>
           
           <input
@@ -199,7 +190,7 @@ const UserSignup = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 px-4 py-6 sm:p-8 font-sans transition-colors duration-500 relative overflow-hidden">
-      <SEOHead title="Create Account | Indiafy" noindex={true} />
+      <SEOHead title="Seller Signup | Indiafy" noindex={true} />
       
       {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -217,9 +208,11 @@ const UserSignup = () => {
         <div className="w-full lg:w-7/12 p-6 sm:p-10 lg:p-14 flex flex-col relative z-20">
           
           <div className="flex justify-between items-center mb-8">
-            <img src="/Images/logo.png" alt="Indiafy" className="h-8 lg:hidden" />
-            <div className="hidden lg:block text-brand-text-secondary text-sm font-medium">Join Indiafy</div>
-            <Link to="/login" className="text-[13px] font-bold text-brand-accent hover:underline transition-colors">
+            <div className="flex items-center gap-2">
+              <img src="/Images/logo.png" alt="Indiafy" className="h-8 lg:hidden" />
+              <span className="hidden lg:inline-block text-brand-accent font-black uppercase tracking-[0.2em] text-[10px] border border-brand-accent/30 px-2 py-1 rounded bg-brand-accent/5">Seller Registration</span>
+            </div>
+            <Link to="/seller/login" className="text-[13px] font-bold text-brand-accent hover:underline transition-colors">
               Log in instead
             </Link>
           </div>
@@ -267,16 +260,14 @@ const UserSignup = () => {
                     animate="center"
                     exit="exit"
                     transition={{ type: "tween", duration: 0.3 }}
-                    className="space-y-6 absolute inset-0"
+                    className="space-y-4 absolute inset-0"
                   >
-                    <div className="space-y-1">
-                      <h2 className="text-3xl font-black text-brand-primary tracking-tight">Join India's Local Marketplace</h2>
-                      <p className="text-sm text-brand-text-secondary font-medium">Let's start with your name.</p>
+                    <div className="space-y-1 mb-4">
+                      <h2 className="text-3xl font-black text-brand-primary tracking-tight">Setup Your Account</h2>
+                      <p className="text-sm text-brand-text-secondary font-medium">Create your seller account to get started.</p>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      {renderField("firstName", "First Name", User, "text", "John")}
-                      {renderField("lastName", "Last Name", User, "text", "Doe")}
-                    </div>
+                    {renderField("ownerName", "Full Name", User, "text", "Your Full Name")}
+                    {renderField("email", "Email Address", Mail, "email", "contact@example.com")}
                   </motion.div>
                 )}
 
@@ -289,19 +280,17 @@ const UserSignup = () => {
                     animate="center"
                     exit="exit"
                     transition={{ type: "tween", duration: 0.3 }}
-                    className="space-y-6 absolute inset-0"
+                    className="space-y-5 absolute inset-0"
                   >
-                    <div className="space-y-1">
-                      <h2 className="text-3xl font-black text-brand-primary tracking-tight">Account Setup</h2>
-                      <p className="text-sm text-brand-text-secondary font-medium">Use a valid email and strong password.</p>
+                    <div className="space-y-1 mb-4">
+                      <h2 className="text-3xl font-black text-brand-primary tracking-tight">Security</h2>
+                      <p className="text-sm text-brand-text-secondary font-medium">Protect your business account.</p>
                     </div>
-                    <div className="space-y-6">
-                      {renderField("email", "Email Address", Mail, "email", "john@example.com")}
-                      <div className="grid grid-cols-2 gap-4">
-                        {renderField("password", "Password", Lock, "password", "Min 8 chars")}
-                        {renderField("confirmPassword", "Confirm", Lock, "password", "Re-enter")}
-                      </div>
-                    </div>
+                    {renderField("password", "Password", Lock, "password", "Min 8 chars")}
+                    {renderField("confirmPassword", "Confirm Password", Lock, "password", "Re-enter")}
+                    <p className="text-[11px] text-slate-500 font-medium pt-2 leading-relaxed">
+                      By registering, you agree to our <Link to="/terms-and-conditions" className="text-brand-accent hover:underline">Terms of Service</Link> and <Link to="/seller-guidelines" className="text-brand-accent hover:underline">Seller Guidelines</Link>. You can set up your specific store type (e.g. Wholesaler, Local Seller) in the dashboard after signing up.
+                    </p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -319,7 +308,7 @@ const UserSignup = () => {
                   </motion.button>
                 )}
                 
-                {step < 2 ? (
+                {step < STEPS.length ? (
                   <motion.button
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
@@ -337,7 +326,7 @@ const UserSignup = () => {
                     disabled={loading}
                     className="flex-grow bg-brand-accent hover:bg-brand-accent-hover text-white rounded-xl py-4 font-bold text-[15px] transition-all shadow-lg shadow-brand-accent/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    {loading ? <Loader2 size={18} className="animate-spin" /> : "Create Account"}
+                    {loading ? <Loader2 size={18} className="animate-spin" /> : "Complete Registration"}
                   </motion.button>
                 )}
               </div>
@@ -351,36 +340,18 @@ const UserSignup = () => {
           <div className="relative z-10 space-y-12">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-accent/10 text-brand-accent text-[10px] font-bold uppercase tracking-widest border border-brand-accent/20">
-                <ShieldCheck size={14} /> Shop Local
+                <TrendingUp size={14} /> Sell Smarter
               </div>
               <h2 className="text-3xl font-black text-brand-primary leading-tight">
-                Join a secure, <br/> hyper-local network.
+                Unlock your local <br/> business potential.
               </h2>
             </div>
 
             <div className="space-y-6">
-              {[
-                { title: "Local Shopping", desc: "Discover stores in your neighborhood directly.", icon: Store },
-                { title: "Verified Sellers", desc: "Every seller is vetted for quality and authenticity.", icon: CheckCircle },
-                { title: "Fast Delivery", desc: "Get your items lightning-fast through local delivery.", icon: Truck },
-                { title: "Secure Payments", desc: "Industry standard encryption for your transactions.", icon: CreditCard }
-              ].map((item, idx) => (
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + (idx * 0.1) }}
-                  key={idx} 
-                  className="flex gap-4 items-start"
-                >
-                  <div className="mt-1 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200">
-                    <item.icon size={20} className="text-brand-accent" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-brand-primary text-[15px]">{item.title}</h4>
-                    <p className="text-xs text-brand-text-secondary font-medium mt-1.5 leading-relaxed">{item.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
+              <FeatureCard title="Store Management" icon={Store} delay={0} />
+              <FeatureCard title="Revenue Analytics" icon={LineChart} delay={0.2} />
+              <FeatureCard title="Marketing Tools" icon={Megaphone} delay={0.4} />
+              <FeatureCard title="Secure Ecosystem" icon={ShieldCheck} delay={0.6} />
             </div>
           </div>
         </div>
@@ -389,4 +360,4 @@ const UserSignup = () => {
   );
 };
 
-export default UserSignup;
+export default SellerSignup;

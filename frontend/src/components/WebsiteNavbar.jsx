@@ -176,7 +176,7 @@ function WebsiteNavbar() {
               {/* Become Seller (desktop only, when logged out) */}
               {!isAuthenticated && (
                 <button
-                  onClick={() => navigate("/seller-auth")}
+                  onClick={() => navigate("/seller/login")}
                   aria-label="Become a seller on Indiafy"
                   className="hidden xl:flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full border-2 border-brand-accent text-brand-accent hover:bg-brand-accent hover:text-white transition-all duration-200"
                 >
@@ -530,7 +530,7 @@ function WebsiteNavbar() {
                 ) : (
                   <>
                     <button
-                      onClick={() => { navigate("/seller-auth"); setMenuOpen(false); }}
+                      onClick={() => { navigate("/seller/login"); setMenuOpen(false); }}
                       aria-label="Become a seller on Indiafy"
                       className="w-full py-3 text-sm font-semibold bg-brand-accent text-white rounded-xl hover:bg-brand-accent-hover transition-colors flex items-center justify-center gap-2"
                     >

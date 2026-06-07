@@ -168,7 +168,7 @@ export default function SellerHub() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/seller-auth", { replace: true });
+      navigate("/seller/login", { replace: true });
       return;
     }
     loadNodes();
