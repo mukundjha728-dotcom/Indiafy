@@ -64,7 +64,7 @@ axiosInstance.interceptors.request.use(
                 config.headers.Authorization = `Bearer ${token}`;
             }
         } catch (errStorage) {
-            console.warn("Storage error reading token:", errStorage);
+            // console.warn("Storage error reading token:", errStorage);
         }
         return config;
     },
@@ -99,7 +99,7 @@ axiosInstance.interceptors.response.use(
                 localStorage.removeItem('indiafy-auth-storage');
                 localStorage.removeItem('indiafy-seller-auth-storage');
                 
-                toast.error("Your session has expired. Please login again.", { id: 'session-expired' });
+                // toast.error("Your session has expired. Please login again.", { id: 'session-expired' });
 
                 const publicPaths = [
                     '/', '/about', '/product/', '/category/', '/search',
@@ -132,7 +132,7 @@ axiosInstance.interceptors.response.use(
             // Handle 429 Too Many Requests
             else if (status === 429) {
                 // We don't want to redirect, just show a warning toast
-                toast.error("Too many requests. Please slow down and try again later.", { id: 'rate-limit' });
+                // toast.error("Too many requests. Please slow down and try again later.", { id: 'rate-limit' });
             }
             
             // Handle 500 Internal Server Error
