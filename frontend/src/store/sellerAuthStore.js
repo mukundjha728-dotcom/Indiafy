@@ -79,7 +79,7 @@ export const useSellerAuthStore = create(
             return;
           }
           
-          if (err.response?.status === 401 || err.response?.status === 429) {
+          if (err.response?.status === 401) {
             set({ user: null, isAuthenticated: false, isBackendAvailable: true });
             return;
           }
