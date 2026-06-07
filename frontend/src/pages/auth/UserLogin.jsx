@@ -62,7 +62,7 @@ const UserLogin = () => {
       const res = await axiosInstance.post("/customer/auth/login", data);
       if (res.success && res.data) {
         loginAuth(res.data, res.data.accessToken);
-        toast.success("Welcome back to Indiafy!");
+        // Removed success toast per user request
 
         const pendingPurchase = localStorage.getItem("pending_purchase");
         const urlParams = new URLSearchParams(window.location.search);

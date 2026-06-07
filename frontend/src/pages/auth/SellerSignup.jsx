@@ -109,7 +109,7 @@ const SellerSignup = () => {
       
       if (res?.success && res?.data) {
         loginAuth(res.data, res.data.accessToken);
-        toast.success("Registration successful! Welcome to Indiafy Sellers.");
+        // Removed success toast per user request
         navigate('/seller/store-setup');
       } else {
         toast.error("Registration failed — invalid response.");

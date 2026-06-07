@@ -100,7 +100,7 @@ const UserSignup = () => {
       const res = await axiosInstance.post("/customer/auth/signup", payload);
       if (res.success && res.data) {
         loginAuth(res.data, res.data.accessToken);
-        toast.success("Account created successfully!");
+        // Removed success toast per user request
         
         const pendingPurchase = localStorage.getItem("pending_purchase");
         const urlParams = new URLSearchParams(window.location.search);
