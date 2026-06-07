@@ -31,17 +31,28 @@ const footerSections = [
   {
     title: "Partner With Us",
     links: [
-      { label: "Sell on Indiafy", path: "/seller-auth" },
+      { label: "Sell on Indiafy", path: "/become-seller-info" },
+      { label: "Seller Guidelines", path: "/seller-guidelines" },
       { label: "Seller Dashboard", path: "/seller-hub" },
-      { label: "Delivery Partners", path: "/about" },
     ],
   },
   {
     title: "Support",
     links: [
+      { label: "Help Center", path: "/help-center" },
+      { label: "Contact Us", path: "/contact" },
+      { label: "Trust & Safety", path: "/trust-safety" },
       { label: "About Us", path: "/about" },
-      { label: "Help Center", path: "/support" },
-      { label: "Contact Us", path: "/support" },
+    ],
+  },
+  {
+    title: "Discover",
+    links: [
+      { label: "Best Shopping Platform", path: "/best-shopping-platform-gurugram" },
+      { label: "Quick Commerce", path: "/quick-commerce-gurugram" },
+      { label: "Wholesale Suppliers", path: "/wholesale-suppliers-gurugram" },
+      { label: "Verified Sellers", path: "/verified-sellers-gurugram" },
+      { label: "Hyperlocal Market", path: "/hyperlocal-marketplace-gurugram" },
     ],
   },
 ];
@@ -86,7 +97,7 @@ function Footer() {
           </div>
 
           {/* Links Columns */}
-          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8">
+          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-5 gap-6">
             {footerSections.map((section) => (
               <div key={section.title}>
                 <h4 className="text-sm font-bold text-brand-primary mb-5">{section.title}</h4>
@@ -113,12 +124,14 @@ function Footer() {
         {/* Bottom Bar */}
         <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-6">
           
-          <div className="flex flex-col md:flex-row items-center gap-4 text-xs font-medium text-brand-text-secondary">
+          <div className="flex flex-col md:flex-row items-center gap-4 text-xs font-medium text-brand-text-secondary mt-4 md:mt-0">
             <span>© {currentYear} Indiafy Commerce. All rights reserved.</span>
             <div className="hidden md:block w-1 h-1 rounded-full bg-gray-300" />
-            <div className="flex gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               <Link to="/privacy-policy" className="hover:text-brand-primary transition-colors">Privacy Policy</Link>
               <Link to="/terms-and-conditions" className="hover:text-brand-primary transition-colors">Terms of Service</Link>
+              <Link to="/refund-policy" className="hover:text-brand-primary transition-colors">Refund Policy</Link>
+              <Link to="/community-standards" className="hover:text-brand-primary transition-colors">Community Standards</Link>
             </div>
           </div>
 

@@ -71,6 +71,23 @@ const Storepage = lazy(() => import("./pages/public/StorePage"));
 const Stores = lazy(() => import("./pages/public/Stores"));
 const PrivacyPolicy = lazy(() => import("./pages/public/PrivacyPolicy"));
 const TermsAndConditions = lazy(() => import("./pages/public/TermsAndConditions"));
+const Contact = lazy(() => import("./pages/public/Contact"));
+const RefundPolicy = lazy(() => import("./pages/public/RefundPolicy"));
+const SellerGuidelines = lazy(() => import("./pages/public/SellerGuidelines"));
+const CommunityStandards = lazy(() => import("./pages/public/CommunityStandards"));
+const TrustSafety = lazy(() => import("./pages/public/TrustSafety"));
+const BecomeSellerInfo = lazy(() => import("./pages/public/BecomeSellerInfo"));
+const HelpCenter = lazy(() => import("./pages/public/HelpCenter"));
+const FAQ = lazy(() => import("./pages/public/FAQ"));
+
+/* =========================================================
+   SEO LANDING PAGES
+========================================================= */
+const BestShoppingPlatform = lazy(() => import("./pages/public/seo/BestShoppingPlatform"));
+const QuickCommerceSEO = lazy(() => import("./pages/public/seo/QuickCommerceSEO"));
+const WholesaleSuppliersSEO = lazy(() => import("./pages/public/seo/WholesaleSuppliersSEO"));
+const VerifiedSellersSEO = lazy(() => import("./pages/public/seo/VerifiedSellersSEO"));
+const HyperlocalMarketplaceSEO = lazy(() => import("./pages/public/seo/HyperlocalMarketplaceSEO"));
 
 /* =========================================================
    ERROR PAGES
@@ -248,6 +265,23 @@ export default function App() {
             <Route path="/store/:id" element={<Storepage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/seller-guidelines" element={<SellerGuidelines />} />
+            <Route path="/community-standards" element={<CommunityStandards />} />
+            <Route path="/trust-safety" element={<TrustSafety />} />
+            <Route path="/become-seller-info" element={<BecomeSellerInfo />} />
+            <Route path="/help-center" element={<HelpCenter />} />
+            <Route path="/faq" element={<FAQ />} />
+
+            {/* =====================================================
+                SEO LANDING PAGES
+            ===================================================== */}
+            <Route path="/best-shopping-platform-gurugram" element={<BestShoppingPlatform />} />
+            <Route path="/quick-commerce-gurugram" element={<QuickCommerceSEO />} />
+            <Route path="/wholesale-suppliers-gurugram" element={<WholesaleSuppliersSEO />} />
+            <Route path="/verified-sellers-gurugram" element={<VerifiedSellersSEO />} />
+            <Route path="/hyperlocal-marketplace-gurugram" element={<HyperlocalMarketplaceSEO />} />
           </Route>
 
           {/* Marketplace stores page — has its own Navbar/Footer */}

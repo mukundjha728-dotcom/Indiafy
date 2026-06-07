@@ -36,8 +36,8 @@ export default function WholesalePage() {
   return (
     <div className="min-h-screen bg-brand-background font-sans selection:bg-brand-accent selection:text-white">
       <SEOHead 
-        title="Wholesale Marketplace India | Verified Suppliers | Indiafy"
-        description="Source products directly from verified manufacturers and distributors across India."
+        title="Wholesale Marketplace India | Verified Wholesale Suppliers in Gurugram"
+        description="Join Indiafy's B2B marketplace in India. Start bulk product sourcing from verified wholesale suppliers and trusted manufacturers."
       />
       <WebsiteNavbar />
       

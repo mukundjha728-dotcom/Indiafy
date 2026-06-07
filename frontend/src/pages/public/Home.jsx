@@ -58,8 +58,8 @@ const Home = memo(() => {
   return (
     <>
       <SEOHead 
-        title="Indiafy | Hyperlocal Commerce & Verified Sellers Marketplace"
-        description="Shop from verified local sellers, wholesale suppliers and quick commerce networks across India."
+        title="Indiafy | Best Shopping Platform in Gurugram & Verified Sellers Marketplace"
+        description="Indiafy is the most trusted marketplace in India and the best online shopping platform in Gurugram. Discover a local marketplace platform with wholesale suppliers and quick commerce delivery."
         schemas={homeSchemas}
       />
       <WebsiteNavbar />

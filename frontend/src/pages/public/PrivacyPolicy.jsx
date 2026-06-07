@@ -1,157 +1,178 @@
-import React from "react";
-import {
-  ShieldCheck,
-  Lock,
-  Eye,
-  Database,
-  Video,
-  MapPin,
-  ChevronRight,
-  FileText,
-} from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ShieldCheck, ChevronRight } from "lucide-react";
 
-// Layout Components
-import SEOHead from "../../components/seo/SEOHead";
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
+import SEOHead from "../../components/seo/SEOHead";
 
 export default function PrivacyPolicy() {
-  const lastUpdated = "March 25, 2026";
+  const [activeSection, setActiveSection] = useState("data-collection");
 
   const sections = [
-    {
-      title: "Data Collection",
-      icon: <Database size={20} />,
-      content:
-        "We collect precise location data (Sector-based mapping), device information, and transaction history to ensure 10-25 minute delivery within your node.",
-    },
-    {
-      title: "Video Verification Policy",
-      icon: <Video size={20} />,
-      content:
-        "High-value orders are subject to mandatory video-verified packing. These recordings are stored on secure Indiafy Nodes and are only accessed during dispute resolution.",
-    },
-    {
-      title: "Operational Privacy",
-      icon: <ShieldCheck size={20} />,
-      content:
-        "In accordance with our 'Operational Discipline' mandate, your sector-specific movements are encrypted and never shared with external advertising aggregators.",
-    },
-    {
-      title: "Payment Security",
-      icon: <Lock size={20} />,
-      content:
-        "Payments via Dynamic QR and UPI are processed through bank-grade microservices. We do not store raw card data on our local sector servers.",
-    },
+    { id: "data-collection", title: "Data Collection" },
+    { id: "cookies", title: "Cookies & Tracking" },
+    { id: "security", title: "Data Security" },
+    { id: "user-rights", title: "User Rights" },
+    { id: "account-deletion", title: "Account Deletion" },
   ];
 
+  // ScrollSpy logic for Sticky TOC
+  useEffect(() => {
+    const handleScroll = () => {
+      let current = "data-collection";
+      for (const section of sections) {
+        const el = document.getElementById(section.id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 150) {
+            current = section.id;
+          }
+        }
+      }
+      setActiveSection(current);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [sections]);
+
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  };
+
   return (
-    <div className="bg-zinc-50 min-h-screen text-zinc-600 font-sans">
+    <div className="bg-[#F8FAFC] min-h-screen font-sans text-slate-900">
       <SEOHead 
         title="Privacy Policy | Indiafy"
+        description="Learn how Indiafy handles your data. Read our privacy policy detailing data collection, security, and your user rights."
       />
-      <WebsiteNavbar />
+      <WebsiteNavbar scrolledByDefault={true} />
 
       {/* HEADER SECTION */}
-      <header className="bg-zinc-950 pt-40 pb-24 px-6 text-center relative overflow-hidden">
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-8">
-            <ShieldCheck size={14} /> Indiafy Security Standard
+      <header className="bg-slate-900 pt-32 pb-24 px-6 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10 text-center lg:text-left">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs font-bold uppercase tracking-widest text-emerald-400 mb-6 lg:mx-0 mx-auto">
+            <ShieldCheck size={16} /> Privacy Mandate
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-6">
-            Privacy <span className="text-zinc-700 italic">Mandate</span>
+          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-4">
+            Privacy Policy
           </h1>
-          <p className="text-zinc-400 text-lg font-medium">
-            Last Updated: {lastUpdated} · Version 2.0 (Gurugram Node)
+          <p className="text-slate-400 text-sm md:text-base font-medium max-w-2xl">
+            Last Updated: March 25, 2026 · We believe that trust is built on transparency.
           </p>
         </div>
-        {/* Ambient Blur */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent opacity-50" />
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 -mt-12 pb-32">
-        {/* HIGHLIGHT CARDS */}
-        <div className="grid md:grid-cols-2 gap-6 mb-16">
-          {sections.map((s, i) => (
-            <div
-              key={i}
-              className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-xl shadow-zinc-200/50 hover:border-zinc-900 transition-all group"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-zinc-50 flex items-center justify-center text-zinc-900 mb-6 group-hover:bg-zinc-900 group-hover:text-white transition-all">
-                {s.icon}
+      <main className="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-24">
+          
+          {/* LEFT: STICKY TOC */}
+          <div className="hidden lg:block w-1/4 shrink-0">
+            <div className="sticky top-32">
+              <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">Contents</h4>
+              <ul className="space-y-4 border-l-2 border-slate-200">
+                {sections.map((section) => (
+                  <li key={section.id}>
+                    <button
+                      onClick={() => scrollToSection(section.id)}
+                      className={`text-sm font-bold text-left w-full pl-6 py-1 transition-all relative ${
+                        activeSection === section.id 
+                          ? "text-brand-primary" 
+                          : "text-slate-500 hover:text-slate-900"
+                      }`}
+                    >
+                      {activeSection === section.id && (
+                        <span className="absolute left-[-2px] top-0 bottom-0 w-[2px] bg-brand-primary rounded-full" />
+                      )}
+                      {section.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              
+              <div className="mt-12 p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <p className="text-sm font-bold mb-3">Questions?</p>
+                <p className="text-xs text-slate-500 mb-4">Our privacy team is available to help.</p>
+                <Link to="/contact" className="text-xs font-bold text-brand-primary flex items-center gap-1 hover:gap-2 transition-all">
+                  Contact Support <ChevronRight size={14} />
+                </Link>
               </div>
-              <h3 className="text-xl font-black text-zinc-900 mb-3 uppercase tracking-tighter">
-                {s.title}
-              </h3>
-              <p className="text-sm leading-relaxed font-medium text-zinc-500">
-                {s.content}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* FULL CONTENT */}
-        <article className="prose prose-zinc max-w-none bg-white p-10 md:p-16 rounded-[3rem] border border-zinc-100 shadow-sm text-zinc-800">
-          <h2 className="text-3xl font-black tracking-tight mb-8 flex items-center gap-3">
-            <FileText className="text-zinc-300" /> Introduction
-          </h2>
-          <p className="mb-8 font-medium leading-relaxed">
-            Welcome to Indiafy. We are committed to protecting your personal
-            data and your right to privacy. This mandate explains how we handle
-            your information when you use our sector-assigned hyperlocal
-            commerce services.
-          </p>
-
-          <h3 className="text-xl font-bold mt-12 mb-4">
-            1. How We Use Location
-          </h3>
-          <p className="text-zinc-500 leading-relaxed mb-6">
-            Unlike traditional e-commerce, Indiafy operates on a{" "}
-            <strong>Node-based architecture</strong>. We use your location to
-            map you to the nearest verified hub. This data is deleted after the
-            order lifecycle is complete, except where required for operational
-            logs.
-          </p>
-
-          <h3 className="text-xl font-bold mt-12 mb-4">
-            2. Video Proof & Content
-          </h3>
-          <p className="text-zinc-500 leading-relaxed mb-6">
-            Sellers are required to record order packing for high-value items.
-            These videos are end-to-end encrypted. Customers can view their own
-            order videos for 7 days post-delivery via the "Order History"
-            section.
-          </p>
-
-          <h3 className="text-xl font-bold mt-12 mb-4">3. Data Sovereignty</h3>
-          <p className="text-zinc-500 leading-relaxed mb-6">
-            Your data is stored on local servers within India. We do not sell or
-            lease your personal information to third-party data brokers.
-          </p>
-
-          <div className="mt-20 p-8 bg-zinc-50 rounded-3xl border border-zinc-100 flex items-start gap-6">
-            <Eye className="text-zinc-900 shrink-0" size={24} />
-            <div>
-              <h4 className="font-black uppercase tracking-widest text-xs mb-2">
-                Transparency Note
-              </h4>
-              <p className="text-[11px] font-bold text-zinc-400 leading-relaxed uppercase tracking-tighter">
-                You have the right to request a complete export of your
-                transaction history and video logs at any time via the Support
-                Center.
-              </p>
             </div>
           </div>
-        </article>
 
-        {/* CALL TO ACTION */}
-        <div className="mt-16 text-center">
-          <p className="text-sm font-bold text-zinc-400 mb-6">
-            Have questions about your data?
-          </p>
-          <button className="px-10 py-4 bg-zinc-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-zinc-800 transition-all shadow-xl">
-            Contact Privacy Officer
-          </button>
+          {/* RIGHT: CONTENT */}
+          <div className="w-full lg:w-3/4 max-w-3xl prose prose-slate prose-headings:font-black prose-headings:tracking-tight prose-a:text-brand-primary">
+            
+            <section id="data-collection" className="mb-16 scroll-mt-32">
+              <h2 className="text-3xl mb-6 text-slate-900">Data Collection</h2>
+              <p>
+                At Indiafy, we collect information to provide you with the fastest and most secure hyperlocal commerce experience. When you create an account, we collect:
+              </p>
+              <ul>
+                <li><strong>Identity Information:</strong> Name, phone number, and email address.</li>
+                <li><strong>Location Data:</strong> To map you to the nearest verified hub and ensure 10-25 minute delivery, we require precise sector-based mapping.</li>
+                <li><strong>Transaction History:</strong> We keep a secure record of your orders for refunds, disputes, and loyalty tracking.</li>
+                <li><strong>Video Verification Logs:</strong> For high-value items, sellers are required to record the packing process. These videos are tied to your order ID.</li>
+              </ul>
+            </section>
+
+            <section id="cookies" className="mb-16 scroll-mt-32">
+              <h2 className="text-3xl mb-6 text-slate-900">Cookies & Tracking</h2>
+              <p>
+                We use cookies to improve your browsing experience, remember your local store preferences, and keep you logged in securely.
+              </p>
+              <ul>
+                <li><strong>Essential Cookies:</strong> Required for the platform to function securely (e.g., authentication tokens).</li>
+                <li><strong>Performance Cookies:</strong> Help us understand how long it takes for our pages to load so we can optimize speed.</li>
+                <li><strong>Functional Cookies:</strong> Remember your delivery address or your preferred language.</li>
+              </ul>
+              <p>
+                We do <em>not</em> use third-party advertising cookies that track you across the internet. Our ecosystem is self-contained.
+              </p>
+            </section>
+
+            <section id="security" className="mb-16 scroll-mt-32">
+              <h2 className="text-3xl mb-6 text-slate-900">Data Security</h2>
+              <p>
+                Security is not an afterthought; it is our foundation. Your data is encrypted in transit and at rest using AES-256 standards.
+              </p>
+              <p>
+                Payments are processed through bank-grade microservices via PCI-DSS compliant partners. We do not store raw credit card data on our local node servers. In the event of a dispute, video-packing evidence is handled via secure, expiring URLs that only the buyer, seller, and Indiafy arbiters can access.
+              </p>
+            </section>
+
+            <section id="user-rights" className="mb-16 scroll-mt-32">
+              <h2 className="text-3xl mb-6 text-slate-900">User Rights</h2>
+              <p>
+                Under the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, you have the right to:
+              </p>
+              <ul>
+                <li>Request a copy of all the personal data we hold about you.</li>
+                <li>Request that we correct any inaccurate information.</li>
+                <li>Opt-out of marketing communications.</li>
+                <li>Request to be forgotten (subject to operational logging requirements).</li>
+              </ul>
+            </section>
+
+            <section id="account-deletion" className="mb-16 scroll-mt-32">
+              <h2 className="text-3xl mb-6 text-slate-900">Account Deletion</h2>
+              <p>
+                You can delete your account at any time from your Profile Settings.
+              </p>
+              <p>
+                Upon deletion, your profile, saved addresses, and active carts will be permanently removed. However, to comply with Indian financial regulations and our fraud prevention mandates, we must retain transaction records and video proofs for a period of up to 5 years.
+              </p>
+              <p>
+                If you have questions about our retention policies, please reach out to our <Link to="/contact">Privacy Officer</Link>.
+              </p>
+            </section>
+            
+          </div>
         </div>
       </main>
 

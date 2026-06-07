@@ -177,9 +177,8 @@ function Hero() {
               transition={{ delay: 0.1 }}
               className="font-display text-hero-mobile lg:text-hero text-brand-primary mb-5"
             >
-              India's Trusted{" "}
-              <span className="text-brand-accent">Hyperlocal</span>{" "}
-              Marketplace
+              India's Most{" "}
+              <span className="text-brand-accent">Trusted Marketplace</span>
             </motion.h1>
 
             <motion.p
@@ -188,7 +187,7 @@ function Hero() {
               transition={{ delay: 0.2 }}
               className="text-brand-text-secondary text-base lg:text-lg font-medium max-w-xl mb-8 leading-relaxed"
             >
-              Discover local stores, wholesale suppliers and quick delivery services from verified sellers near you.
+              The best online shopping platform in Gurugram. Discover local stores, wholesale suppliers, and instant quick commerce delivery from our verified sellers marketplace.
             </motion.p>
 
             {/* CTAs */}

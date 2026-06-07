@@ -89,8 +89,8 @@ export default function QuickCommerce() {
   return (
     <div className="bg-zinc-50 min-h-screen flex flex-col font-sans pb-14 md:pb-0">
       <SEOHead 
-        title="15 Minute Delivery | Indiafy Quick Commerce"
-        description="Groceries, electronics and essentials delivered in minutes from verified local sellers."
+        title="15 Minute Delivery in Gurugram | Indiafy Quick Commerce"
+        description="Experience quick commerce in Gurugram with Indiafy. The best instant delivery platform in Gurugram for fast grocery delivery and hyperlocal essentials."
       />
       
       {/* Section 1: Compact Header */}
