@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 // Layout Components
+import SEOHead from "../../components/seo/SEOHead";
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
 
@@ -46,6 +47,9 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="bg-zinc-50 min-h-screen text-zinc-600 font-sans">
+      <SEOHead 
+        title="Privacy Policy | Indiafy"
+      />
       <WebsiteNavbar />
 
       {/* HEADER SECTION */}

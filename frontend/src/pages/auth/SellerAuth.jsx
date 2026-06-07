@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '../../components/seo/SEOHead';
 import axiosInstance from '../../utils/axiosInstance';
 import { useSellerAuthStore } from '../../store/sellerAuthStore';
 import { toast } from 'react-toastify';
@@ -118,6 +119,9 @@ export default function SellerAuth() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center lg:p-8 font-sans">
+      <SEOHead 
+        title="Sell Online Across India | Become a Seller on Indiafy"
+      />
       
       <div className="relative w-full h-[100dvh] lg:h-[92vh] lg:min-h-[700px] lg:max-w-6xl bg-white lg:rounded-[2.5rem] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden flex">
         

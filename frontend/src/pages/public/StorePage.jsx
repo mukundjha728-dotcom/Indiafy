@@ -22,6 +22,7 @@ import axiosInstance from "../../utils/axiosInstance";
 const CATEGORIES = ["All", "Essentials", "Grocery", "Personal Care", "Home Decor"];
 
 import { useCartStore } from "../../store/cartStore";
+import SEOHead from "../../components/seo/SEOHead";
 
 export default function StorePage() {
   const { id } = useParams();
@@ -127,8 +128,28 @@ export default function StorePage() {
     );
   }
 
+  const storeSchema = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": storeInfo.storeName || storeInfo.businessName || "Verified Store",
+    "image": storeInfo.logo || storeInfo.banner || "https://india-fy.vercel.app/logo.png",
+    "description": storeInfo.description || "Local Verified Store on Indiafy",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": storeInfo.city || "Gurugram",
+      "addressCountry": "IN"
+    },
+    "telephone": storeInfo.phone || storeInfo.contact || ""
+  };
+
   return (
     <div className="bg-zinc-50 min-h-screen font-sans pb-24">
+      <SEOHead 
+        title={`${storeInfo.storeName || storeInfo.businessName || "Store"} | Indiafy`}
+        description={storeInfo.description || `Shop from ${storeInfo.storeName || "this verified store"} on Indiafy.`}
+        image={storeInfo.logo || storeInfo.banner}
+        schemas={[storeSchema]}
+      />
       <WebsiteNavbar />
 
       <main className="pt-16 md:pt-20">

@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import SEOHead from "../../components/seo/SEOHead";
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
 
@@ -34,6 +35,10 @@ export default function WholesalePage() {
 
   return (
     <div className="min-h-screen bg-brand-background font-sans selection:bg-brand-accent selection:text-white">
+      <SEOHead 
+        title="Wholesale Marketplace India | Verified Suppliers | Indiafy"
+        description="Source products directly from verified manufacturers and distributors across India."
+      />
       <WebsiteNavbar />
       
       <main className="w-full flex flex-col">

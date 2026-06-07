@@ -23,6 +23,7 @@ import {
   LogOut,
   ChevronRight,
 } from "lucide-react";
+import SEOHead from "../../components/seo/SEOHead";
 import StoreCreationWizard from "./components/StoreCreationWizard";
 
 /* ----------------------------------------------------------
@@ -233,6 +234,10 @@ export default function SellerHub() {
   ---------------------------------------------------------- */
   return (
     <div className="bg-[#050505] min-h-screen text-zinc-400 font-sans selection:bg-blue-500 selection:text-white">
+      <SEOHead 
+        title="Seller Hub | Indiafy"
+        noindex={true}
+      />
       <main className="pt-12 pb-24 px-4 sm:px-6 max-w-7xl mx-auto">
 
         {/* =====================================================

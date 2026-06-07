@@ -1,4 +1,5 @@
 import { useState } from "react";
+import SEOHead from "../../components/seo/SEOHead";
 import Sidebar from "../../components/admin/Sidebar";
 import Header from "../../components/admin/Header";
 import { Download } from "lucide-react";
@@ -127,6 +128,10 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-background-light">
+      <SEOHead 
+        title="Admin Dashboard | Indiafy"
+        noindex={true}
+      />
       {/* Simple Sidebar */}
       <Sidebar />
 

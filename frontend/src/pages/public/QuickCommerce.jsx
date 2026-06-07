@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
+import SEOHead from "../../components/seo/SEOHead";
 
 import QuickHeader from "../../components/QuickCommerce/QuickHeader";
 import DeliveryBar from "../../components/QuickCommerce/DeliveryBar";
@@ -87,6 +88,11 @@ export default function QuickCommerce() {
 
   return (
     <div className="bg-zinc-50 min-h-screen flex flex-col font-sans pb-14 md:pb-0">
+      <SEOHead 
+        title="15 Minute Delivery | Indiafy Quick Commerce"
+        description="Groceries, electronics and essentials delivered in minutes from verified local sellers."
+      />
+      
       {/* Section 1: Compact Header */}
       <QuickHeader />
 

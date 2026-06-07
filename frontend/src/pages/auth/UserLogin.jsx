@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import SEOHead from "../../components/seo/SEOHead";
 import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosInstance";
@@ -75,6 +76,10 @@ const UserLogin = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#f0f2f5] p-4 sm:p-8 selection:bg-indigo-100 font-sans">
+      <SEOHead 
+        title="Login | Indiafy"
+        noindex={true}
+      />
       {/* Dynamic Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px] animate-pulse" />

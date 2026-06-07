@@ -13,6 +13,7 @@ import {
   AlertCircle,
   TrendingDown
 } from "lucide-react";
+import SEOHead from "../../components/seo/SEOHead";
 import { useOrderStore } from "../../store/orderStore";
 import { useNodeStore } from "../../store/nodeStore";
 
@@ -78,6 +79,10 @@ export default function Dashboard() {
   if (!nodeId) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
+        <SEOHead 
+          title="Seller Dashboard | Indiafy"
+          noindex={true}
+        />
         <div className="text-center">
           <AlertCircle size={60} className="mx-auto text-red-500 mb-4" />
           <h2 className="text-3xl font-black text-slate-900 mb-3">
@@ -96,6 +101,10 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <SEOHead 
+        title="Seller Dashboard | Indiafy"
+        noindex={true}
+      />
       {/* HEADER */}
       <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">

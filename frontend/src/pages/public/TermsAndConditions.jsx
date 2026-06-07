@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 // Layout Components
+import SEOHead from "../../components/seo/SEOHead";
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
 
@@ -36,6 +37,9 @@ export default function TermsAndConditions() {
 
   return (
     <div className="bg-white min-h-screen text-zinc-600 font-sans">
+      <SEOHead 
+        title="Terms & Conditions | Indiafy"
+      />
       <WebsiteNavbar />
 
       {/* HEADER AREA */}

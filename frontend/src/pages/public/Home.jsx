@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, memo } from "react";
+import SEOHead from "../../components/seo/SEOHead";
 
 // Layout Components - eagerly loaded (always visible)
 import WebsiteNavbar from "../../components/WebsiteNavbar";
@@ -28,8 +29,39 @@ const SectionLoader = () => (
 );
 
 const Home = memo(() => {
+  const homeSchemas = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Indiafy",
+      "url": "https://india-fy.vercel.app/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://india-fy.vercel.app/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Indiafy",
+      "url": "https://india-fy.vercel.app",
+      "logo": "https://india-fy.vercel.app/logo.png",
+      "sameAs": [
+        "https://www.facebook.com/indiafy",
+        "https://twitter.com/indiafy",
+        "https://www.instagram.com/indiafy"
+      ]
+    }
+  ];
+
   return (
     <>
+      <SEOHead 
+        title="Indiafy | Hyperlocal Commerce & Verified Sellers Marketplace"
+        description="Shop from verified local sellers, wholesale suppliers and quick commerce networks across India."
+        schemas={homeSchemas}
+      />
       <WebsiteNavbar />
 
       <main className="overflow-hidden">

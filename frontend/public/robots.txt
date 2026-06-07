@@ -2,3 +2,9 @@ User-agent: *
 Allow: /
 
 Sitemap: https://india-fy.vercel.app/sitemap.xml
+
+Disallow:
+*/admin/*
+*/dashboard/*
+*/seller/dashboard/*
+*/api/*

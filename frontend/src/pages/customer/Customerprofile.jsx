@@ -25,6 +25,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 
 // Layout Components
+import SEOHead from "../../components/seo/SEOHead";
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
 import { useProfileStore } from "../../store/profileStore";
@@ -183,6 +184,10 @@ export default function CustomerProfile() {
 
   return (
     <div className="bg-[#050505] min-h-screen text-zinc-400 font-sans selection:bg-emerald-500/30">
+      <SEOHead 
+        title="Dashboard | Indiafy"
+        noindex={true}
+      />
       <WebsiteNavbar />
 
       <main className="max-w-7xl mx-auto px-4 pt-32 pb-24">

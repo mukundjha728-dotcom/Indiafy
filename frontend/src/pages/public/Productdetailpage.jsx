@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
+import SEOHead from "../../components/seo/SEOHead";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 
@@ -209,8 +210,33 @@ export default function ProductDetailPage() {
     }
   };
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": p.productName || p.brand || "Verified Product",
+    "image": pImages,
+    "description": p.description || PRODUCT.description,
+    "offers": {
+      "@type": "Offer",
+      "url": typeof window !== "undefined" ? window.location.href : "https://india-fy.vercel.app",
+      "priceCurrency": "INR",
+      "price": pPrice,
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "name": pSeller.businessName || pSeller.name
+      }
+    }
+  };
+
   return (
     <div className="bg-white min-h-screen">
+      <SEOHead 
+        title={`${p.productName || p.brand || "Product"} | Indiafy`}
+        description={p.description || PRODUCT.description}
+        image={pImages[0]}
+        schemas={[productSchema]}
+      />
       <WebsiteNavbar />
 
       <main className="max-w-7xl mx-auto px-6 pt-32 pb-20">
