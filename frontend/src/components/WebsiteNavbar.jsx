@@ -163,7 +163,7 @@ function WebsiteNavbar() {
             {/* RIGHT: Actions */}
             <div className="flex items-center gap-1 sm:gap-2">
               {/* Track Order (desktop only) */}
-              {isAuthenticated && (
+              {isCustomerAuthenticated && (
                 <Link
                   to="/order-history"
                   className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-brand-text-secondary hover:text-brand-primary transition-colors rounded-lg hover:bg-brand-background"
@@ -483,7 +483,7 @@ function WebsiteNavbar() {
                   <ChevronRight size={16} />
                 </Link>
 
-                {isAuthenticated && (
+                {isCustomerAuthenticated && (
                   <Link to="/order-history" onClick={() => setMenuOpen(false)} className="flex items-center justify-between px-3 py-3 text-sm font-semibold text-brand-primary hover:bg-brand-background rounded-xl transition-colors">
                     <span className="flex items-center gap-2"><Package size={16} /> Orders</span>
                     <ChevronRight size={16} className="text-brand-text-secondary" />

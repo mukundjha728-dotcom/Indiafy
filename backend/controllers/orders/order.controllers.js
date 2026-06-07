@@ -142,7 +142,19 @@ export const getOrderById = asyncHandler(async (req, res) => {
         throw new ApiError(403, "Not authorized to view this order");
     }
 
-    return res.status(200).json(new ApiResponse(200, order, "Order fetched successfully"));
+    let responseOrder = order.toObject();
+
+    // If the user is only authorized because they are a seller of some items, filter out other sellers' items
+    if (userRole === "seller" && customerId !== userId) {
+        const sellerItems = responseOrder.orderItems.filter(item => 
+            item.seller?._id?.toString() === userId || item.seller?.toString() === userId
+        );
+        const sellerTotal = sellerItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        responseOrder.orderItems = sellerItems;
+        responseOrder.totalPrice = sellerTotal;
+    }
+
+    return res.status(200).json(new ApiResponse(200, responseOrder, "Order fetched successfully"));
 });
 
 // @desc    Get logged in customer orders
@@ -175,7 +187,19 @@ export const getSellerOrders = asyncHandler(async (req, res) => {
         .populate('orderItems.product', 'productName productImage nodeType nodeId')
         .sort({ createdAt: -1 });
         
-    return res.status(200).json(new ApiResponse(200, orders, "Seller orders fetched successfully"));
+    // Filter out items that do not belong to this seller and recalculate totals
+    const filteredOrders = orders.map(order => {
+        const sellerItems = order.orderItems.filter(item => item.seller.toString() === req.user._id.toString());
+        const sellerTotal = sellerItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        
+        return {
+            ...order.toObject(),
+            orderItems: sellerItems,
+            totalPrice: sellerTotal
+        };
+    });
+
+    return res.status(200).json(new ApiResponse(200, filteredOrders, "Seller orders fetched successfully"));
 });
 
 // @desc    Update order status (Shipping, Delivered)
