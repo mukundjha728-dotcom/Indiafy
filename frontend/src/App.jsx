@@ -90,6 +90,12 @@ const VerifiedSellersSEO = lazy(() => import("./pages/public/seo/VerifiedSellers
 const HyperlocalMarketplaceSEO = lazy(() => import("./pages/public/seo/HyperlocalMarketplaceSEO"));
 
 /* =========================================================
+   BLOG PAGES
+========================================================= */
+const BlogList = lazy(() => import("./pages/public/blog/BlogList"));
+const BlogPost = lazy(() => import("./pages/public/blog/BlogPost"));
+
+/* =========================================================
    ERROR PAGES
 ========================================================= */
 
@@ -282,6 +288,12 @@ export default function App() {
             <Route path="/wholesale-suppliers-gurugram" element={<WholesaleSuppliersSEO />} />
             <Route path="/verified-sellers-gurugram" element={<VerifiedSellersSEO />} />
             <Route path="/hyperlocal-marketplace-gurugram" element={<HyperlocalMarketplaceSEO />} />
+
+            {/* =====================================================
+                BLOG PAGES
+            ===================================================== */}
+            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
           </Route>
 
           {/* Marketplace stores page — has its own Navbar/Footer */}
