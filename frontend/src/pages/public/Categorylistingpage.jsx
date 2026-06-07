@@ -163,7 +163,7 @@ export default function CategoryListingPage() {
             <button
               key={brand}
               onClick={() => toggleBrand(brand)}
-              className={`px-4 py-2 rounded-full text-[10px] font-bold border transition-all ${selectedBrands.includes(brand) ? "bg-zinc-900 text-white border-zinc-900" : "bg-white text-zinc-400 border-zinc-100"}`}
+              className={`px-4 py-2 rounded-full text-[10px] font-bold border transition-all ${selectedBrands.includes(brand) ? "bg-white shadow-sm border border-slate-200 text-slate-900 border-zinc-900" : "bg-white text-slate-600 border-zinc-100"}`}
             >
               {brand}
             </button>
@@ -178,18 +178,25 @@ export default function CategoryListingPage() {
       <WebsiteNavbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 md:pt-36 pb-20">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* MOBILE FILTER TRIGGER & TITLE */}
         <div className="mb-8 md:mb-16">
-          <h1 className="text-4xl md:text-7xl font-black text-zinc-900 tracking-tighter leading-none mb-4 md:mb-6">
-            Audio & <span className="text-zinc-200 italic">Gear</span>
+          <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none mb-4 md:mb-6">
+            Audio & <span className="text-slate-900 italic">Gear</span>
           </h1>
           <div className="flex items-center justify-between">
-            <p className="text-zinc-500 text-sm md:text-lg font-medium">
+            <p className="text-slate-500 text-sm md:text-lg font-medium">
               Found {filteredProducts.length} items
             </p>
             <button
               onClick={() => setIsMobileFilterOpen(true)}
-              className="lg:hidden flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg"
+              className="lg:hidden flex items-center gap-2 bg-white shadow-sm border border-slate-200 text-slate-900 px-4 py-2 rounded-full text-xs font-bold shadow-lg"
             >
               <Filter size={14} /> Filters
             </button>
@@ -202,11 +209,11 @@ export default function CategoryListingPage() {
             <div className="sticky top-36">
               <FilterContent />
               <div className="mt-12 p-6 bg-zinc-50 rounded-[2rem] border border-zinc-100">
-                <ShieldCheck size={24} className="mb-3 text-zinc-900" />
+                <ShieldCheck size={24} className="mb-3 text-slate-900" />
                 <p className="text-[10px] font-black uppercase tracking-widest mb-1">
                   Indiafy Trust
                 </p>
-                <p className="text-[10px] text-zinc-400 leading-relaxed font-medium">
+                <p className="text-[10px] text-slate-600 leading-relaxed font-medium">
                   Every seller in West Gurugram is manually verified by our
                   sector team.
                 </p>
@@ -222,7 +229,7 @@ export default function CategoryListingPage() {
                 <button
                   key={type}
                   onClick={() => setSortType(type)}
-                  className={`whitespace-nowrap px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${sortType === type ? "bg-zinc-900 text-white border-zinc-900 shadow-xl" : "bg-zinc-50 text-zinc-400 border-zinc-100"}`}
+                  className={`whitespace-nowrap px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${sortType === type ? "bg-white shadow-sm border border-slate-200 text-slate-900 border-zinc-900 shadow-xl" : "bg-zinc-50 text-slate-600 border-zinc-100"}`}
                 >
                   {type.replace("_", " ")}
                 </button>
@@ -267,7 +274,7 @@ export default function CategoryListingPage() {
                 </h2>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="p-2 bg-zinc-100 rounded-full"
+                  className="p-2 bg-slate-100 rounded-full"
                 >
                   <X size={20} />
                 </button>
@@ -275,7 +282,7 @@ export default function CategoryListingPage() {
               <FilterContent />
               <button
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="w-full mt-10 py-4 bg-zinc-900 text-white rounded-2xl font-black uppercase tracking-widest"
+                className="w-full mt-10 py-4 bg-white shadow-sm border border-slate-200 text-slate-900 rounded-2xl font-black uppercase tracking-widest"
               >
                 Show Results
               </button>
@@ -306,28 +313,28 @@ const ProductCard = ({ product }) => {
           alt={product.name}
         />
         {product.badge && (
-          <div className="absolute top-3 left-3 bg-zinc-900 text-white text-[8px] font-black px-2 py-1 rounded-full uppercase">
+          <div className="absolute top-3 left-3 bg-white shadow-sm border border-slate-200 text-slate-900 text-[8px] font-black px-2 py-1 rounded-full uppercase">
             {product.badge}
           </div>
         )}
       </div>
       <div className="px-1">
         <div className="flex justify-between items-start mb-1">
-          <span className="text-[8px] font-black text-zinc-300 uppercase tracking-widest">
+          <span className="text-[8px] font-black text-slate-700 uppercase tracking-widest">
             {product.brand}
           </span>
           <div className="flex items-center gap-1 text-[10px] font-bold">
             <Star size={10} fill="currentColor" /> {product.rating}
           </div>
         </div>
-        <h3 className="font-bold text-zinc-900 text-sm md:text-base mb-4 line-clamp-1">
+        <h3 className="font-bold text-slate-900 text-sm md:text-base mb-4 line-clamp-1">
           {product.name}
         </h3>
         <div className="flex items-center justify-between border-t border-zinc-100 pt-4">
-          <span className="text-lg md:text-xl font-black text-zinc-900">
+          <span className="text-lg md:text-xl font-black text-slate-900">
             {fmt(product.price)}
           </span>
-          <div className="flex items-center gap-1.5 bg-zinc-900 text-white p-2 md:p-2.5 rounded-xl shadow-lg">
+          <div className="flex items-center gap-1.5 bg-white shadow-sm border border-slate-200 text-slate-900 p-2 md:p-2.5 rounded-xl shadow-lg">
             <ShoppingBag size={16} />
           </div>
         </div>

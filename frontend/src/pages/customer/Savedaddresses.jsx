@@ -82,13 +82,20 @@ export default function SavedAddresses() {
       <WebsiteNavbar />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-32 pb-24">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-5xl font-black text-zinc-900 tracking-tighter">
-              My <span className="text-zinc-300 italic">Locations</span>
+            <h1 className="text-5xl font-black text-slate-900 tracking-tighter">
+              My <span className="text-slate-700 italic">Locations</span>
             </h1>
-            <p className="mt-2 font-medium text-zinc-500">
+            <p className="mt-2 font-medium text-slate-500">
               Manage your verified sector-mapped delivery addresses.
             </p>
           </div>
@@ -97,7 +104,7 @@ export default function SavedAddresses() {
               setEditingAddr(null);
               setIsModalOpen(true);
             }}
-            className="flex items-center justify-center gap-3 px-8 py-4 bg-zinc-900 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-zinc-800 transition-all"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-white shadow-sm border border-slate-200 text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-slate-100 border border-slate-200 transition-all"
           >
             <Plus size={18} /> Add New Address
           </button>
@@ -117,28 +124,28 @@ export default function SavedAddresses() {
               >
                 <div className="flex justify-between items-start mb-6">
                   <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center ${index === 0 ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-400"}`}
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center ${index === 0 ? "bg-white shadow-sm border border-slate-200 text-slate-900" : "bg-slate-100 text-slate-600"}`}
                   >
                     <MapPin size={18} />
                   </div>
                   {index === 0 && (
-                    <span className="px-3 py-1 bg-zinc-900 text-white text-[9px] font-black uppercase rounded-full tracking-widest">
+                    <span className="px-3 py-1 bg-white shadow-sm border border-slate-200 text-slate-900 text-[9px] font-black uppercase rounded-full tracking-widest">
                       Default
                     </span>
                   )}
                 </div>
 
                 <div className="space-y-1 mb-8">
-                  <h3 className="text-xl font-bold text-zinc-900">
+                  <h3 className="text-xl font-bold text-slate-900">
                     {addr.nearBy}
                   </h3>
-                  <p className="text-sm font-bold text-zinc-400 uppercase tracking-tighter">
+                  <p className="text-sm font-bold text-slate-600 uppercase tracking-tighter">
                     {profile?.firstName}
                   </p>
-                  <p className="text-sm text-zinc-500 leading-relaxed mt-2">
+                  <p className="text-sm text-slate-500 leading-relaxed mt-2">
                     {addr.street}, {addr.city}, {addr.state}
                   </p>
-                  <p className="text-xs font-black text-zinc-900 mt-2">
+                  <p className="text-xs font-black text-slate-900 mt-2">
                     {profile?.contact}
                   </p>
                 </div>
@@ -146,7 +153,7 @@ export default function SavedAddresses() {
                 <div className="flex items-center gap-2 pt-6 border-t border-zinc-200/50">
                   <button
                     onClick={() => handleDelete(addr._id)}
-                    className="p-3 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    className="p-3 text-slate-600 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                   >
                     <Trash2 size={18} />
                   </button>
@@ -155,14 +162,14 @@ export default function SavedAddresses() {
                       setEditingAddr(addr);
                       setIsModalOpen(true);
                     }}
-                    className="p-3 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-xl transition-all"
+                    className="p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all"
                   >
                     <Edit3 size={18} />
                   </button>
                   {index !== 0 && (
                     <button
                       onClick={() => setAsDefault(addr._id)}
-                      className="ml-auto text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-all"
+                      className="ml-auto text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-slate-900 transition-all"
                     >
                       Set Default
                     </button>
@@ -180,17 +187,17 @@ export default function SavedAddresses() {
             }}
             className="flex flex-col items-center justify-center p-8 rounded-[2.5rem] border-2 border-dashed border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50 transition-all group min-h-[300px]"
           >
-            <div className="w-14 h-14 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-300 group-hover:scale-110 transition-transform mb-4">
+            <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 group-hover:scale-110 transition-transform mb-4">
               <Plus size={32} />
             </div>
-            <p className="text-sm font-black uppercase tracking-widest text-zinc-400">
+            <p className="text-sm font-black uppercase tracking-widest text-slate-600">
               Add Location
             </p>
           </button>
         </div>
 
         {/* Verification Banner */}
-        <div className="mt-20 p-10 bg-zinc-950 rounded-[3rem] text-white overflow-hidden relative shadow-2xl">
+        <div className="mt-20 p-10 bg-white rounded-[3rem] text-slate-900 overflow-hidden relative shadow-2xl">
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-lg">
               <div className="flex items-center gap-3 mb-4">
@@ -199,13 +206,13 @@ export default function SavedAddresses() {
                   Sector Verification
                 </h4>
               </div>
-              <p className="text-zinc-400 font-medium leading-relaxed">
+              <p className="text-slate-600 font-medium leading-relaxed">
                 Indiafy uses automated sector-mapping to ensure every address is
                 within our 10-25 mins operational territory. Verified locations
                 get priority logistics assignment.
               </p>
             </div>
-            <button className="px-10 py-5 bg-white text-zinc-900 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-emerald-400 transition-all">
+            <button className="px-10 py-5 bg-white text-slate-900 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-emerald-400 transition-all">
               Learn More
             </button>
           </div>
@@ -224,7 +231,7 @@ export default function SavedAddresses() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-white/60 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, y: 100, scale: 0.9 }}
@@ -232,7 +239,7 @@ export default function SavedAddresses() {
               exit={{ opacity: 0, y: 100, scale: 0.9 }}
               className="relative w-full max-w-xl bg-white rounded-[3rem] p-10 md:p-14 overflow-hidden"
             >
-              <h2 className="text-3xl font-black text-zinc-900 tracking-tighter mb-8">
+              <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-8">
                 {editingAddr ? "Edit Location" : "New Location"}
               </h2>
               <div className="space-y-6">
@@ -270,13 +277,13 @@ export default function SavedAddresses() {
                     className="w-full bg-zinc-50 border-0 rounded-2xl px-6 py-4 font-bold text-sm focus:ring-2 focus:ring-zinc-900"
                   />
                 </div>
-                <button onClick={handleSave} className="w-full py-5 bg-zinc-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-xs mt-4 shadow-xl">
+                <button onClick={handleSave} className="w-full py-5 bg-white shadow-sm border border-slate-200 text-slate-900 rounded-[2rem] font-black uppercase tracking-widest text-xs mt-4 shadow-xl">
                   {editingAddr ? "Update Address" : "Verify & Save Address"}
                 </button>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-10 right-10 text-zinc-300 hover:text-zinc-900 transition-colors"
+                className="absolute top-10 right-10 text-slate-700 hover:text-slate-900 transition-colors"
               >
                 <X size={24} />
               </button>

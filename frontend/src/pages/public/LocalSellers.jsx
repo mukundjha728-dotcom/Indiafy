@@ -78,6 +78,13 @@ export default function LocalSellers() {
       <WebsiteNavbar />
 
       <main className="pt-24 pb-24">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* 🗺️ HEADER & SEARCH SECTION */}
         <section className="bg-white/90 backdrop-blur-2xl px-4 sm:px-6 lg:px-8 py-6 border-b border-zinc-200 z-40 shadow-sm relative">
           <div className="max-w-7xl mx-auto">
@@ -89,10 +96,10 @@ export default function LocalSellers() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center gap-2 mb-2"
                 >
-                  <div className="p-1.5 bg-zinc-100 rounded-lg">
-                    <Navigation size={14} className="text-zinc-600" />
+                  <div className="p-1.5 bg-slate-100 rounded-lg">
+                    <Navigation size={14} className="text-slate-500" />
                   </div>
-                  <span className="text-[10px] font-black tracking-widest uppercase text-zinc-500">
+                  <span className="text-[10px] font-black tracking-widest uppercase text-slate-500">
                     Current Node: Sector 45
                   </span>
                 </motion.div>
@@ -100,7 +107,7 @@ export default function LocalSellers() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-3xl md:text-5xl font-black text-zinc-900 tracking-tighter"
+                  className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter"
                 >
                   Local Verified Nodes
                 </motion.h1>
@@ -110,7 +117,7 @@ export default function LocalSellers() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-xs font-bold text-zinc-500 bg-zinc-100 px-4 py-2.5 rounded-xl flex items-center gap-2 w-fit border border-zinc-200"
+                className="text-xs font-bold text-slate-500 bg-slate-100 px-4 py-2.5 rounded-xl flex items-center gap-2 w-fit border border-zinc-200"
               >
                 <BadgeCheck size={16} className="text-emerald-500" />
                 {filteredSellers.length} Nodes Found
@@ -124,7 +131,7 @@ export default function LocalSellers() {
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                   <Search
                     size={18}
-                    className="text-zinc-400 group-focus-within:text-zinc-900 transition-colors"
+                    className="text-slate-600 group-focus-within:text-slate-900 transition-colors"
                   />
                 </div>
                 <input
@@ -132,12 +139,12 @@ export default function LocalSellers() {
                   placeholder="Search stores, groceries, hardware..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-zinc-100 border border-transparent focus:border-zinc-300 focus:bg-white rounded-2xl py-3.5 pl-12 pr-4 text-sm font-bold text-zinc-900 placeholder:text-zinc-400 transition-all outline-none shadow-sm"
+                  className="w-full bg-slate-100 border border-transparent focus:border-zinc-300 focus:bg-white rounded-2xl py-3.5 pl-12 pr-4 text-sm font-bold text-slate-900 placeholder:text-slate-600 transition-all outline-none shadow-sm"
                 />
               </div>
 
               {/* Filter Button */}
-              <button className="hidden md:flex items-center gap-2 bg-white border border-zinc-200 text-zinc-900 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-zinc-50 transition-colors active:scale-95 shadow-sm">
+              <button className="hidden md:flex items-center gap-2 bg-white border border-zinc-200 text-slate-900 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-zinc-50 transition-colors active:scale-95 shadow-sm">
                 <SlidersHorizontal size={18} /> Filters
               </button>
             </div>
@@ -150,8 +157,8 @@ export default function LocalSellers() {
                   onClick={() => setActiveFilter(filter)}
                   className={`whitespace-nowrap px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${
                     activeFilter === filter
-                      ? "bg-zinc-900 text-white shadow-xl shadow-zinc-900/20"
-                      : "bg-white border border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-900"
+                      ? "bg-white shadow-sm border border-slate-200 text-slate-900 shadow-xl shadow-slate-200"
+                      : "bg-white border border-zinc-200 text-slate-500 hover:border-zinc-300 hover:text-slate-900"
                   }`}
                 >
                   {filter}
@@ -178,7 +185,7 @@ export default function LocalSellers() {
                   className="bg-white p-3 md:p-4 rounded-[2rem] border border-zinc-100 hover:border-zinc-300 hover:shadow-2xl transition-all duration-500 group flex flex-col h-full cursor-pointer"
                 >
                   {/* Card Image area */}
-                  <div className="relative w-full aspect-video md:aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-4 bg-zinc-100 shrink-0">
+                  <div className="relative w-full aspect-video md:aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-4 bg-slate-100 shrink-0">
                     <img loading="lazy" decoding="async"
                       src={seller.img}
                       alt={seller.name}
@@ -197,14 +204,14 @@ export default function LocalSellers() {
                         </div>
                       )}
                       {seller.badge && (
-                        <div className="bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-zinc-900 text-[9px] font-black uppercase tracking-widest shadow-sm">
+                        <div className="bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-slate-900 text-[9px] font-black uppercase tracking-widest shadow-sm">
                           {seller.badge}
                         </div>
                       )}
                     </div>
 
                     {/* Rating Badge */}
-                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2 py-1 rounded-xl text-zinc-900 text-[10px] font-black flex items-center gap-1 shadow-sm">
+                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2 py-1 rounded-xl text-slate-900 text-[10px] font-black flex items-center gap-1 shadow-sm">
                       <Star
                         size={10}
                         fill="currentColor"
@@ -217,20 +224,20 @@ export default function LocalSellers() {
                   {/* Card Content */}
                   <div className="flex-1 flex flex-col px-2">
                     <div className="flex justify-between items-start mb-1">
-                      <h3 className="font-black text-zinc-900 text-lg leading-tight line-clamp-1">
+                      <h3 className="font-black text-slate-900 text-lg leading-tight line-clamp-1">
                         {seller.name}
                       </h3>
                     </div>
 
-                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">
+                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-4">
                       {seller.tags}
                     </p>
 
                     {/* Info Pills */}
                     <div className="grid grid-cols-2 gap-2 mb-5 mt-auto">
                       <div className="bg-zinc-50 rounded-xl p-2.5 flex items-center justify-center gap-1.5 border border-zinc-100">
-                        <MapPin size={12} className="text-zinc-400" />
-                        <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest truncate">
+                        <MapPin size={12} className="text-slate-600" />
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">
                           {seller.distance}
                         </span>
                       </div>
@@ -240,7 +247,7 @@ export default function LocalSellers() {
                         ) : (
                           <Clock size={12} className="text-blue-500" />
                         )}
-                        <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest truncate">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">
                           {seller.time}
                         </span>
                       </div>
@@ -252,7 +259,7 @@ export default function LocalSellers() {
                         e.stopPropagation(); // Card ke double click issues rokiyega
                         navigate(`/store/${seller.id}`);
                       }}
-                      className="w-full bg-zinc-50 border border-zinc-200 text-zinc-900 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 group-hover:bg-zinc-900 group-hover:border-zinc-900 group-hover:text-white transition-all active:scale-95"
+                      className="w-full bg-zinc-50 border border-zinc-200 text-white py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 group-hover:bg-white shadow-sm border border-slate-200 group-hover:border-zinc-900 group-hover:text-slate-900 transition-all active:scale-95"
                     >
                       Visit Store <ArrowUpRight size={14} />
                     </button>
@@ -266,12 +273,12 @@ export default function LocalSellers() {
           {filteredSellers.length === 0 && (
             <div className="w-full py-24 flex flex-col items-center justify-center text-center">
               <div className="w-24 h-24 bg-white border border-zinc-200 shadow-sm rounded-full flex items-center justify-center mb-6">
-                <Search size={32} className="text-zinc-300" />
+                <Search size={32} className="text-slate-700" />
               </div>
-              <h3 className="text-2xl font-black text-zinc-900 mb-2 tracking-tighter">
+              <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tighter">
                 No Nodes Found
               </h3>
-              <p className="text-zinc-500 font-medium text-sm">
+              <p className="text-slate-500 font-medium text-sm">
                 Try adjusting your filters or searching for something else.
               </p>
               <button
@@ -279,7 +286,7 @@ export default function LocalSellers() {
                   setSearchQuery("");
                   setActiveFilter("All");
                 }}
-                className="mt-6 text-xs font-black uppercase tracking-widest text-zinc-900 bg-white border border-zinc-200 px-6 py-3 rounded-full hover:bg-zinc-50 shadow-sm active:scale-95 transition-all"
+                className="mt-6 text-xs font-black uppercase tracking-widest text-slate-900 bg-white border border-zinc-200 px-6 py-3 rounded-full hover:bg-zinc-50 shadow-sm active:scale-95 transition-all"
               >
                 Clear all filters
               </button>

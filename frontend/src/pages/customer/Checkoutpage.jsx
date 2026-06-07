@@ -295,22 +295,29 @@ export default function CheckoutPage() {
       <WebsiteNavbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-24">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* Header */}
         <div className="mb-10 flex items-center justify-between">
           <div>
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-xs font-black uppercase tracking-widest mb-4"
+              className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors text-xs font-black uppercase tracking-widest mb-4"
             >
               <ChevronLeft size={16} /> Back
             </button>
-            <h1 className="text-4xl font-black text-zinc-900 tracking-tighter">
-              Secure <span className="text-zinc-300 italic">Checkout</span>
+            <h1 className="text-4xl font-black text-slate-900 tracking-tighter">
+              Secure <span className="text-slate-700 italic">Checkout</span>
             </h1>
           </div>
           <div className="hidden md:flex items-center gap-4">
             <div
-              className={`flex items-center gap-2 px-4 py-2 rounded-full border ${step >= 1 ? "bg-zinc-900 text-white border-zinc-900" : "bg-white text-zinc-400"}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border ${step >= 1 ? "bg-white shadow-sm border border-slate-200 text-slate-900 border-zinc-900" : "bg-white text-slate-600"}`}
             >
               <span className="text-xs font-black">01</span>
               <span className="text-xs font-bold uppercase tracking-tighter">
@@ -319,7 +326,7 @@ export default function CheckoutPage() {
             </div>
             <div className="h-px w-8 bg-zinc-200" />
             <div
-              className={`flex items-center gap-2 px-4 py-2 rounded-full border ${step >= 2 ? "bg-zinc-900 text-white border-zinc-900" : "bg-white text-zinc-400"}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border ${step >= 2 ? "bg-white shadow-sm border border-slate-200 text-slate-900 border-zinc-900" : "bg-white text-slate-600"}`}
             >
               <span className="text-xs font-black">02</span>
               <span className="text-xs font-bold uppercase tracking-tighter">
@@ -337,7 +344,7 @@ export default function CheckoutPage() {
               className={`bg-white rounded-[2.5rem] p-8 border ${step === 1 ? "border-zinc-900 shadow-2xl" : "border-zinc-100 opacity-60 pointer-events-none"}`}
             >
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-10 h-10 rounded-2xl bg-zinc-100 flex items-center justify-center text-zinc-900">
+                <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-900">
                   <MapPin size={20} />
                 </div>
                 <h3 className="text-xl font-black uppercase tracking-tight">
@@ -348,7 +355,7 @@ export default function CheckoutPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 {addresses.length === 0 ? (
                   <div className="col-span-2 p-8 rounded-[2rem] bg-zinc-50 border-2 border-zinc-200 border-dashed">
-                    <p className="text-zinc-500 font-bold text-center mb-6 uppercase tracking-widest text-[10px]">Add Delivery Information</p>
+                    <p className="text-slate-500 font-bold text-center mb-6 uppercase tracking-widest text-[10px]">Add Delivery Information</p>
                     <div className="space-y-4 max-w-md mx-auto">
                       <input 
                         type="text" 
@@ -373,7 +380,7 @@ export default function CheckoutPage() {
                           onChange={(e) => setQuickAddr({...quickAddr, pincode: e.target.value})}
                         />
                       </div>
-                      <p className="text-[9px] text-zinc-400 text-center font-bold uppercase tracking-tighter">Enter details to proceed with test order</p>
+                      <p className="text-[9px] text-slate-600 text-center font-bold uppercase tracking-tighter">Enter details to proceed with test order</p>
                     </div>
                   </div>
                 ) : (
@@ -384,18 +391,18 @@ export default function CheckoutPage() {
                       className={`cursor-pointer p-6 rounded-3xl border-2 transition-all ${selectedAddr === idx ? "border-zinc-900 bg-zinc-50" : "border-zinc-100 hover:border-zinc-200"}`}
                     >
                       <div className="flex justify-between items-start mb-4">
-                        <span className="px-3 py-1 bg-zinc-900 text-white text-[9px] font-black uppercase rounded-full">
+                        <span className="px-3 py-1 bg-white shadow-sm border border-slate-200 text-slate-900 text-[9px] font-black uppercase rounded-full">
                           {addr.nearBy || "Home"}
                         </span>
                         {selectedAddr === idx && (
-                          <CheckCircle2 size={20} className="text-zinc-900" />
+                          <CheckCircle2 size={20} className="text-slate-900" />
                         )}
                       </div>
-                      <p className="font-bold text-zinc-900">{profile?.firstName} {profile?.lastName}</p>
-                      <p className="text-sm text-zinc-500 mt-1 leading-relaxed">
+                      <p className="font-bold text-slate-900">{profile?.firstName} {profile?.lastName}</p>
+                      <p className="text-sm text-slate-500 mt-1 leading-relaxed">
                         {addr.street}, {addr.city}, {addr.state}
                       </p>
-                      <p className="text-xs font-bold text-zinc-400 mt-3">
+                      <p className="text-xs font-bold text-slate-600 mt-3">
                         {profile?.contact}
                       </p>
                     </div>
@@ -465,7 +472,7 @@ export default function CheckoutPage() {
                       toast.warn("Please enter a delivery address");
                     }
                   }}
-                  className="w-full mt-8 py-5 bg-zinc-900 text-white rounded-3xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-zinc-800 transition-all"
+                  className="w-full mt-8 py-5 bg-white shadow-sm border border-slate-200 text-slate-900 rounded-3xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-slate-100 border border-slate-200 transition-all"
                 >
                   Deliver to this address
                 </button>
@@ -478,7 +485,7 @@ export default function CheckoutPage() {
             >
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-2xl bg-zinc-100 flex items-center justify-center text-zinc-900">
+                  <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-900">
                     <CreditCard size={20} />
                   </div>
                   <h3 className="text-xl font-black uppercase tracking-tight">
@@ -491,7 +498,7 @@ export default function CheckoutPage() {
                       setStep(1);
                       setPendingOrderId(null); // Force new order calculation if address changes
                     }}
-                    className="text-[10px] font-black uppercase text-zinc-400 hover:text-zinc-900 border-b border-zinc-200"
+                    className="text-[10px] font-black uppercase text-slate-600 hover:text-slate-900 border-b border-zinc-200"
                   >
                     Change Address
                   </button>
@@ -512,10 +519,10 @@ export default function CheckoutPage() {
                         className="w-4 h-4 accent-zinc-900"
                       />
                       <div>
-                        <p className="font-bold text-zinc-900">
+                        <p className="font-bold text-slate-900">
                           ⚡ Test Simulator / Mock Pay (Highly Recommended)
                         </p>
-                        <p className="text-xs text-zinc-400 font-medium">
+                        <p className="text-xs text-slate-600 font-medium">
                           Bypass Razorpay API entirely for instant successful test checkout
                         </p>
                       </div>
@@ -537,20 +544,20 @@ export default function CheckoutPage() {
                         className="w-4 h-4 accent-zinc-900"
                       />
                       <div>
-                        <p className="font-bold text-zinc-900">
+                        <p className="font-bold text-slate-900">
                           UPI / Dynamic QR
                         </p>
-                        <p className="text-xs text-zinc-400 font-medium">
+                        <p className="text-xs text-slate-600 font-medium">
                           Instant reconciliation via Indiafy Node
                         </p>
                       </div>
                     </div>
-                    <Smartphone size={24} className="text-zinc-300" />
+                    <Smartphone size={24} className="text-slate-700" />
                   </div>
                   {payMethod === "upi" && (
-                    <div className="mt-6 p-4 bg-zinc-100 rounded-2xl border border-dashed border-zinc-300 flex items-center gap-4">
-                      <QrCode size={40} className="text-zinc-400" />
-                      <p className="text-[10px] font-bold text-zinc-500 leading-tight uppercase tracking-tighter">
+                    <div className="mt-6 p-4 bg-slate-100 rounded-2xl border border-dashed border-zinc-300 flex items-center gap-4">
+                      <QrCode size={40} className="text-slate-600" />
+                      <p className="text-[10px] font-bold text-slate-500 leading-tight uppercase tracking-tighter">
                         A Secure Dynamic QR will be generated upon confirmation.
                         Rider-personal transfers are prohibited.
                       </p>
@@ -571,15 +578,15 @@ export default function CheckoutPage() {
                         className="w-4 h-4 accent-zinc-900"
                       />
                       <div>
-                        <p className="font-bold text-zinc-900">
+                        <p className="font-bold text-slate-900">
                           Cash on Delivery
                         </p>
-                        <p className="text-xs text-zinc-400 font-medium">
+                        <p className="text-xs text-slate-600 font-medium">
                           Verify & Pay at Sector-assigned Rider
                         </p>
                       </div>
                     </div>
-                    <Truck size={24} className="text-zinc-300" />
+                    <Truck size={24} className="text-slate-700" />
                   </div>
                   {payMethod === "cod" && (
                     <div className="mt-4 flex items-start gap-2 text-amber-600 bg-amber-50 p-4 rounded-2xl border border-amber-100">
@@ -598,58 +605,58 @@ export default function CheckoutPage() {
           {/* RIGHT: SUMMARY */}
           <aside className="lg:col-span-4">
             <div className="sticky top-32 space-y-6">
-              <div className="bg-zinc-950 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-zinc-300">
+              <div className="bg-white rounded-[2.5rem] p-8 text-slate-900 shadow-2xl shadow-zinc-300">
                 <h2 className="text-lg font-black uppercase tracking-widest mb-6">
                   Order Total
                 </h2>
 
                 {/* Items Summary */}
-                <div className="space-y-4 mb-8 border-b border-zinc-800 pb-6">
+                <div className="space-y-4 mb-8 border-b border-slate-200 pb-6">
                   {displayItems.map((item, idx) => (
                     <div key={idx} className="flex gap-4">
-                      <div className="w-12 h-12 bg-white rounded-xl overflow-hidden shrink-0 border border-zinc-800">
+                      <div className="w-12 h-12 bg-white rounded-xl overflow-hidden shrink-0 border border-slate-200">
                         <img loading="lazy" decoding="async" 
                           src={item.productId?.productImage?.[0] || "https://via.placeholder.com/100"} 
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-black uppercase text-white truncate tracking-tight">{item.productId?.title || "Product"}</p>
-                        <p className="text-[10px] font-bold text-zinc-500 uppercase">Qty: {item.quantity}</p>
+                        <p className="text-[10px] font-black uppercase text-slate-900 truncate tracking-tight">{item.productId?.title || "Product"}</p>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase">Qty: {item.quantity}</p>
                       </div>
-                      <p className="text-[10px] font-black text-white">{fmt(item.price)}</p>
+                      <p className="text-[10px] font-black text-slate-900">{fmt(item.price)}</p>
                     </div>
                   ))}
                 </div>
 
                 <div className="space-y-4 mb-8">
-                  <div className="flex justify-between text-zinc-500 font-medium text-sm">
+                  <div className="flex justify-between text-slate-500 font-medium text-sm">
                     <span>Subtotal</span>
-                    <span className="text-white font-bold">{fmt(subtotal)}</span>
+                    <span className="text-slate-900 font-bold">{fmt(subtotal)}</span>
                   </div>
                   {gstEstimate > 0 && (
-                    <div className="flex justify-between text-zinc-500 font-medium text-sm">
+                    <div className="flex justify-between text-slate-500 font-medium text-sm">
                       <span>GST</span>
-                      <span className="text-white font-bold">{fmt(gstEstimate)}</span>
+                      <span className="text-slate-900 font-bold">{fmt(gstEstimate)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-zinc-500 font-medium text-sm">
+                  <div className="flex justify-between text-slate-500 font-medium text-sm">
                     <span>Delivery Fee</span>
                     <span className="text-emerald-400 font-bold uppercase text-[10px] pt-1 tracking-widest">
                       Free
                     </span>
                   </div>
                   {payMethod === "cod" && (
-                    <div className="flex justify-between text-zinc-500 font-medium text-sm">
+                    <div className="flex justify-between text-slate-500 font-medium text-sm">
                       <span>COD Fee</span>
-                      <span className="text-white font-bold">{fmt(codFee)}</span>
+                      <span className="text-slate-900 font-bold">{fmt(codFee)}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="pt-6 border-t border-zinc-800 flex justify-between items-end mb-10">
+                <div className="pt-6 border-t border-slate-200 flex justify-between items-end mb-10">
                   <div>
-                    <p className="text-[9px] font-black uppercase text-zinc-600 tracking-[0.2em] mb-1">
+                    <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em] mb-1">
                       Payable Amount
                     </p>
                     <p className="text-4xl font-black">
@@ -661,7 +668,7 @@ export default function CheckoutPage() {
                 <button
                   disabled={step !== 2 || isPlacing}
                   onClick={handlePlaceOrder}
-                  className="w-full py-5 bg-white text-zinc-900 rounded-3xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30"
+                  className="w-full py-5 bg-white text-slate-900 rounded-3xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30"
                 >
                   {isPlacing ? "Processing Order..." : "Confirm & Pay Now"}
                 </button>
@@ -677,16 +684,16 @@ export default function CheckoutPage() {
                 )}
 
                 {/* Test Mode Info */}
-                <div className="mt-5 p-4 bg-zinc-800 rounded-2xl border border-zinc-700">
+                <div className="mt-5 p-4 bg-slate-100 border border-slate-200 rounded-2xl border border-slate-300">
                   <p className="text-[9px] font-black text-amber-400 uppercase tracking-widest mb-2">⚡ Razorpay Test Mode</p>
-                  <p className="text-[10px] text-zinc-400 leading-relaxed">
-                    Use test UPI: <span className="text-white font-bold">success@razorpay</span><br/>
-                    Test Card: <span className="text-white font-bold">4111 1111 1111 1111</span><br/>
+                  <p className="text-[10px] text-slate-600 leading-relaxed">
+                    Use test UPI: <span className="text-slate-900 font-bold">success@razorpay</span><br/>
+                    Test Card: <span className="text-slate-900 font-bold">4111 1111 1111 1111</span><br/>
                     Expiry: any future date · CVV: any 3 digits
                   </p>
                 </div>
 
-                <div className="mt-8 flex items-center justify-center gap-2 text-zinc-600">
+                <div className="mt-8 flex items-center justify-center gap-2 text-slate-500">
                   <Lock size={12} />
                   <span className="text-[10px] font-bold uppercase tracking-widest">
                     256-bit Secure Encryption

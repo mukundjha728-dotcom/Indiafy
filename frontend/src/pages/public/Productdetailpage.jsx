@@ -152,7 +152,7 @@ export default function ProductDetailPage() {
   }, [id]);
 
   if (isLoading) {
-    return <div className="min-h-screen bg-white flex items-center justify-center"><p className="text-xl font-bold uppercase text-zinc-400">Loading Product...</p></div>;
+    return <div className="min-h-screen bg-white flex items-center justify-center"><p className="text-xl font-bold uppercase text-slate-600">Loading Product...</p></div>;
   }
 
   // Robust data mapping from backend or fallback to static
@@ -240,10 +240,17 @@ export default function ProductDetailPage() {
       <WebsiteNavbar />
 
       <main className="max-w-7xl mx-auto px-6 pt-32 pb-20">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* ✅ Back → go to previous page */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors mb-8 font-bold text-xs uppercase tracking-widest"
+          className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors mb-8 font-bold text-xs uppercase tracking-widest"
         >
           <ChevronLeft size={16} /> Back to Collection
         </button>
@@ -265,7 +272,7 @@ export default function ProductDetailPage() {
                 {/* ✅ Video Verified badge → seller's video verification page */}
                 <button
                   onClick={() => navigate(`/store/${pSeller._id || pSeller.id}`)}
-                  className="absolute top-6 left-6 bg-zinc-900/90 backdrop-blur-md text-white px-4 py-2 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+                  className="absolute top-6 left-6 bg-white shadow-sm border border-slate-200/90 backdrop-blur-md text-slate-900 px-4 py-2 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-100 border border-slate-200 transition-colors"
                 >
                   <Video size={14} className="text-emerald-400" /> Video-Verified Store
                 </button>
@@ -277,7 +284,7 @@ export default function ProductDetailPage() {
                 >
                   <Heart
                     size={18}
-                    className={wishlisted ? "text-red-500 fill-red-500" : "text-zinc-400"}
+                    className={wishlisted ? "text-red-500 fill-red-500" : "text-slate-600"}
                   />
                 </button>
               </motion.div>
@@ -304,23 +311,23 @@ export default function ProductDetailPage() {
           <div className="lg:col-span-5 space-y-10">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
                   {p.brand || PRODUCT.brand}
                 </span>
                 <span className="h-1 w-1 rounded-full bg-zinc-300"></span>
-                <div className="flex items-center gap-1 text-zinc-900 text-xs font-bold">
+                <div className="flex items-center gap-1 text-slate-900 text-xs font-bold">
                   <Star size={12} fill="currentColor" /> {PRODUCT.rating}
                 </div>
               </div>
-              <h1 className="text-2xl md:text-4xl font-black text-zinc-900 tracking-tight flex items-center gap-2">
+              <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                       {p.productName || (p.brand ? `${p.brand}'s Product` : "Verified Product")}
                       <BadgeCheck size={24} className="text-emerald-500" />
                     </h1>
               <div className="flex items-baseline gap-4">
-                <span className="text-4xl font-black text-zinc-900">
+                <span className="text-4xl font-black text-slate-900">
                   {fmt(pPrice)}
                 </span>
-                <span className="text-xl text-zinc-300 line-through font-bold">
+                <span className="text-xl text-slate-700 line-through font-bold">
                   {fmt(pOriginalPrice)}
                 </span>
                 <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">
@@ -336,19 +343,19 @@ export default function ProductDetailPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-zinc-900 flex items-center justify-center text-white font-black">
+                  <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-900 font-black">
                     {(pSeller.businessName || pSeller.name)?.charAt(0)}
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-zinc-400">Sold by</p>
-                    <p className="font-bold text-zinc-900">{pSeller.businessName || pSeller.name}</p>
+                    <p className="text-[10px] font-black uppercase text-slate-600">Sold by</p>
+                    <p className="font-bold text-slate-900">{pSeller.businessName || pSeller.name}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="flex items-center gap-1 text-emerald-600 text-xs font-black uppercase">
                     <BadgeCheck size={14} /> Verified
                   </div>
-                  <p className="text-[10px] font-bold text-zinc-400 mt-1">
+                  <p className="text-[10px] font-bold text-slate-600 mt-1">
                     {PRODUCT.seller.distance} • {pSeller.city || PRODUCT.seller.sector}
                   </p>
                 </div>
@@ -358,7 +365,7 @@ export default function ProductDetailPage() {
                   <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                     <CheckCircle2 size={16} />
                   </div>
-                  <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-tighter">
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-tighter">
                     Mandatory Video Packing Enabled
                   </p>
                 </div>
@@ -376,8 +383,8 @@ export default function ProductDetailPage() {
                   key={idx}
                   className="bg-zinc-50 p-4 rounded-3xl border border-zinc-100 flex flex-col items-center gap-2"
                 >
-                  <item.icon size={18} className="text-zinc-400" />
-                  <span className="text-[10px] font-black uppercase text-zinc-900">
+                  <item.icon size={18} className="text-slate-600" />
+                  <span className="text-[10px] font-black uppercase text-slate-900">
                     {item.val}
                   </span>
                 </div>
@@ -394,7 +401,7 @@ export default function ProductDetailPage() {
               </button>
               <button
                 onClick={handleBuyNow}
-                className="flex-1 py-4 sm:py-5 bg-zinc-900 text-white rounded-3xl font-black uppercase tracking-widest text-[10px] sm:text-xs shadow-2xl shadow-zinc-300 hover:bg-zinc-800 transition-all flex items-center justify-center gap-3"
+                className="flex-1 py-4 sm:py-5 bg-white shadow-sm border border-slate-200 text-slate-900 rounded-3xl font-black uppercase tracking-widest text-[10px] sm:text-xs shadow-2xl shadow-zinc-300 hover:bg-slate-100 border border-slate-200 transition-all flex items-center justify-center gap-3"
               >
                 <Zap size={18} className="text-yellow-400 fill-yellow-400" /> Buy Now
               </button>
@@ -410,14 +417,14 @@ export default function ProductDetailPage() {
                 key={t}
                 onClick={() => setTab(t)}
                 className={`pb-4 text-xs font-black uppercase tracking-[0.2em] transition-all relative ${
-                  tab === t ? "text-zinc-900" : "text-zinc-300 hover:text-zinc-500"
+                  tab === t ? "text-slate-900" : "text-slate-700 hover:text-slate-500"
                 }`}
               >
                 {t}
                 {tab === t && (
                   <motion.div
                     layoutId="tab-line"
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-900 rounded-full"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-white shadow-sm border border-slate-200 rounded-full"
                   />
                 )}
               </button>
@@ -429,7 +436,7 @@ export default function ProductDetailPage() {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-lg text-zinc-500 leading-relaxed font-medium max-w-4xl"
+                className="text-lg text-slate-500 leading-relaxed font-medium max-w-4xl"
               >
                 {p.description || PRODUCT.description}
               </motion.p>
@@ -445,10 +452,10 @@ export default function ProductDetailPage() {
                     key={i}
                     className="flex justify-between p-6 bg-zinc-50 rounded-2xl border border-zinc-100"
                   >
-                    <span className="text-xs font-black uppercase tracking-widest text-zinc-400">
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-600">
                       {s.label}
                     </span>
-                    <span className="text-sm font-bold text-zinc-900">{s.value}</span>
+                    <span className="text-sm font-bold text-slate-900">{s.value}</span>
                   </div>
                 ))}
               </motion.div>
@@ -461,13 +468,13 @@ export default function ProductDetailPage() {
               >
                 <div className="grid md:grid-cols-3 gap-8 bg-zinc-50 p-8 rounded-[2.5rem] border border-zinc-100">
                   <div className="text-center md:border-r border-zinc-200 flex flex-col justify-center">
-                    <h4 className="text-6xl font-black text-zinc-900">{PRODUCT.rating}</h4>
-                    <div className="flex justify-center gap-1 my-3 text-zinc-900">
+                    <h4 className="text-6xl font-black text-slate-900">{PRODUCT.rating}</h4>
+                    <div className="flex justify-center gap-1 my-3 text-slate-900">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} size={18} fill={i < 4 ? "currentColor" : "none"} />
                       ))}
                     </div>
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
                       Based on 3.8k Reviews
                     </p>
                   </div>
@@ -477,11 +484,11 @@ export default function ProductDetailPage() {
                         <span className="w-4">{n}</span>
                         <div className="flex-1 h-2 bg-zinc-200 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-zinc-900"
+                            className="h-full bg-white shadow-sm border border-slate-200"
                             style={{ width: `${n === 5 ? 70 : 20}%` }}
                           />
                         </div>
-                        <span className="w-8 text-right text-zinc-400">
+                        <span className="w-8 text-right text-slate-600">
                           {n === 5 ? "70%" : "20%"}
                         </span>
                       </div>
@@ -497,14 +504,14 @@ export default function ProductDetailPage() {
                     >
                       <div className="flex justify-between items-start mb-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center font-black">
+                          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-black">
                             {rev.avatar}
                           </div>
                           <div>
-                            <p className="font-bold text-zinc-900">{rev.user}</p>
+                            <p className="font-bold text-slate-900">{rev.user}</p>
                             <div className="flex items-center gap-2 mt-1">
                               <Star size={10} fill="currentColor" />
-                              <span className="text-[10px] font-bold text-zinc-400 uppercase">
+                              <span className="text-[10px] font-bold text-slate-600 uppercase">
                                 {rev.date}
                               </span>
                             </div>
@@ -514,9 +521,9 @@ export default function ProductDetailPage() {
                           Verified Purchase
                         </span>
                       </div>
-                      <h5 className="font-bold text-zinc-900 mb-2">{rev.title}</h5>
-                      <p className="text-zinc-500 text-sm leading-relaxed mb-6">{rev.body}</p>
-                      <button className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 transition-colors">
+                      <h5 className="font-bold text-slate-900 mb-2">{rev.title}</h5>
+                      <p className="text-slate-500 text-sm leading-relaxed mb-6">{rev.body}</p>
+                      <button className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors">
                         <ThumbsUp size={14} /> Helpful ({rev.helpful})
                       </button>
                     </div>
@@ -530,14 +537,14 @@ export default function ProductDetailPage() {
         {/* ─── RELATED PRODUCTS ─── */}
         <div className="mt-32">
           <div className="flex items-center justify-between mb-12">
-            <h3 className="text-3xl font-black text-zinc-900 tracking-tighter">
-              You may also <span className="text-zinc-300 italic">like</span>
+            <h3 className="text-3xl font-black text-slate-900 tracking-tighter">
+              You may also <span className="text-slate-700 italic">like</span>
             </h3>
-            <div className="h-px flex-1 bg-zinc-100 mx-8 hidden md:block" />
+            <div className="h-px flex-1 bg-slate-100 mx-8 hidden md:block" />
             {/* ✅ View All → /search filtered by product brand/category */}
             <button
               onClick={() => navigate(`/search?q=${PRODUCT.brand}`)}
-              className="text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-colors"
+              className="text-xs font-black uppercase tracking-widest text-slate-600 hover:text-slate-900 transition-colors"
             >
               View All
             </button>
@@ -561,12 +568,12 @@ export default function ProductDetailPage() {
                   />
                 </div>
                 <div className="px-2">
-                  <h4 className="font-bold text-zinc-900 text-sm line-clamp-1 mb-1">
+                  <h4 className="font-bold text-slate-900 text-sm line-clamp-1 mb-1">
                     {p.name}
                   </h4>
                   <div className="flex justify-between items-center">
-                    <span className="font-black text-zinc-900">{fmt(p.price)}</span>
-                    <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">
+                    <span className="font-black text-slate-900">{fmt(p.price)}</span>
+                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">
                       {p.dist}
                     </span>
                   </div>

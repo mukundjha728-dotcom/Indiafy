@@ -60,18 +60,25 @@ export default function CartPage() {
       <WebsiteNavbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 pb-24">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-5xl font-black text-zinc-900 tracking-tighter mb-2">
-            Shopping <span className="text-zinc-300 italic">Bag</span>
+          <h1 className="text-5xl font-black text-slate-900 tracking-tighter mb-2">
+            Shopping <span className="text-slate-700 italic">Bag</span>
           </h1>
-          <p className="text-zinc-500 font-medium">
+          <p className="text-slate-500 font-medium">
             You have {cartItems.length} verified item{cartItems.length !== 1 ? "s" : ""} in your bag.
           </p>
         </div>
 
         {isLoading ? (
-          <div className="py-32 flex justify-center"><div className="animate-spin text-zinc-900"><Plus size={40} /></div></div>
+          <div className="py-32 flex justify-center"><div className="animate-spin text-slate-900"><Plus size={40} /></div></div>
         ) : cartItems.length === 0 && saved.length === 0 ? (
           <EmptyState navigate={navigate} />
         ) : (
@@ -80,7 +87,7 @@ export default function CartPage() {
             <div className="lg:col-span-8 space-y-8">
 
               {/* Delivery Promise Banner */}
-              <div className="bg-zinc-900 rounded-[2rem] p-6 text-white flex items-center justify-between overflow-hidden relative">
+              <div className="bg-white shadow-sm border border-slate-200 rounded-[2rem] p-6 text-slate-900 flex items-center justify-between overflow-hidden relative">
                 <div className="relative z-10 flex items-center gap-5">
                   <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center">
                     <Truck size={24} className="text-emerald-400" />
@@ -89,9 +96,9 @@ export default function CartPage() {
                     <p className="text-sm font-black uppercase tracking-widest text-emerald-400">
                       Hyperlocal Speed
                     </p>
-                    <p className="text-zinc-400 text-xs mt-0.5 font-medium">
+                    <p className="text-slate-600 text-xs mt-0.5 font-medium">
                       Estimated delivery to your sector:{" "}
-                      <span className="text-white font-bold">15-25 Mins</span>
+                      <span className="text-slate-900 font-bold">15-25 Mins</span>
                     </p>
                   </div>
                 </div>
@@ -129,13 +136,13 @@ export default function CartPage() {
                             <div className="flex justify-between items-start">
                               <button
                                 onClick={() => navigate(verticalRoutes["E-Commerce"])}
-                                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-700 transition-colors"
+                                className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-slate-600 transition-colors"
                               >
                                 {item.productId?.vertical || "E-Commerce"}
                               </button>
                               <button
                                 onClick={() => removeItem(item.productId?._id)}
-                                className="text-zinc-300 hover:text-red-500 transition-colors"
+                                className="text-slate-700 hover:text-red-500 transition-colors"
                               >
                                 <Trash2 size={18} />
                               </button>
@@ -143,7 +150,7 @@ export default function CartPage() {
 
                             <h3
                               onClick={() => navigate(`/product/${item.productId?._id}`)}
-                              className="text-xl font-bold text-zinc-900 leading-tight cursor-pointer hover:text-zinc-600 transition-colors"
+                              className="text-xl font-bold text-slate-900 leading-tight cursor-pointer hover:text-slate-500 transition-colors"
                             >
                               {item.productId?.name}
                             </h3>
@@ -155,7 +162,7 @@ export default function CartPage() {
                                 >
                                   <BadgeCheck size={12} /> {item.productId?.seller || "Indiafy Seller"}
                                 </button>
-                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
+                                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">
                                   {item.productId?.sector || "Local"}
                                 </span>
                                 {item.isWholesale && (
@@ -165,7 +172,7 @@ export default function CartPage() {
                                 )}
                               </div>
                               {item.isWholesale && item.productId?.minimumOrderQty > 1 && (
-                                <p className="text-[9px] font-bold text-zinc-500 uppercase mt-1">
+                                <p className="text-[9px] font-bold text-slate-500 uppercase mt-1">
                                   MOQ: {item.productId.minimumOrderQty} Units • GST: {item.productId.gstPercentage || 0}%
                                 </p>
                               )}
@@ -174,13 +181,13 @@ export default function CartPage() {
                           <div className="flex items-end justify-between mt-6">
                             <div className="space-y-1">
                               <div className="flex items-center gap-2">
-                                <span className="text-2xl font-black text-zinc-900">
+                                <span className="text-2xl font-black text-slate-900">
                                   {fmt(item.price)}
                                 </span>
                               </div>
                               <button
                                 onClick={() => saveForLater(item)}
-                                className="flex items-center gap-1 text-[10px] font-bold text-zinc-400 hover:text-red-400 transition-colors uppercase tracking-tighter mt-1"
+                                className="flex items-center gap-1 text-[10px] font-bold text-slate-600 hover:text-red-400 transition-colors uppercase tracking-tighter mt-1"
                               >
                                 <Heart size={11} /> Save for Later
                               </button>
@@ -189,7 +196,7 @@ export default function CartPage() {
                             <div className="flex items-center bg-white border border-zinc-200 rounded-2xl p-1 shadow-sm">
                               <button
                                 onClick={() => updateQty(item.productId?._id, -1)}
-                                className="p-2 hover:bg-zinc-100 rounded-xl transition-colors"
+                                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
                               >
                                 <Minus size={14} />
                               </button>
@@ -198,7 +205,7 @@ export default function CartPage() {
                               </span>
                               <button
                                 onClick={() => updateQty(item.productId?._id, 1)}
-                                className="p-2 hover:bg-zinc-100 rounded-xl transition-colors"
+                                className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
                               >
                                 <Plus size={14} />
                               </button>
@@ -214,7 +221,7 @@ export default function CartPage() {
               {/* ✅ Saved for Later section */}
               {saved.length > 0 && (
                 <div className="mt-10">
-                  <h3 className="text-xs font-black uppercase tracking-widest text-zinc-400 mb-4">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-slate-600 mb-4">
                     Saved for Later ({saved.length})
                   </h3>
                   <div className="space-y-3">
@@ -232,15 +239,15 @@ export default function CartPage() {
                         <div className="flex-1 min-w-0">
                           <p
                             onClick={() => navigate(`/product/${item.productId?._id}`)}
-                            className="text-sm font-bold text-zinc-900 truncate cursor-pointer hover:text-zinc-600"
+                            className="text-sm font-bold text-slate-900 truncate cursor-pointer hover:text-slate-500"
                           >
                             {item.productId?.name}
                           </p>
-                          <p className="text-xs font-black text-zinc-900 mt-0.5">{fmt(item.price)}</p>
+                          <p className="text-xs font-black text-slate-900 mt-0.5">{fmt(item.price)}</p>
                         </div>
                         <button
                           onClick={() => moveToCart(item)}
-                          className="text-[10px] font-black uppercase tracking-widest text-zinc-900 border border-zinc-200 px-3 py-2 rounded-xl hover:bg-zinc-100 transition-colors whitespace-nowrap"
+                          className="text-[10px] font-black uppercase tracking-widest text-slate-900 border border-zinc-200 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors whitespace-nowrap"
                         >
                           Move to Cart
                         </button>
@@ -254,23 +261,23 @@ export default function CartPage() {
             {/* Right: Summary */}
             <aside className="lg:col-span-4">
               <div className="sticky top-32 space-y-6">
-                <div className="bg-zinc-900 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-zinc-200">
+                <div className="bg-white shadow-sm border border-slate-200 rounded-[2.5rem] p-8 text-slate-900 shadow-2xl shadow-zinc-200">
                   <h2 className="text-xl font-black uppercase tracking-widest mb-8 flex items-center gap-3">
-                    Summary <ShoppingBag size={20} className="text-zinc-500" />
+                    Summary <ShoppingBag size={20} className="text-slate-500" />
                   </h2>
 
                   <div className="space-y-4 mb-8">
-                    <div className="flex justify-between text-zinc-400 font-medium">
+                    <div className="flex justify-between text-slate-600 font-medium">
                       <span>Subtotal</span>
-                      <span className="text-white font-bold">{fmt(subtotal)}</span>
+                      <span className="text-slate-900 font-bold">{fmt(subtotal)}</span>
                     </div>
                     {gstEstimate > 0 && (
-                      <div className="flex justify-between text-zinc-400 font-medium">
+                      <div className="flex justify-between text-slate-600 font-medium">
                         <span>GST (Est.)</span>
-                        <span className="text-white font-bold">{fmt(gstEstimate)}</span>
+                        <span className="text-slate-900 font-bold">{fmt(gstEstimate)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between text-zinc-400 font-medium">
+                    <div className="flex justify-between text-slate-600 font-medium">
                       <span>Delivery Fee</span>
                       <span className="text-emerald-400 font-bold uppercase text-xs tracking-widest pt-1">
                         Calculated Next
@@ -282,9 +289,9 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  <div className="pt-6 border-t border-zinc-800 flex justify-between items-end mb-8">
+                  <div className="pt-6 border-t border-slate-200 flex justify-between items-end mb-8">
                     <div>
-                      <p className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">
+                      <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">
                         Total Payable
                       </p>
                       <p className="text-4xl font-black">{fmt(totalPayable)}</p>
@@ -295,7 +302,7 @@ export default function CartPage() {
                   <button
                     onClick={() => navigate("/checkout")}
                     disabled={cartItems.length === 0}
-                    className="w-full py-5 bg-white text-zinc-900 rounded-3xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all group disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full py-5 bg-white text-slate-900 rounded-3xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all group disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     Checkout Securely{" "}
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -304,7 +311,7 @@ export default function CartPage() {
                   {/* ✅ Continue Shopping → / */}
                   {/* <button
                     onClick={() => navigate("/")}
-                    className="w-full mt-3 py-3 text-zinc-500 hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors"
+                    className="w-full mt-3 py-3 text-slate-500 hover:text-slate-900 text-[11px] font-bold uppercase tracking-widest transition-colors"
                   >
                     ← Continue Shopping
                   </button> */}
@@ -312,8 +319,8 @@ export default function CartPage() {
 
                 {/* Secure Note */}
                 <div className="p-6 border-2 border-dashed border-zinc-100 rounded-[2rem] flex items-center gap-4">
-                  <ShieldCheck size={32} className="text-zinc-300 shrink-0" />
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase leading-relaxed tracking-tighter">
+                  <ShieldCheck size={32} className="text-slate-700 shrink-0" />
+                  <p className="text-[10px] font-bold text-slate-600 uppercase leading-relaxed tracking-tighter">
                     Encrypted Dynamic QR Payments & Video Verification active for this order.
                   </p>
                 </div>
@@ -331,18 +338,18 @@ export default function CartPage() {
 const EmptyState = ({ navigate }) => (
   <div className="py-32 text-center bg-zinc-50 rounded-[4rem] border-2 border-dashed border-zinc-100">
     <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
-      <ShoppingBag size={40} className="text-zinc-200" />
+      <ShoppingBag size={40} className="text-slate-900" />
     </div>
-    <h2 className="text-3xl font-black text-zinc-900 tracking-tighter mb-4">
+    <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">
       Your bag is empty
     </h2>
-    <p className="text-zinc-400 font-medium mb-10 max-w-xs mx-auto">
+    <p className="text-slate-600 font-medium mb-10 max-w-xs mx-auto">
       Start Indiafying your daily lifestyle with verified local sellers.
     </p>
     {/* ✅ Start Shopping → / */}
     <button
       onClick={() => navigate("/")}
-      className="px-12 py-4 bg-zinc-900 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:shadow-2xl transition-all shadow-zinc-200"
+      className="px-12 py-4 bg-white shadow-sm border border-slate-200 text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:shadow-2xl transition-all shadow-zinc-200"
     >
       Start Shopping
     </button>

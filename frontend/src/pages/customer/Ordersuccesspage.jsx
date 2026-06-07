@@ -51,7 +51,7 @@ export default function OrderSuccessPage() {
   if (loading) {
     return (
       <div className="bg-zinc-50 min-h-screen flex items-center justify-center">
-        <div className="animate-spin text-zinc-900"><ShoppingBag size={40} /></div>
+        <div className="animate-spin text-slate-900"><ShoppingBag size={40} /></div>
       </div>
     );
   }
@@ -68,6 +68,13 @@ export default function OrderSuccessPage() {
       <WebsiteNavbar />
 
       <main className="max-w-3xl mx-auto px-4 pt-32 pb-24">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* SUCCESS HERO */}
         <div className="text-center mb-12">
           <motion.div
@@ -75,20 +82,20 @@ export default function OrderSuccessPage() {
             animate={{ scale: 1 }}
             className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-emerald-200"
           >
-            <CheckCircle2 size={40} className="text-white" />
+            <CheckCircle2 size={40} className="text-slate-900" />
           </motion.div>
-          <h1 className="text-4xl font-black text-zinc-900 tracking-tighter mb-2">
+          <h1 className="text-4xl font-black text-slate-900 tracking-tighter mb-2">
             Order Confirmed!
           </h1>
-          <p className="text-zinc-500 font-medium">
+          <p className="text-slate-500 font-medium">
             Order ID:{" "}
-            <span className="text-zinc-900 font-bold">#{orderId || displayOrder._id}</span>
+            <span className="text-slate-900 font-bold">#{orderId || displayOrder._id}</span>
           </p>
         </div>
 
         <div className="space-y-6">
           {/* 1. SHIPMENT TRACKING CARD */}
-          <section className="bg-zinc-900 rounded-[2.5rem] p-8 text-white shadow-2xl overflow-hidden relative">
+          <section className="bg-white shadow-sm border border-slate-200 rounded-[2.5rem] p-8 text-slate-900 shadow-2xl overflow-hidden relative">
             <div className="relative z-10">
               <div className="flex justify-between items-start mb-8">
                 <div>
@@ -96,7 +103,7 @@ export default function OrderSuccessPage() {
                     Delivery Status
                   </p>
                   <h2 className="text-4xl font-black">Awaiting Confirmation</h2>
-                  <p className="text-zinc-400 text-xs font-bold mt-2 uppercase tracking-tighter">
+                  <p className="text-slate-600 text-xs font-bold mt-2 uppercase tracking-tighter">
                     Heavy item: Seller will confirm and ship shortly.
                   </p>
                 </div>
@@ -119,13 +126,13 @@ export default function OrderSuccessPage() {
                 <div className="flex-1 h-1.5 bg-white/20 rounded-full" />
               </div>
 
-              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-zinc-500">
+              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
                 <span className="text-emerald-400">Order Placed</span>
-                <span className="text-white">Seller Accepted</span>
+                <span className="text-slate-900">Seller Accepted</span>
                 <span>Shipped</span>
               </div>
             </div>
-            <div className="absolute -right-8 -bottom-8 text-white/5 rotate-12">
+            <div className="absolute -right-8 -bottom-8 text-slate-900/5 rotate-12">
               <Truck size={200} />
             </div>
           </section>
@@ -133,18 +140,18 @@ export default function OrderSuccessPage() {
           {/* 2. ANTI-FRAUD: VIDEO PACKING */}
           <section className="bg-white rounded-[2rem] p-6 border border-zinc-100 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-zinc-50 flex items-center justify-center text-zinc-900 border border-zinc-100">
+              <div className="w-12 h-12 rounded-2xl bg-zinc-50 flex items-center justify-center text-white border border-zinc-100">
                 <Video size={20} />
               </div>
               <div className="flex-1">
                 <h3 className="text-sm font-black uppercase tracking-tight">
                   Packing Proof
                 </h3>
-                <p className="text-xs text-zinc-500 font-medium">
+                <p className="text-xs text-slate-500 font-medium">
                   Mandatory video recording will be available once packed.
                 </p>
               </div>
-              <div className="px-3 py-1 bg-zinc-100 rounded-full text-[9px] font-black uppercase text-zinc-400 animate-pulse">
+              <div className="px-3 py-1 bg-slate-100 rounded-full text-[9px] font-black uppercase text-slate-600 animate-pulse">
                 Live Status
               </div>
             </div>
@@ -164,14 +171,14 @@ export default function OrderSuccessPage() {
                     alt="item"
                   />
                   <div className="flex-1">
-                    <h4 className="font-bold text-zinc-900 text-sm">
+                    <h4 className="font-bold text-slate-900 text-sm">
                       {item.product?.productName || "Product"}
                     </h4>
                     <div className="flex justify-between items-center mt-2">
-                      <span className="text-xs font-bold text-zinc-400 uppercase">
+                      <span className="text-xs font-bold text-slate-600 uppercase">
                         Qty: {item.quantity}
                       </span>
-                      <span className="font-black text-zinc-900">
+                      <span className="font-black text-slate-900">
                         {fmt(item.price)}
                       </span>
                     </div>
@@ -183,7 +190,7 @@ export default function OrderSuccessPage() {
               <div className="flex items-center gap-2 font-bold text-emerald-600 text-xs uppercase">
                 <ShieldCheck size={18} /> Secure Transaction
               </div>
-              <p className="text-2xl font-black text-zinc-900">
+              <p className="text-2xl font-black text-slate-900">
                 {fmt(displayOrder.totalPrice)}
               </p>
             </div>
@@ -193,13 +200,13 @@ export default function OrderSuccessPage() {
           <div className="grid grid-cols-2 gap-4 pt-4">
             <button
               onClick={() => navigate(`/track-order/${orderId || "demo"}`)}
-              className="py-5 bg-zinc-900 text-white rounded-3xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-zinc-800 transition-all"
+              className="py-5 bg-white shadow-sm border border-slate-200 text-slate-900 rounded-3xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-slate-100 border border-slate-200 transition-all"
             >
               Track Order
             </button>
             <button
               onClick={() => navigate("/")}
-              className="py-5 bg-white border-2 border-zinc-900 text-zinc-900 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-zinc-50 transition-all"
+              className="py-5 bg-white border-2 border-zinc-900 text-slate-900 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-zinc-50 transition-all"
             >
               Back to Home
             </button>

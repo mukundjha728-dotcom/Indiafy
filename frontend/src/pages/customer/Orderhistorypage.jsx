@@ -99,17 +99,24 @@ export default function OrderHistoryPage() {
   }, [search, activeFilter, sortBy, formattedOrders]);
 
   return (
-    <div className="bg-zinc-950 min-h-screen text-zinc-400">
+    <div className="bg-white min-h-screen text-slate-600">
       <WebsiteNavbar />
 
       <main className="max-w-5xl mx-auto px-4 pt-32 pb-24">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* Header Section */}
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-5xl font-black text-white tracking-tighter">
-              Order <span className="text-zinc-600 italic">History</span>
+            <h1 className="text-5xl font-black text-slate-900 tracking-tighter">
+              Order <span className="text-slate-500 italic">History</span>
             </h1>
-            <p className="mt-2 font-medium text-zinc-500">
+            <p className="mt-2 font-medium text-slate-500">
               Managing {filteredOrders.length} orders in Gurugram sectors.
             </p>
           </div>
@@ -119,7 +126,7 @@ export default function OrderHistoryPage() {
         <div className="flex flex-col md:flex-row gap-4 mb-10">
           <div className="flex-1 relative group">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-white transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-slate-900 transition-colors"
               size={18}
             />
             <input
@@ -127,12 +134,12 @@ export default function OrderHistoryPage() {
               placeholder="Search by Order ID or Item..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl py-4 pl-12 pr-12 text-white focus:outline-none focus:border-zinc-500 transition-all"
+              className="w-full bg-white shadow-sm border border-slate-200 border border-slate-200 rounded-2xl py-4 pl-12 pr-12 text-slate-900 focus:outline-none focus:border-zinc-500 transition-all"
             />
             {search && (
               <button
                 onClick={() => setSearch("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
               >
                 <X size={18} />
               </button>
@@ -142,7 +149,7 @@ export default function OrderHistoryPage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-zinc-900 border border-zinc-800 text-white rounded-2xl px-6 py-4 font-bold text-sm outline-none focus:border-zinc-500 cursor-pointer appearance-none"
+            className="bg-white shadow-sm border border-slate-200 border border-slate-200 text-slate-900 rounded-2xl px-6 py-4 font-bold text-sm outline-none focus:border-zinc-500 cursor-pointer appearance-none"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -159,7 +166,7 @@ export default function OrderHistoryPage() {
               className={`px-6 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all border ${
                 activeFilter === tab
                   ? "bg-white text-zinc-950 border-white shadow-lg shadow-white/5"
-                  : "border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
+                  : "border-slate-200 text-slate-500 hover:border-zinc-600 hover:text-slate-700"
               }`}
             >
               {tab}
@@ -170,7 +177,7 @@ export default function OrderHistoryPage() {
         {/* Orders List */}
         <div className="space-y-6 min-h-[400px]">
           {isLoading ? (
-            <div className="py-20 text-center text-zinc-500 font-bold tracking-widest uppercase">
+            <div className="py-20 text-center text-slate-500 font-bold tracking-widest uppercase">
               Loading orders...
             </div>
           ) : (
@@ -183,10 +190,10 @@ export default function OrderHistoryPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="py-20 text-center bg-zinc-900/50 rounded-[3rem] border border-dashed border-zinc-800"
+                className="py-20 text-center bg-white/90 backdrop-blur-xl shadow-sm border border-slate-200 rounded-[3rem] border border-dashed border-slate-200"
               >
-                <Package className="mx-auto mb-4 text-zinc-800" size={48} />
-                <p className="text-zinc-600 font-bold uppercase tracking-widest text-xs">
+                <Package className="mx-auto mb-4 text-slate-700" size={48} />
+                <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
                   No orders found matching your criteria
                 </p>
               </motion.div>
@@ -211,7 +218,7 @@ function OrderCard({ order }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] overflow-hidden hover:border-zinc-700 transition-colors"
+      className="bg-white shadow-sm border border-slate-200 border border-slate-200 rounded-[2.5rem] overflow-hidden hover:border-slate-300 transition-colors"
     >
       <div className="p-8">
         <div className="flex flex-col md:flex-row justify-between gap-6">
@@ -220,7 +227,7 @@ function OrderCard({ order }) {
               {order.items.map((item, i) => (
                 <div
                   key={i}
-                  className="w-16 h-16 rounded-2xl border-4 border-zinc-900 overflow-hidden bg-zinc-800 shadow-xl"
+                  className="w-16 h-16 rounded-2xl border-4 border-zinc-900 overflow-hidden bg-slate-100 border border-slate-200 shadow-xl"
                 >
                   <img loading="lazy" decoding="async"
                     src={item.img}
@@ -232,7 +239,7 @@ function OrderCard({ order }) {
             </div>
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <span className="text-xs font-black text-white uppercase tracking-widest">
+                <span className="text-xs font-black text-slate-900 uppercase tracking-widest">
                   {order.id}
                 </span>
                 <span
@@ -247,23 +254,23 @@ function OrderCard({ order }) {
                   {order.status}
                 </span>
               </div>
-              <p className="text-sm font-bold text-zinc-500">
+              <p className="text-sm font-bold text-slate-500">
                 {order.date} • {order.items.length} Items
               </p>
             </div>
           </div>
 
           <div className="flex flex-col md:items-end justify-center">
-            <p className="text-2xl font-black text-white mb-1">
+            <p className="text-2xl font-black text-slate-900 mb-1">
               {fmt(order.total)}
             </p>
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter text-zinc-600">
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter text-slate-500">
               <MapPin size={12} /> {order.sector} Hub
             </div>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-zinc-800/50 flex flex-wrap gap-3">
+        <div className="mt-8 pt-6 border-t border-slate-200 flex flex-wrap gap-3">
           {order.status !== "Cancelled" && (
             <button 
               onClick={() => navigate(`/track-order/${order.rawId}`)}
@@ -274,12 +281,12 @@ function OrderCard({ order }) {
           )}
           <button
             onClick={() => setExpanded(!expanded)}
-            className="bg-zinc-800 text-white px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-zinc-700 transition-all flex items-center gap-2"
+            className="bg-slate-100 border border-slate-200 text-slate-900 px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all flex items-center gap-2"
           >
             {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}{" "}
             Details
           </button>
-          <button className="border border-zinc-800 text-zinc-400 px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:text-white transition-all flex items-center gap-2">
+          <button className="border border-slate-200 text-slate-600 px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-all flex items-center gap-2">
             <RotateCcw size={14} /> Reorder
           </button>
           {order.videoAvailable && (
@@ -301,13 +308,13 @@ function OrderCard({ order }) {
               className="overflow-hidden"
             >
               <div className="mt-8 space-y-4">
-                <p className="text-[10px] font-black uppercase text-zinc-600 tracking-widest">
+                <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest">
                   Order Breakdown
                 </p>
                 {order.items.map((item, i) => (
                   <div
                     key={i}
-                    className="flex justify-between items-center p-4 bg-zinc-950/50 rounded-2xl border border-zinc-800/50"
+                    className="flex justify-between items-center p-4 bg-white rounded-2xl border border-slate-200"
                   >
                     <div className="flex items-center gap-4">
                       <img loading="lazy" decoding="async"
@@ -316,26 +323,26 @@ function OrderCard({ order }) {
                         alt=""
                       />
                       <div>
-                        <p className="text-sm font-bold text-zinc-300">
+                        <p className="text-sm font-bold text-slate-700">
                           {item.name}
                         </p>
-                        <p className="text-xs text-zinc-600 font-medium">
+                        <p className="text-xs text-slate-500 font-medium">
                           Qty: {item.qty}
                         </p>
                       </div>
                     </div>
-                    <p className="text-sm font-black text-white">
+                    <p className="text-sm font-black text-slate-900">
                       {fmt(item.price)}
                     </p>
                   </div>
                 ))}
-                <div className="p-6 bg-zinc-950 rounded-3xl border border-zinc-800 mt-4 flex items-center gap-4">
-                  <ShieldCheck size={24} className="text-zinc-700" />
+                <div className="p-6 bg-white rounded-3xl border border-slate-200 mt-4 flex items-center gap-4">
+                  <ShieldCheck size={24} className="text-slate-600" />
                   <div>
-                    <p className="text-xs font-bold text-zinc-400">
+                    <p className="text-xs font-bold text-slate-600">
                       Sold by {order.seller}
                     </p>
-                    <p className="text-[10px] text-zinc-600 font-medium uppercase tracking-tighter">
+                    <p className="text-[10px] text-slate-500 font-medium uppercase tracking-tighter">
                       Verified Sector-Assigned Infrastructure
                     </p>
                   </div>

@@ -53,7 +53,7 @@ const STATUS_LIST = ["Pending", "Processing", "Shipped", "Delivered"];
 
 const Card = ({ children, className = "" }) => (
   <div
-    className={`bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden ${className}`}
+    className={`bg-white/90 backdrop-blur-xl shadow-sm border border-slate-200 backdrop-blur-xl border border-slate-200 rounded-[2.5rem] overflow-hidden ${className}`}
   >
     {children}
   </div>
@@ -113,7 +113,7 @@ export default function OrderTrackingPage() {
   if (loading) return (
     <div className="bg-black min-h-screen flex items-center justify-center">
        <div className="relative">
-         <div className="w-16 h-16 border-4 border-zinc-800 border-t-orange-500 rounded-full animate-spin" />
+         <div className="w-16 h-16 border-4 border-slate-200 border-t-orange-500 rounded-full animate-spin" />
          <div className="absolute inset-0 flex items-center justify-center">
            <Package size={20} className="text-orange-500 animate-pulse" />
          </div>
@@ -122,14 +122,14 @@ export default function OrderTrackingPage() {
   );
 
   if (error || !order) return (
-    <div className="bg-black min-h-screen text-zinc-400">
+    <div className="bg-black min-h-screen text-slate-600">
       <WebsiteNavbar />
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <Package size={48} className="text-zinc-800" />
-        <p className="text-2xl font-black text-white tracking-tighter">{error || "Order Not Found"}</p>
+        <Package size={48} className="text-slate-700" />
+        <p className="text-2xl font-black text-slate-900 tracking-tighter">{error || "Order Not Found"}</p>
         <button 
           onClick={() => navigate("/order-history")}
-          className="px-10 py-4 bg-white text-black rounded-[2rem] font-black text-xs uppercase tracking-widest hover:scale-105 transition-all"
+          className="px-10 py-4 bg-slate-900 text-white hover:bg-slate-800 rounded-[2rem] font-black text-xs uppercase tracking-widest hover:scale-105 transition-all"
         >
           View History
         </button>
@@ -164,21 +164,28 @@ export default function OrderTrackingPage() {
   };
 
   return (
-    <div className="bg-[#050505] min-h-screen text-zinc-400 selection:bg-orange-500/30">
+    <div className="bg-slate-50 min-h-screen text-slate-600 selection:bg-orange-500/30">
       <WebsiteNavbar />
 
       <main className="max-w-5xl mx-auto px-6 pt-32 pb-24">
+
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
         {/* HEADER AREA */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
           <div>
             <button
               onClick={() => navigate("/order-history")}
-              className="group flex items-center gap-2 text-zinc-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-[0.3em] mb-6"
+              className="group flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-all text-[10px] font-black uppercase tracking-[0.3em] mb-6"
             >
               <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to orders
             </button>
-            <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter flex items-center gap-4">
-              Track <span className="text-zinc-800 italic">Order</span>
+            <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
+              Track <span className="text-slate-700 italic">Order</span>
               {!isCancelled && order.status !== "Delivered" && (
                 <div className="relative flex h-3 w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
@@ -190,13 +197,13 @@ export default function OrderTrackingPage() {
           
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-1">Last Update</p>
-              <p className="text-xs font-bold text-white">{formatDate(order.updatedAt)}</p>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Last Update</p>
+              <p className="text-xs font-bold text-slate-900">{formatDate(order.updatedAt)}</p>
             </div>
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="p-4 bg-zinc-900 border border-white/5 rounded-2xl text-white hover:bg-zinc-800 transition-all disabled:opacity-50 group"
+              className="p-4 bg-white shadow-sm border border-slate-200 border border-slate-200 rounded-2xl text-slate-900 hover:bg-slate-100 border border-slate-200 transition-all disabled:opacity-50 group"
             >
               <RefreshCw size={18} className={refreshing ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-500"} />
             </button>
@@ -232,11 +239,11 @@ export default function OrderTrackingPage() {
                     {isCancelled ? "Status: Cancelled" : order.status === "Delivered" ? "Order Delivered" : "Estimated Arrival"}
                   </p>
                   <div className="flex items-baseline gap-3">
-                    <h2 className={`text-8xl font-black tracking-tighter ${isCancelled ? "text-zinc-800" : "text-white"}`}>
+                    <h2 className={`text-8xl font-black tracking-tighter ${isCancelled ? "text-slate-700" : "text-slate-900"}`}>
                       {getETA()}
                     </h2>
                     {!isCancelled && order.status !== "Delivered" && (
-                      <span className="text-zinc-700 text-2xl font-black uppercase tracking-widest italic">Mins</span>
+                      <span className="text-slate-600 text-2xl font-black uppercase tracking-widest italic">Mins</span>
                     )}
                   </div>
                   {order.status === "Delivered" && order.deliveredAt && (
@@ -247,10 +254,10 @@ export default function OrderTrackingPage() {
                   )}
                 </div>
                 <div className="text-right">
-                  <div className="bg-zinc-800/50 p-4 rounded-3xl border border-white/5 mb-4">
-                    <Truck size={32} className={isCancelled ? "text-zinc-700" : "text-orange-500"} />
+                  <div className="bg-slate-100 border border-slate-200/50 p-4 rounded-3xl border border-slate-200 mb-4">
+                    <Truck size={32} className={isCancelled ? "text-slate-600" : "text-orange-500"} />
                   </div>
-                  <p className="text-sm font-black text-white uppercase tracking-tighter">
+                  <p className="text-sm font-black text-slate-900 uppercase tracking-tighter">
                     #{(order._id || "").slice(-8).toUpperCase()}
                   </p>
                 </div>
@@ -260,8 +267,8 @@ export default function OrderTrackingPage() {
             {/* PROGRESS TRACKER */}
             <Card className="p-10">
               <div className="flex items-center justify-between mb-10">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">Live Timeline</p>
-                <div className="px-3 py-1 bg-white/5 rounded-full text-[9px] font-black uppercase tracking-widest text-zinc-500">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Live Timeline</p>
+                <div className="px-3 py-1 bg-white/5 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-500">
                   Real-time Sync
                 </div>
               </div>
@@ -278,27 +285,27 @@ export default function OrderTrackingPage() {
                         <div
                           className={`w-12 h-12 rounded-[1.25rem] flex items-center justify-center transition-all duration-500 shrink-0 ${
                             isCurrent 
-                              ? "bg-orange-500 text-white shadow-[0_0_30px_rgba(249,115,22,0.4)] scale-110" 
+                              ? "bg-orange-500 text-slate-900 shadow-[0_0_30px_rgba(249,115,22,0.4)] scale-110" 
                               : isCompleted 
                                 ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" 
-                                : "bg-zinc-900 text-zinc-800 border border-white/5"
+                                : "bg-white shadow-sm border border-slate-200 text-slate-700 border border-slate-200"
                           }`}
                         >
                           {isCompleted ? <CheckCircle2 size={22} /> : step.icon}
                         </div>
                         {i !== STEPS.length - 1 && (
-                          <div className={`w-0.5 h-16 my-2 transition-all duration-700 ${isCompleted ? "bg-emerald-500/20" : "bg-zinc-900"}`} />
+                          <div className={`w-0.5 h-16 my-2 transition-all duration-700 ${isCompleted ? "bg-emerald-500/20" : "bg-white shadow-sm border border-slate-200"}`} />
                         )}
                       </div>
                       <div className="pt-2 pb-10">
                         <p
                           className={`text-base font-black uppercase tracking-tight transition-colors duration-500 ${
-                            isCurrent ? "text-orange-500" : isCompleted ? "text-white" : "text-zinc-800"
+                            isCurrent ? "text-orange-500" : isCompleted ? "text-slate-900" : "text-slate-700"
                           }`}
                         >
                           {step.label}
                         </p>
-                        <p className={`text-xs font-medium mt-1 transition-colors duration-500 ${isCompleted ? "text-zinc-500" : "text-zinc-700"}`}>
+                        <p className={`text-xs font-medium mt-1 transition-colors duration-500 ${isCompleted ? "text-slate-500" : "text-slate-600"}`}>
                           {step.sub}
                         </p>
                         {isCurrent && (
@@ -316,13 +323,13 @@ export default function OrderTrackingPage() {
 
             {/* ORDER ITEMS */}
             <Card className="p-8">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 mb-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6">
                 Order Items ({order.orderItems?.length || 0})
               </p>
               <div className="space-y-4">
                 {(order.orderItems || []).map((item, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800/50">
-                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-zinc-800 shrink-0 border border-zinc-700">
+                  <div key={i} className="flex items-center gap-4 p-4 bg-white/90 backdrop-blur-xl shadow-sm border border-slate-200 rounded-2xl border border-slate-200">
+                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 border border-slate-300">
                       <img loading="lazy" decoding="async" 
                         src={item.product?.productImage?.[0] || "https://placehold.co/100x100"} 
                         className="w-full h-full object-cover" 
@@ -330,20 +337,20 @@ export default function OrderTrackingPage() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-white truncate">
+                      <p className="text-sm font-bold text-slate-900 truncate">
                         {item.product?.productName || "Product"}
                       </p>
-                      <p className="text-xs text-zinc-500 font-medium">Qty: {item.quantity}</p>
+                      <p className="text-xs text-slate-500 font-medium">Qty: {item.quantity}</p>
                     </div>
-                    <p className="text-sm font-black text-white shrink-0">
+                    <p className="text-sm font-black text-slate-900 shrink-0">
                       ₹{Number(item.price || 0).toLocaleString("en-IN")}
                     </p>
                   </div>
                 ))}
               </div>
-              <div className="mt-6 pt-4 border-t border-zinc-800 flex justify-between items-center">
-                <span className="text-xs font-bold text-zinc-500 uppercase">Total</span>
-                <span className="text-xl font-black text-white">
+              <div className="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center">
+                <span className="text-xs font-bold text-slate-500 uppercase">Total</span>
+                <span className="text-xl font-black text-slate-900">
                   ₹{Number(order.totalPrice || 0).toLocaleString("en-IN")}
                 </span>
               </div>
@@ -352,28 +359,28 @@ export default function OrderTrackingPage() {
 
           <div className="lg:col-span-5 space-y-6">
             {/* ORDER INFO CARD */}
-            <Card className="p-8 bg-zinc-900 shadow-2xl">
+            <Card className="p-8 bg-white shadow-sm border border-slate-200 shadow-2xl">
               <div className="flex items-center gap-5 mb-8">
-                <div className="w-16 h-16 rounded-[1.5rem] bg-orange-500 flex items-center justify-center text-white font-black text-2xl">
+                <div className="w-16 h-16 rounded-[1.5rem] bg-orange-500 flex items-center justify-center text-slate-900 font-black text-2xl">
                   {(order.orderItems?.[0]?.seller?.businessName || order.orderItems?.[0]?.seller?.firstName || "S").charAt(0)}
                 </div>
                 <div>
-                  <h4 className="text-xl font-black text-white">
+                  <h4 className="text-xl font-black text-slate-900">
                     {order.orderItems?.[0]?.seller?.businessName || order.orderItems?.[0]?.seller?.firstName || "Indiafy Seller"}
                   </h4>
-                  <p className="text-xs font-medium text-zinc-500">
+                  <p className="text-xs font-medium text-slate-500">
                     {order.paymentMethod || "UPI"} • {order.isPaid ? "Paid" : "Unpaid"}
                   </p>
                 </div>
               </div>
 
               {/* Shipping Address */}
-              <div className="mb-6 p-4 bg-zinc-800/50 rounded-2xl border border-zinc-700/50">
-                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-2">Shipping To</p>
-                <p className="text-sm text-white font-medium">
+              <div className="mb-6 p-4 bg-slate-100 border border-slate-200/50 rounded-2xl border border-slate-300/50">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Shipping To</p>
+                <p className="text-sm text-slate-900 font-medium">
                   {order.shippingAddress?.address || "No address"}
                 </p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-slate-500">
                   {[order.shippingAddress?.city, order.shippingAddress?.state, order.shippingAddress?.postalCode].filter(Boolean).join(", ")}
                 </p>
               </div>
@@ -390,7 +397,7 @@ export default function OrderTrackingPage() {
                       toast.info("Packing video not yet available");
                     }
                   }}
-                  className={`flex items-center justify-center gap-3 py-4 bg-zinc-800 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest border border-zinc-700 ${!order.packingVideoUrl ? "opacity-50 cursor-not-allowed" : "hover:bg-zinc-700"}`}
+                  className={`flex items-center justify-center gap-3 py-4 bg-slate-100 border border-slate-200 text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-slate-300 ${!order.packingVideoUrl ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-100"}`}
                 >
                   <Video size={16} /> Video
                 </button>
@@ -399,27 +406,27 @@ export default function OrderTrackingPage() {
 
             {/* PAYMENT INFO */}
             <Card className="p-6">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 mb-4">Payment Details</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">Payment Details</p>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">Method</span>
-                  <span className="text-white font-bold">{order.paymentMethod || "N/A"}</span>
+                  <span className="text-slate-500">Method</span>
+                  <span className="text-slate-900 font-bold">{order.paymentMethod || "N/A"}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">Status</span>
+                  <span className="text-slate-500">Status</span>
                   <span className={`font-bold ${order.isPaid ? "text-emerald-500" : "text-amber-500"}`}>
                     {order.isPaid ? "Paid" : "Pending"}
                   </span>
                 </div>
                 {order.paidAt && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-zinc-500">Paid At</span>
-                    <span className="text-white font-bold">{formatDate(order.paidAt)}</span>
+                    <span className="text-slate-500">Paid At</span>
+                    <span className="text-slate-900 font-bold">{formatDate(order.paidAt)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-sm pt-3 border-t border-zinc-800">
-                  <span className="text-zinc-500 font-bold">Total</span>
-                  <span className="text-white font-black text-lg">₹{Number(order.totalPrice || 0).toLocaleString("en-IN")}</span>
+                <div className="flex justify-between text-sm pt-3 border-t border-slate-200">
+                  <span className="text-slate-500 font-bold">Total</span>
+                  <span className="text-slate-900 font-black text-lg">₹{Number(order.totalPrice || 0).toLocaleString("en-IN")}</span>
                 </div>
               </div>
             </Card>
@@ -440,7 +447,7 @@ export default function OrderTrackingPage() {
 
             {/* Auto-refresh indicator */}
             {order.status !== "Delivered" && order.status !== "Cancelled" && (
-              <div className="flex items-center justify-center gap-2 text-zinc-700 text-[10px] font-bold uppercase tracking-widest">
+              <div className="flex items-center justify-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
                 <RefreshCw size={10} className="animate-spin" style={{ animationDuration: "3s" }} />
                 Auto-refreshing every 10s
               </div>

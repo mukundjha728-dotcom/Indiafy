@@ -58,7 +58,7 @@ function StoreCard({ store, onClick }) {
       className="group bg-white rounded-2xl overflow-hidden border border-zinc-100 hover:shadow-xl hover:shadow-zinc-200/60 transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
     >
       {/* Banner */}
-      <div className="relative h-40 overflow-hidden bg-zinc-100">
+      <div className="relative h-40 overflow-hidden bg-slate-100">
         <img
           src={banner}
           alt={store.storeName}
@@ -68,7 +68,7 @@ function StoreCard({ store, onClick }) {
         {/* Overlays */}
         <div className="absolute top-3 left-3 flex gap-2">
           <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider
-            ${store.isStoreOpen ? "bg-emerald-500 text-white" : "bg-zinc-800/80 text-zinc-300"}`}>
+            ${store.isStoreOpen ? "bg-emerald-500 text-white" : "bg-slate-100 border border-slate-200/80 text-slate-700"}`}>
             {store.isStoreOpen && (
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
@@ -78,13 +78,13 @@ function StoreCard({ store, onClick }) {
             {store.isStoreOpen ? "Open" : "Closed"}
           </div>
           {store.isVerified && (
-            <div className="flex items-center gap-1 bg-white/90 px-2 py-0.5 rounded-full text-[9px] font-bold text-zinc-900">
+            <div className="flex items-center gap-1 bg-white/90 px-2 py-0.5 rounded-full text-[9px] font-bold text-slate-900">
               <BadgeCheck size={9} color="#3B82F6" /> Verified
             </div>
           )}
         </div>
 
-        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[10px] font-black text-zinc-900 flex items-center gap-1">
+        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[10px] font-black text-slate-900 flex items-center gap-1">
           <Zap size={10} color={color} />
           {store.dispatchSpeed || "30 mins"}
         </div>
@@ -101,42 +101,42 @@ function StoreCard({ store, onClick }) {
       {/* Content */}
       <div className={`p-4 ${store.logo ? "pt-7" : "pt-4"}`}>
         <div className="flex items-start justify-between gap-2 mb-1.5">
-          <h3 className="font-black text-zinc-900 text-sm leading-tight line-clamp-1 group-hover:text-blue-600 transition-colors">
+          <h3 className="font-black text-slate-900 text-sm leading-tight line-clamp-1 group-hover:text-blue-600 transition-colors">
             {store.storeName}
           </h3>
-          <div className="flex items-center gap-0.5 text-[11px] font-bold text-zinc-900 shrink-0">
+          <div className="flex items-center gap-0.5 text-[11px] font-bold text-slate-900 shrink-0">
             <Star size={11} fill="currentColor" className="text-amber-400" />
             {(store.rating || 4.5).toFixed(1)}
           </div>
         </div>
 
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white uppercase tracking-wider"
+          <span className="text-[9px] font-bold px-2 py-0.5 rounded-full text-slate-900 uppercase tracking-wider"
             style={{ backgroundColor: color }}>
             {nodeMeta?.emoji} {nodeMeta?.label || store.nodeType}
           </span>
         </div>
 
         {store.storeCategory && (
-          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">
+          <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-2">
             {store.storeCategory}
           </p>
         )}
 
         {store.description && (
-          <p className="text-xs text-zinc-500 line-clamp-2 mb-3 leading-relaxed">{store.description}</p>
+          <p className="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed">{store.description}</p>
         )}
 
         <div className="flex items-center justify-between pt-2 border-t border-zinc-100">
-          <div className="flex items-center gap-3 text-[10px] text-zinc-400 font-bold">
+          <div className="flex items-center gap-3 text-[10px] text-slate-600 font-bold">
             {store.city && (
               <span className="flex items-center gap-1">
-                <MapPin size={10} className="text-zinc-300" /> {store.city}
+                <MapPin size={10} className="text-slate-700" /> {store.city}
               </span>
             )}
             {store.deliveryRadius && (
               <span className="flex items-center gap-1">
-                <Clock size={10} className="text-zinc-300" /> {store.deliveryRadius}km
+                <Clock size={10} className="text-slate-700" /> {store.deliveryRadius}km
               </span>
             )}
           </div>
@@ -209,33 +209,40 @@ export default function Stores() {
       <WebsiteNavbar />
       <main className="min-h-screen bg-slate-50">
 
+      {/* Background Blobs for Hero Theme */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute top-[-10%] right-[10%] w-[50vw] h-[50vw] bg-gradient-to-br from-emerald-100/50 to-teal-100/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40vw] h-[40vw] bg-gradient-to-tr from-blue-100/40 to-indigo-100/20 rounded-full blur-[100px]" />
+      </div>
+      
+
         {/* HERO */}
-        <section className="bg-zinc-900 pt-20 pb-16 px-4">
+        <section className="bg-white shadow-sm border border-slate-200 pt-20 pb-16 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
               <ShoppingBag className="text-blue-400" size={20} />
               <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Indiafy Marketplace</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 mb-4 leading-tight tracking-tight">
               Discover Local Stores
             </h1>
-            <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto">
+            <p className="text-slate-600 text-lg mb-8 max-w-xl mx-auto">
               Browse {total > 0 ? `${total} live` : "hundreds of"} stores across categories — from quick commerce to wholesale.
             </p>
 
             {/* Search */}
             <div className="relative max-w-xl mx-auto">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search stores, categories..."
-                className="w-full pl-11 pr-12 py-4 bg-white/10 backdrop-blur border border-white/20 text-white placeholder:text-zinc-500 rounded-2xl font-medium text-sm outline-none focus:bg-white/15 focus:border-white/40 transition-all"
+                className="w-full pl-11 pr-12 py-4 bg-white/10 backdrop-blur border border-white/20 text-slate-900 placeholder:text-slate-500 rounded-2xl font-medium text-sm outline-none focus:bg-white/15 focus:border-white/40 transition-all"
               />
               {search && (
                 <button onClick={() => setSearch("")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-900">
                   <X size={16} />
                 </button>
               )}
@@ -254,8 +261,8 @@ export default function Stores() {
                   onClick={() => setSelectedType(type.value)}
                   className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0
                     ${selectedType === type.value
-                      ? "bg-zinc-900 text-white shadow-md"
-                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"}`}
+                      ? "bg-white shadow-sm border border-slate-200 text-slate-900 shadow-md"
+                      : "bg-slate-100 text-slate-500 hover:bg-zinc-200"}`}
                 >
                   <span>{type.emoji}</span> {type.label}
                 </button>
@@ -267,7 +274,7 @@ export default function Stores() {
               <button
                 onClick={() => setShowFilters((v) => !v)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0
-                  ${showFilters ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"}`}
+                  ${showFilters ? "bg-white shadow-sm border border-slate-200 text-slate-900" : "bg-slate-100 text-slate-500 hover:bg-zinc-200"}`}
               >
                 <SlidersHorizontal size={13} /> Filters
                 {hasFilters && !showFilters && (
@@ -287,13 +294,13 @@ export default function Stores() {
             {showFilters && (
               <div className="mt-3 pb-1 flex items-center gap-3">
                 <div className="relative">
-                  <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                  <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
                   <input
                     type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="Filter by city..."
-                    className="pl-8 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium text-zinc-900 outline-none focus:border-zinc-400 transition-all w-44"
+                    className="pl-8 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium text-white outline-none focus:border-zinc-400 transition-all w-44"
                   />
                 </div>
               </div>
@@ -305,7 +312,7 @@ export default function Stores() {
         <section className="max-w-7xl mx-auto px-4 py-8">
           {/* Results count */}
           <div className="flex items-center justify-between mb-6">
-            <p className="text-sm font-bold text-zinc-500">
+            <p className="text-sm font-bold text-slate-500">
               {loading ? "Loading..." : `${stores.length} store${stores.length !== 1 ? "s" : ""} found`}
               {selectedType && ` · ${NODE_TYPES.find((n) => n.value === selectedType)?.label}`}
               {city && ` · ${city}`}
@@ -314,24 +321,24 @@ export default function Stores() {
 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
-              <Loader2 className="animate-spin text-zinc-300" size={36} />
-              <p className="text-zinc-400 font-bold uppercase tracking-widest text-[10px]">Loading Stores...</p>
+              <Loader2 className="animate-spin text-slate-700" size={36} />
+              <p className="text-slate-600 font-bold uppercase tracking-widest text-[10px]">Loading Stores...</p>
             </div>
           ) : stores.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <Store size={48} className="text-zinc-200 mb-4" />
-              <h3 className="text-xl font-black text-zinc-900 mb-2">No stores found</h3>
-              <p className="text-zinc-500 text-sm mb-6 max-w-sm">
+              <Store size={48} className="text-slate-900 mb-4" />
+              <h3 className="text-xl font-black text-slate-900 mb-2">No stores found</h3>
+              <p className="text-slate-500 text-sm mb-6 max-w-sm">
                 {hasFilters ? "Try adjusting your filters or search terms." : "Be the first seller to open a store!"}
               </p>
               {hasFilters ? (
                 <button onClick={clearFilters}
-                  className="px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-zinc-800 transition-all">
+                  className="px-6 py-3 bg-white shadow-sm border border-slate-200 text-slate-900 font-bold rounded-xl hover:bg-slate-100 border border-slate-200 transition-all">
                   Clear Filters
                 </button>
               ) : (
                 <button onClick={() => navigate("/seller/login")}
-                  className="px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-zinc-800 transition-all">
+                  className="px-6 py-3 bg-white shadow-sm border border-slate-200 text-slate-900 font-bold rounded-xl hover:bg-slate-100 border border-slate-200 transition-all">
                   Open Your Store →
                 </button>
               )}
@@ -351,19 +358,19 @@ export default function Stores() {
 
         {/* SELLER CTA */}
         <section className="max-w-7xl mx-auto px-4 pb-16">
-          <div className="relative bg-zinc-900 rounded-3xl overflow-hidden p-8 md:p-12 text-center"
+          <div className="relative bg-white shadow-sm border border-slate-200 rounded-3xl overflow-hidden p-8 md:p-12 text-center"
             style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)" }}>
             <div className="absolute inset-0 opacity-20"
               style={{ backgroundImage: "radial-gradient(circle at 30% 40%, #3B82F6 0%, transparent 50%), radial-gradient(circle at 70% 60%, #8B5CF6 0%, transparent 50%)" }} />
             <div className="relative z-10">
               <div className="text-4xl mb-4">🚀</div>
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-3">Sell on Indiafy</h2>
-              <p className="text-zinc-400 mb-6 max-w-md mx-auto">
+              <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-3">Sell on Indiafy</h2>
+              <p className="text-slate-600 mb-6 max-w-md mx-auto">
                 Launch your store in minutes. Reach thousands of local customers instantly.
               </p>
               <button
                 onClick={() => navigate("/seller/login")}
-                className="px-8 py-4 bg-white text-zinc-900 font-black rounded-2xl hover:bg-blue-50 transition-all shadow-2xl text-sm flex items-center gap-2 mx-auto"
+                className="px-8 py-4 bg-white text-slate-900 font-black rounded-2xl hover:bg-blue-50 transition-all shadow-2xl text-sm flex items-center gap-2 mx-auto"
               >
                 Start Selling for Free <ArrowRight size={16} />
               </button>
