@@ -9,6 +9,7 @@ export const useSellerAuthStore = create(
       token: null,
       isAuthenticated: false,
       isBackendAvailable: true,
+      expiresAt: null,
 
       /**
        * Called after a successful login.
@@ -25,8 +26,16 @@ export const useSellerAuthStore = create(
           token: token || null,
           isAuthenticated: true,
           isBackendAvailable: true,
+          expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
         });
       },
+
+      clearSession: () => set({ 
+        user: null, 
+        token: null, 
+        isAuthenticated: false,
+        expiresAt: null 
+      }),
 
       logout: async () => {
         try {
@@ -45,6 +54,12 @@ export const useSellerAuthStore = create(
        * So res = { statusCode, data: sellerObject, message, success }
        */
       fetchMe: async (role, retries = 2) => {
+        const state = get();
+        if (state.expiresAt && Date.now() > state.expiresAt) {
+          state.clearSession();
+          return;
+        }
+
         try {
           // axiosInstance returns response.data directly
           // Backend ApiResponse shape:
@@ -96,6 +111,7 @@ export const useSellerAuthStore = create(
         token: state.token,
         isAuthenticated: state.isAuthenticated,
         isBackendAvailable: state.isBackendAvailable,
+        expiresAt: state.expiresAt,
       }),
     }
   )

@@ -95,6 +95,12 @@ axiosInstance.interceptors.response.use(
                 const isAuthCall = error.config.url.includes('/auth/me') || error.config.url.includes('/login') || error.config.url.includes('/signup');
                 if (isAuthCall) return Promise.reject(error);
 
+                // Clear auth stores from localStorage immediately
+                localStorage.removeItem('indiafy-auth-storage');
+                localStorage.removeItem('indiafy-seller-auth-storage');
+                
+                toast.error("Your session has expired. Please login again.", { id: 'session-expired' });
+
                 const publicPaths = [
                     '/', '/about', '/product/', '/category/', '/search',
                     '/store/', '/cart', '/login', '/signup',
@@ -105,8 +111,14 @@ axiosInstance.interceptors.response.use(
                     path === '/' ? currentPath === '/' : currentPath.startsWith(path)
                 );
 
-                if (!isPublicPage && currentPath !== '/session-expired') {
-                    window.location.href = '/session-expired';
+                if (!isPublicPage) {
+                    if (currentPath.includes('/seller')) {
+                        window.location.href = '/seller/login?expired=true';
+                    } else if (currentPath.includes('/admin')) {
+                        window.location.href = '/admin/login?expired=true';
+                    } else {
+                        window.location.href = '/login?expired=true';
+                    }
                 }
             }
             

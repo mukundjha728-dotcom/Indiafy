@@ -11,7 +11,7 @@ const jwtToken = async (user) => {
     };
 
     const accesToken = jwt.sign(payload, securityKey, { expiresIn: "7d" });
-    const refreshToken = jwt.sign(payload, securityKey, { expiresIn: "30d" });
+    const refreshToken = jwt.sign(payload, securityKey, { expiresIn: "7d" });
 
     return {
       message: true,

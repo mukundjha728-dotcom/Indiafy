@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAuthStore } from "../store/authStore";
 import { useSellerAuthStore } from "../store/sellerAuthStore";
 
@@ -19,6 +20,18 @@ const ProtectedRoute = ({ allowedRoles }) => {
   const isSellerAllowed = allowedRoles?.includes("seller");
   const isCustomerAllowed = allowedRoles?.includes("customer");
   const isAdminAllowed = allowedRoles?.includes("admin");
+
+  useEffect(() => {
+    const now = Date.now();
+    if (sellerAuth.isAuthenticated && sellerAuth.expiresAt && now > sellerAuth.expiresAt) {
+      sellerAuth.clearSession();
+      toast.error("Your session has expired. Please login again.", { toastId: 'session-expired' });
+    }
+    if (customerAuth.isAuthenticated && customerAuth.expiresAt && now > customerAuth.expiresAt) {
+      customerAuth.clearSession();
+      toast.error("Your session has expired. Please login again.", { toastId: 'session-expired' });
+    }
+  }, [sellerAuth, customerAuth]);
 
   /* ----------------------------------------------------------
      Seller-only routes

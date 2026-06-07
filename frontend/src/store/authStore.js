@@ -9,6 +9,7 @@ export const useAuthStore = create(
       token: null,
       isAuthenticated: false,
       isBackendAvailable: true,
+      expiresAt: null,
 
       login: (userData, token) => set({
         user: {
@@ -17,7 +18,15 @@ export const useAuthStore = create(
         },
         token: token,
         isAuthenticated: true,
-        isBackendAvailable: true
+        isBackendAvailable: true,
+        expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
+      }),
+
+      clearSession: () => set({ 
+        user: null, 
+        token: null, 
+        isAuthenticated: false,
+        expiresAt: null 
       }),
 
       logout: async () => {
@@ -34,6 +43,12 @@ export const useAuthStore = create(
       },
 
       fetchMe: async (role, retries = 2) => {
+        const state = get();
+        if (state.expiresAt && Date.now() > state.expiresAt) {
+          state.clearSession();
+          return;
+        }
+
         try {
           const res = await axiosInstance.get(`/${role.toLowerCase()}/auth/me`);
           // res = { statusCode, data: userData, message }
@@ -68,6 +83,13 @@ export const useAuthStore = create(
     }),
     {
       name: 'indiafy-auth-storage',
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
+        isBackendAvailable: state.isBackendAvailable,
+        expiresAt: state.expiresAt,
+      }),
     }
   )
 );
