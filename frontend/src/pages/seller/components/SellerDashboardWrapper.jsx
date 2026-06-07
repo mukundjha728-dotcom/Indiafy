@@ -3,7 +3,8 @@ import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { useNodeStore } from "../../../store/nodeStore";
 import DashboardLayout from "../../../components/DashboardLayout";
 import SellerErrorBoundary from "../../../components/SellerErrorBoundary";
-import { AlertCircle, Loader2, ArrowLeft } from "lucide-react";
+import { AlertCircle, ArrowLeft } from "lucide-react";
+import DashboardSkeleton from "../../../components/ui/skeletons/DashboardSkeleton";
 
 /**
  * SellerDashboardWrapper
@@ -40,21 +41,7 @@ export default function SellerDashboardWrapper() {
      LOADING STATE
   ---------------------------------------------------------- */
   if (isLoading && !hasLoaded) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center">
-          <Loader2 className="w-7 h-7 animate-spin text-white" />
-        </div>
-        <div className="text-center">
-          <h2 className="text-slate-900 font-black tracking-widest uppercase text-xs mb-1">
-            Loading Node Environment
-          </h2>
-          <p className="text-slate-400 text-xs">
-            Initializing your seller dashboard...
-          </p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   /* ----------------------------------------------------------

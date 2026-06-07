@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SEOHead from "../../components/seo/SEOHead";
-import { Mail, Lock, Eye, EyeOff, Loader2, Users, Store, MapPin, ShoppingCart, Truck, User } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Users, Store, MapPin, ShoppingCart, Truck, User } from "lucide-react";
 import { toast } from "react-hot-toast";
 import axiosInstance from "../../utils/axiosInstance";
 import { useAuthStore } from "../../store/authStore";
@@ -301,11 +301,7 @@ const UserLogin = () => {
                   disabled={loading}
                   className="w-full bg-brand-accent hover:bg-brand-accent-hover text-white rounded-xl py-4 font-bold text-[15px] transition-all shadow-lg shadow-brand-accent/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {loading ? (
-                    <Loader2 size={20} className="animate-spin" />
-                  ) : (
-                    "Continue"
-                  )}
+                  {loading ? "Signing In..." : "Continue"}
                 </motion.button>
 
                 <div className="relative flex items-center py-2">

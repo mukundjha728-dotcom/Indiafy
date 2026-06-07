@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 const fmt = (n) => "₹" + Number(n).toLocaleString("en-IN");
 
@@ -78,7 +79,17 @@ export default function CartPage() {
         </div>
 
         {isLoading ? (
-          <div className="py-32 flex justify-center"><div className="animate-spin text-slate-900"><Plus size={40} /></div></div>
+          <div className="grid lg:grid-cols-12 gap-12 items-start mt-8">
+            <div className="lg:col-span-8 space-y-4">
+              <Skeleton className="w-full h-24 rounded-[2rem]" />
+              <Skeleton className="w-full h-40 rounded-[2.5rem]" />
+              <Skeleton className="w-full h-40 rounded-[2.5rem]" />
+            </div>
+            <aside className="lg:col-span-4 space-y-6">
+              <Skeleton className="w-full h-96 rounded-[2.5rem]" />
+              <Skeleton className="w-full h-32 rounded-[2rem]" />
+            </aside>
+          </div>
         ) : cartItems.length === 0 && saved.length === 0 ? (
           <EmptyState navigate={navigate} />
         ) : (

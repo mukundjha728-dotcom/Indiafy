@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useOrderStore } from "../../store/orderStore";
 import { toast } from "react-toastify";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 // Layout Components
 import WebsiteNavbar from "../../components/WebsiteNavbar";
@@ -111,13 +112,16 @@ export default function OrderTrackingPage() {
   };
 
   if (loading) return (
-    <div className="bg-black min-h-screen flex items-center justify-center">
-       <div className="relative">
-         <div className="w-16 h-16 border-4 border-slate-200 border-t-orange-500 rounded-full animate-spin" />
-         <div className="absolute inset-0 flex items-center justify-center">
-           <Package size={20} className="text-orange-500 animate-pulse" />
-         </div>
-       </div>
+    <div className="bg-black min-h-screen text-slate-600">
+      <WebsiteNavbar />
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+        <Skeleton className="w-full h-[300px] rounded-[2rem] bg-slate-800" />
+        <div className="space-y-4">
+          <Skeleton className="w-64 h-8 bg-slate-800" />
+          <Skeleton className="w-full h-24 rounded-2xl bg-slate-800" />
+          <Skeleton className="w-full h-24 rounded-2xl bg-slate-800" />
+        </div>
+      </div>
     </div>
   );
 

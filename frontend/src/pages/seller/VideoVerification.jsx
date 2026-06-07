@@ -366,7 +366,7 @@ const VideoVerification = () => {
               }`}
             >
               {isUploading ? (
-                <div className="w-5 h-5 border-2 border-slate-400 border-t-white rounded-full animate-spin"></div>
+                <CheckCircle size={20} className="opacity-50" />
               ) : allVerified && videoSrc ? (
                 <CheckCircle size={20} />
               ) : (

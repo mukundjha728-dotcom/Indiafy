@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import SEOHead from "../../components/seo/SEOHead";
 import StoreCreationWizard from "./components/StoreCreationWizard";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 /* ----------------------------------------------------------
    NODE CARD DEFINITIONS
@@ -197,12 +198,15 @@ export default function SellerHub() {
   ---------------------------------------------------------- */
   if (isLoading && !refreshing && nodes.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 animate-spin text-brand-accent" />
-          <p className="text-xs font-bold uppercase tracking-widest text-brand-text-secondary">
-            Loading Seller Hub...
-          </p>
+      <div className="min-h-screen bg-slate-50 pt-12 pb-24 px-4 sm:px-6 max-w-7xl mx-auto space-y-12">
+        <div className="space-y-4">
+          <Skeleton className="w-64 h-12" />
+          <Skeleton className="w-96 h-6" />
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+          {[...Array(6)].map((_, i) => (
+             <Skeleton key={i} className="h-64 rounded-[2rem]" />
+          ))}
         </div>
       </div>
     );

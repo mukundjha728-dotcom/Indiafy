@@ -7,7 +7,6 @@ import {
   User,
   Eye,
   EyeOff,
-  Loader2,
   ArrowRight,
   ShieldCheck,
   CheckCircle,
@@ -337,7 +336,7 @@ const UserSignup = () => {
                     disabled={loading}
                     className="flex-grow bg-brand-accent hover:bg-brand-accent-hover text-white rounded-xl py-4 font-bold text-[15px] transition-all shadow-lg shadow-brand-accent/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    {loading ? <Loader2 size={18} className="animate-spin" /> : "Create Account"}
+                    {loading ? "Creating Account..." : "Create Account"}
                   </motion.button>
                 )}
               </div>

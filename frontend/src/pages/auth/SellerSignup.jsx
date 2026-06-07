@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SEOHead from "../../components/seo/SEOHead";
 import { 
-  Mail, Lock, User, Eye, EyeOff, Loader2, ArrowRight, Store, 
+  Mail, Lock, User, Eye, EyeOff, ArrowRight, Store, 
   Phone, TrendingUp, ShieldCheck, Megaphone, FileText, Briefcase, 
   ChevronLeft, CheckCircle, Boxes, LineChart
 } from "lucide-react";
@@ -326,7 +326,7 @@ const SellerSignup = () => {
                     disabled={loading}
                     className="flex-grow bg-brand-accent hover:bg-brand-accent-hover text-white rounded-xl py-4 font-bold text-[15px] transition-all shadow-lg shadow-brand-accent/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    {loading ? <Loader2 size={18} className="animate-spin" /> : "Complete Registration"}
+                    {loading ? "Creating Account..." : "Complete Registration"}
                   </motion.button>
                 )}
               </div>

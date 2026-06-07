@@ -31,6 +31,7 @@ import Footer from "../../components/Footer";
 import { useProfileStore } from "../../store/profileStore";
 import { useAuthStore } from "../../store/authStore";
 import { useOrderStore } from "../../store/orderStore";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 const fmtDate = (date) => {
   if (!date) return "N/A";
@@ -152,12 +153,17 @@ export default function CustomerProfile() {
 
   if (isLoading && !profile) {
     return (
-      <div className="bg-slate-50 min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-6">
-          <div className="w-16 h-16 border-4 border-slate-200 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-sm font-black uppercase tracking-[0.3em] text-slate-500 animate-pulse">
-            Synchronizing Node...
-          </p>
+      <div className="bg-slate-50 min-h-screen pt-32 px-4 max-w-7xl mx-auto space-y-12">
+        <div className="flex items-center gap-8 bg-white/90 rounded-[3.5rem] p-12">
+          <Skeleton className="w-40 h-40 rounded-[3rem]" />
+          <div className="space-y-4">
+            <Skeleton className="w-64 h-12" />
+            <Skeleton className="w-48 h-6" />
+          </div>
+        </div>
+        <div className="grid lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-3 space-y-4"><Skeleton className="h-[400px] rounded-[2.5rem]" /></div>
+          <div className="lg:col-span-9 space-y-6"><Skeleton className="h-[200px] rounded-[3rem]" /><Skeleton className="h-[300px] rounded-[3rem]" /></div>
         </div>
       </div>
     );

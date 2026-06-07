@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, memo } from "react";
 import SEOHead from "../../components/seo/SEOHead";
+import { ProductSkeleton } from "../../components/ui/skeletons/ProductSkeleton";
 
 // Layout Components - eagerly loaded (always visible)
 import WebsiteNavbar from "../../components/WebsiteNavbar";
@@ -23,8 +24,8 @@ const AppDownload = lazy(() => import("../../components/HomePage/AppDownload"));
 
 // Lightweight section fallback
 const SectionLoader = () => (
-  <div className="py-20 flex items-center justify-center" role="status" aria-label="Loading section">
-    <div className="w-8 h-8 border-4 border-gray-200 border-t-brand-accent rounded-full animate-spin" />
+  <div className="py-12 max-w-7xl mx-auto px-4" role="status" aria-label="Loading section">
+    <ProductSkeleton count={5} variant="grid" />
   </div>
 );
 

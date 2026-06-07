@@ -257,7 +257,7 @@ export default function Settings({ storeDetails, setStoreDetails }) {
         <div className="flex items-center gap-3">
           {showSuccess && <span className="text-emerald-600 text-sm font-bold flex items-center gap-1.5 animate-in fade-in slide-in-from-right-4"><CheckCircle2 size={18} /> Saved!</span>}
           <button type="submit" disabled={isSaving || formData.isDeactivated} className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all shadow-md shadow-slate-900/10 disabled:opacity-50 disabled:cursor-not-allowed">
-            {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+            {isSaving ? null : <Save size={18} />}
             {isSaving ? "Saving..." : "Save Changes"}
           </button>
         </div>
@@ -466,7 +466,7 @@ export default function Settings({ storeDetails, setStoreDetails }) {
               className="px-6 py-3 font-bold text-sm rounded-xl bg-red-600 text-white hover:bg-red-700 active:scale-95 transition-all shadow-md shadow-red-600/10 disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
             >
               {isDeleting ? (
-                <><Loader2 size={16} className="animate-spin" /> Deleting...</>
+                <>Deleting...</>
               ) : (
                 <><Trash2 size={16} /> Delete Store</>
               )}

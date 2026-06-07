@@ -20,6 +20,7 @@ import axiosInstance from "../../utils/axiosInstance";
 // Ensure these paths match your folder structure exactly
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
+import { Skeleton } from "../../components/ui/Skeleton";
 
 const fmt = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
 
@@ -50,8 +51,14 @@ export default function OrderSuccessPage() {
 
   if (loading) {
     return (
-      <div className="bg-zinc-50 min-h-screen flex items-center justify-center">
-        <div className="animate-spin text-slate-900"><ShoppingBag size={40} /></div>
+      <div className="bg-zinc-50 min-h-screen font-sans">
+        <WebsiteNavbar />
+        <main className="max-w-3xl mx-auto px-4 pt-32 pb-24 space-y-6">
+          <Skeleton className="w-20 h-20 rounded-full mx-auto" />
+          <Skeleton className="w-64 h-10 mx-auto" />
+          <Skeleton className="w-full h-64 rounded-[2.5rem]" />
+          <Skeleton className="w-full h-32 rounded-[2rem]" />
+        </main>
       </div>
     );
   }

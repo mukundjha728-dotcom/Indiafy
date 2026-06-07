@@ -23,6 +23,8 @@ const CATEGORIES = ["All", "Essentials", "Grocery", "Personal Care", "Home Decor
 
 import { useCartStore } from "../../store/cartStore";
 import SEOHead from "../../components/seo/SEOHead";
+import { Skeleton } from "../../components/ui/Skeleton";
+import { ProductSkeleton } from "../../components/ui/skeletons/ProductSkeleton";
 
 export default function StorePage() {
   const { id } = useParams();
@@ -108,11 +110,10 @@ export default function StorePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-500 font-bold text-sm animate-pulse uppercase tracking-widest">Initialising Terminal...</p>
-        </div>
+      <div className="min-h-screen pt-20 px-4 max-w-7xl mx-auto w-full space-y-8 bg-zinc-50">
+        <Skeleton className="w-full h-64 rounded-3xl" />
+        <Skeleton className="w-48 h-12" />
+        <ProductSkeleton count={10} variant="grid" />
       </div>
     );
   }

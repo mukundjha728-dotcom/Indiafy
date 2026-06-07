@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
 import axiosInstance from "../../utils/axiosInstance";
+import { StoreSkeleton } from "../../components/ui/skeletons/StoreSkeleton";
 
 /* ============================================================
    NODE TYPE CONFIG
@@ -320,10 +321,7 @@ export default function Stores() {
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-24 gap-4">
-              <Loader2 className="animate-spin text-slate-700" size={36} />
-              <p className="text-slate-600 font-bold uppercase tracking-widest text-[10px]">Loading Stores...</p>
-            </div>
+            <div className="py-12"><StoreSkeleton count={8} variant="grid" /></div>
           ) : stores.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <Store size={48} className="text-slate-900 mb-4" />

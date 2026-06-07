@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, MapPin, ArrowRight, Store, Loader2 } from "lucide-react";
+import { Star, MapPin, ArrowRight, Store } from "lucide-react";
 import axiosInstance from "../../utils/axiosInstance";
+import { StoreSkeleton } from "../ui/skeletons/StoreSkeleton";
 
 const NODE_META = {
   LOCAL_RETAIL: { label: "Local", color: "#3B82F6" },
@@ -87,8 +88,8 @@ export default function NearbyStores() {
   if (loading) {
     return (
       <section className="py-12 bg-brand-background">
-        <div className="section-container flex justify-center">
-          <Loader2 className="animate-spin text-brand-text-secondary" size={24} />
+        <div className="section-container">
+          <StoreSkeleton count={4} variant="grid" />
         </div>
       </section>
     );

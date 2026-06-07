@@ -34,23 +34,19 @@ import WebsiteLayout from "./components/WebsiteLayout";
 import DashboardLayout from "./components/DashboardLayout";
 import SellerDashboardWrapper from "./pages/seller/components/SellerDashboardWrapper";
 
-/* =========================================================
-   LOADER
-========================================================= */
+import { Skeleton, SkeletonText } from "./components/ui/Skeleton";
+import { HeroSkeleton } from "./components/ui/skeletons/HeroSkeleton";
+import { WholesaleSkeleton } from "./components/ui/skeletons/WholesaleSkeleton";
+import { ProductSkeleton } from "./components/ui/skeletons/ProductSkeleton";
+import { BlogSkeleton } from "./components/ui/skeletons/BlogSkeleton";
+import DashboardSkeleton from "./components/ui/skeletons/DashboardSkeleton";
 
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-zinc-50 relative overflow-hidden">
-    <div className="absolute top-[30%] left-[40%] w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] animate-pulse pointer-events-none" />
-    <div className="absolute top-[40%] right-[30%] w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] animate-pulse pointer-events-none" style={{ animationDelay: "1s" }} />
-    <div className="flex flex-col items-center gap-6 relative z-10">
-      <div className="relative flex items-center justify-center">
-        <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
-        <div className="w-14 h-14 border-4 border-indigo-600 border-t-transparent border-l-transparent rounded-full animate-spin"></div>
-        <div className="absolute w-6 h-6 bg-indigo-600 rounded-full blur-sm animate-pulse opacity-50"></div>
-      </div>
-      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-900/60 bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100 shadow-sm">
-        Initializing
-      </p>
+  <div className="min-h-screen pt-20 px-4 max-w-7xl mx-auto w-full space-y-8">
+    <Skeleton className="w-1/3 h-12 mb-8" />
+    <div className="space-y-4">
+      <Skeleton className="w-full h-64 rounded-2xl" />
+      <SkeletonText lines={4} />
     </div>
   </div>
 );
@@ -259,9 +255,9 @@ export default function App() {
           ===================================================== */}
 
           <Route element={<WebsiteLayout />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Suspense fallback={<HeroSkeleton />}><Home /></Suspense>} />
             <Route path="/about" element={<About />} />
-            <Route path="/wholesale" element={<Wholesalepage />} />
+            <Route path="/wholesale" element={<Suspense fallback={<WholesaleSkeleton />}><Wholesalepage /></Suspense>} />
             <Route path="/cart" element={<Cartpage />} />
             <Route path="/checkout" element={<Checkoutpage />} />
             <Route path="/payment" element={<Paymentpage />} />
@@ -294,7 +290,7 @@ export default function App() {
             {/* =====================================================
                 BLOG PAGES
             ===================================================== */}
-            <Route path="/blog" element={<BlogList />} />
+            <Route path="/blog" element={<Suspense fallback={<BlogSkeleton />}><BlogList /></Suspense>} />
             <Route path="/blog/:slug" element={<BlogPost />} />
           </Route>
 
@@ -302,7 +298,7 @@ export default function App() {
           <Route path="/stores" element={<Stores />} />
 
           {/* Quick Commerce — standalone app-like experience */}
-          <Route path="/quick-commerce" element={<QuickCommerce />} />
+          <Route path="/quick-commerce" element={<Suspense fallback={<div className="p-8 max-w-7xl mx-auto"><ProductSkeleton count={12} variant="grid" /></div>}><QuickCommerce /></Suspense>} />
 
           {/* =====================================================
               CUSTOMER (protected)
@@ -388,7 +384,7 @@ export default function App() {
               {/* Index → redirect to dashboard sub-route */}
               <Route index element={<Navigate to="dashboard" replace />} />
 
-              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="dashboard" element={<Suspense fallback={<div className="p-6"><DashboardSkeleton /></div>}><Dashboard /></Suspense>} />
               <Route path="orders" element={<Orders />} />
               <Route path="live" element={<LiveOrders />} />
               <Route path="products" element={<Products />} />
@@ -407,7 +403,7 @@ export default function App() {
           ===================================================== */}
 
           <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard" element={<Suspense fallback={<div className="p-6"><DashboardSkeleton /></div>}><AdminDashboard /></Suspense>} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/admin/customers" element={<CustomerManagement />} />
             <Route path="/admin/orders" element={<AdminOrderManagement />} />

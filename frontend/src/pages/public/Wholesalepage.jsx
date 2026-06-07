@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import SEOHead from "../../components/seo/SEOHead";
 import WebsiteNavbar from "../../components/WebsiteNavbar";
 import Footer from "../../components/Footer";
+import { WholesaleSkeleton } from "../../components/ui/skeletons/WholesaleSkeleton";
 
 // Lazy loaded sections
 const Hero = lazy(() => import("../../components/WholesalePage/Hero"));
@@ -20,11 +21,8 @@ const CatalogueDownload = lazy(() => import("../../components/WholesalePage/Cata
 const PostRequirement = lazy(() => import("../../components/WholesalePage/PostRequirement"));
 
 const SectionLoader = () => (
-  <div className="w-full h-[400px] flex items-center justify-center bg-brand-background">
-    <div className="flex flex-col items-center gap-4">
-      <div className="w-8 h-8 rounded-full border-4 border-brand-accent/20 border-t-brand-accent animate-spin" />
-      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">Loading Module...</p>
-    </div>
+  <div className="py-12 max-w-7xl mx-auto px-4" role="status" aria-label="Loading section">
+    <WholesaleSkeleton count={6} mode="product" />
   </div>
 );
 

@@ -634,7 +634,7 @@ export default function StoreCreationWizard({ nodeType, onClose, onSuccess }) {
               className="flex items-center gap-2 px-8 py-3 rounded-xl text-white font-bold text-sm shadow-xl transition-all hover:opacity-90 active:scale-95 disabled:opacity-70"
               style={{ background: `linear-gradient(135deg, ${config.color}, ${config.color}cc)` }}>
               {isSubmitting ? (
-                <><Loader2 size={16} className="animate-spin" /> Launching Store...</>
+                <>Launching Store...</>
               ) : (
                 <><Zap size={16} /> Launch Store 🚀</>
               )}

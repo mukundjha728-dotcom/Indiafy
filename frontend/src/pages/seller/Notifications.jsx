@@ -12,8 +12,8 @@ import {
   Boxes,
   Wallet,
   TrendingDown,
-  Loader2,
 } from "lucide-react";
+import { Skeleton } from "../../components/ui/Skeleton";
 import { useNavigate } from "react-router-dom";
 import { useOrderStore } from "../../store/orderStore";
 import { useProductStore } from "../../store/productStore";
@@ -311,8 +311,19 @@ export default function Notifications() {
 
       {/* LOADING */}
       {(ordersLoading || refreshing) && allNotifications.length === 0 && (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+        <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/60 overflow-hidden">
+          <div className="divide-y divide-slate-100">
+             {[...Array(3)].map((_, i) => (
+                <div key={i} className="p-5 sm:p-6 flex items-start gap-4 sm:gap-5">
+                   <Skeleton className="w-12 h-12 rounded-2xl shrink-0" />
+                   <div className="flex-1 space-y-3">
+                      <Skeleton className="w-1/3 h-5" />
+                      <Skeleton className="w-full h-4" />
+                      <Skeleton className="w-2/3 h-4" />
+                   </div>
+                </div>
+             ))}
+          </div>
         </div>
       )}
 
