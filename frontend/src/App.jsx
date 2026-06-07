@@ -193,20 +193,21 @@ export default function App() {
   ========================================================= */
 
   const initializeCustomer = useCallback(() => {
-    if (customerUser?.role?.toLowerCase() === "customer") {
+    if (authReady && customerUser?.role?.toLowerCase() === "customer") {
       fetchCart();
       fetchProfile();
     }
-  }, [customerUser?.role, fetchCart, fetchProfile]);
+  }, [authReady, customerUser?.role, fetchCart, fetchProfile]);
 
   const initializeSeller = useCallback(() => {
     if (
+      authReady &&
       sellerUser?.role?.toLowerCase() === "seller" &&
       sellerUser?._id
     ) {
       fetchProducts("", "", sellerUser._id);
     }
-  }, [sellerUser?.role, sellerUser?._id, fetchProducts]);
+  }, [authReady, sellerUser?.role, sellerUser?._id, fetchProducts]);
 
   useEffect(() => {
     const checkBackendHealth = async () => {

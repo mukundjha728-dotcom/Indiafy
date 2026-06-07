@@ -91,8 +91,8 @@ axiosInstance.interceptors.response.use(
 
             // Handle 401 Unauthorized
             if (status === 401) {
-                // Don't redirect for auth/me or login/signup calls
-                const isAuthCall = error.config.url.includes('/auth/me') || error.config.url.includes('/login') || error.config.url.includes('/signup');
+                // Don't redirect for auth/me, login/signup, or logout calls
+                const isAuthCall = error.config.url.includes('/auth/me') || error.config.url.includes('/login') || error.config.url.includes('/signup') || error.config.url.includes('/logout');
                 if (isAuthCall) return Promise.reject(error);
 
                 // Clear auth stores from localStorage immediately

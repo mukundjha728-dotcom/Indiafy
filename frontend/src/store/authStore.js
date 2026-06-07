@@ -38,7 +38,8 @@ export const useAuthStore = create(
         set({
           user: null,
           token: null,
-          isAuthenticated: false
+          isAuthenticated: false,
+          expiresAt: null
         });
       },
 

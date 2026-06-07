@@ -43,7 +43,7 @@ export const useSellerAuthStore = create(
         } catch (err) {
           console.error('Seller logout failed on backend:', err);
         }
-        set({ user: null, token: null, isAuthenticated: false });
+        set({ user: null, token: null, isAuthenticated: false, expiresAt: null });
       },
 
       /**
