@@ -21,53 +21,37 @@ export const useProfileStore = create((set, get) => ({
   },
 
   updateProfile: async (profileData) => {
-    try {
-      const res = await axiosInstance.put('/customer/profile', profileData);
-      // Immediately update with response
-      const updated = res.data || res;
-      set({ profile: { ...get().profile, ...updated } });
-      // Re-fetch to ensure populated fields (like email) are intact
-      const freshRes = await axiosInstance.get('/customer/profile');
-      set({ profile: freshRes.data || null });
-    } catch (err) {
-      throw err;
-    }
+    const res = await axiosInstance.put('/customer/profile', profileData);
+    // Immediately update with response
+    const updated = res.data || res;
+    set({ profile: { ...get().profile, ...updated } });
+    // Re-fetch to ensure populated fields (like email) are intact
+    const freshRes = await axiosInstance.get('/customer/profile');
+    set({ profile: freshRes.data || null });
   },
 
   addAddress: async (addressData) => {
-    try {
-      const res = await axiosInstance.post('/customer/profile/addresses', addressData);
-      // Backend returns the address array in res.data
-      const addresses = res.data || [];
-      set((state) => ({
-        profile: { ...state.profile, address: addresses }
-      }));
-      return addresses;
-    } catch (err) {
-      throw err;
-    }
+    const res = await axiosInstance.post('/customer/profile/addresses', addressData);
+    // Backend returns the address array in res.data
+    const addresses = res.data || [];
+    set((state) => ({
+      profile: { ...state.profile, address: addresses }
+    }));
+    return addresses;
   },
 
   deleteAddress: async (addressId) => {
-    try {
-      const res = await axiosInstance.delete(`/customer/profile/addresses/${addressId}`);
-      // Backend returns the updated address array
-      const addresses = res.data || [];
-      set((state) => ({
-        profile: { ...state.profile, address: addresses }
-      }));
-      return addresses;
-    } catch (err) {
-      throw err;
-    }
+    const res = await axiosInstance.delete(`/customer/profile/addresses/${addressId}`);
+    // Backend returns the updated address array
+    const addresses = res.data || [];
+    set((state) => ({
+      profile: { ...state.profile, address: addresses }
+    }));
+    return addresses;
   },
 
   deleteAccount: async () => {
-    try {
-      await axiosInstance.delete('/customer/profile');
-      set({ profile: null });
-    } catch (err) {
-      throw err;
-    }
+    await axiosInstance.delete('/customer/profile');
+    set({ profile: null });
   }
 }));

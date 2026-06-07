@@ -4,7 +4,7 @@ import axiosInstance from '../utils/axiosInstance';
 
 export const useNodeStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       activeNode: null,
       nodes: [],
       isLoading: false,
@@ -32,7 +32,9 @@ export const useNodeStore = create(
             set({ activeNode: node });
             try {
               localStorage.setItem('activeNode', JSON.stringify(node));
-            } catch (_) {}
+            } catch (storageErr) {
+              // ignore quota errors
+            }
             return node;
           }
           set({ error: 'Node not found' });

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import axiosInstance from '../utils/axiosInstance';
 import { toast } from 'react-toastify';
 
-export const useCartStore = create((set, get) => ({
+export const useCartStore = create((set) => ({
   cartItems: [],
   totalPrice: 0,
   isLoading: false,

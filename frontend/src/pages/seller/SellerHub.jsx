@@ -147,7 +147,7 @@ export default function SellerHub() {
      FETCH NODES
   ---------------------------------------------------------- */
   const loadNodes = useCallback(async () => {
-    setRefreshing(true);
+    Promise.resolve().then(() => setRefreshing(true));
     await fetchAllNodes();
     setRefreshing(false);
   }, [fetchAllNodes]);

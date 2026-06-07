@@ -54,7 +54,7 @@ const Toggle = ({ label, description, checked, onChange, disabled }) => (
 export default function Settings({ storeDetails, setStoreDetails }) {
   const fileInputRef = useRef(null);
   
-  const { activeNode, fetchNodeDetails, updateActiveNode } = useNodeStore();
+  const { activeNode, updateActiveNode } = useNodeStore();
   
   const [formData, setFormData] = useState({
     name: "", initials: "", email: "", phone: "", 

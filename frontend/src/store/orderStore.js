@@ -8,13 +8,9 @@ export const useOrderStore = create((set) => ({
   error: null,
 
   createOrder: async (orderPayload) => {
-    try {
-      const res = await axiosInstance.post('/orders', orderPayload);
-      // axios interceptor returns response.data = { statusCode, data, message }
-      return res.data || res;
-    } catch (err) {
-      throw err;
-    }
+    const res = await axiosInstance.post('/orders', orderPayload);
+    // axios interceptor returns response.data = { statusCode, data, message }
+    return res.data || res;
   },
 
   fetchMyOrders: async () => {
@@ -47,28 +43,20 @@ export const useOrderStore = create((set) => ({
   },
 
   updateOrderStatus: async (orderId, status) => {
-    try {
-      await axiosInstance.put(`/orders/${orderId}/status`, { status });
-      // update state locally
-      set((state) => ({
-        sellerOrders: state.sellerOrders.map((o) =>
-          o._id === orderId ? { ...o, status } : o
-        ),
-      }));
-    } catch (err) {
-      throw err;
-    }
+    await axiosInstance.put(`/orders/${orderId}/status`, { status });
+    // update state locally
+    set((state) => ({
+      sellerOrders: state.sellerOrders.map((o) =>
+        o._id === orderId ? { ...o, status } : o
+      ),
+    }));
   },
 
   deleteOrder: async (orderId) => {
-    try {
-      await axiosInstance.delete(`/orders/${orderId}`);
-      set((state) => ({
-        orders: state.orders.filter((o) => o._id !== orderId)
-      }));
-    } catch (err) {
-      throw err;
-    }
+    await axiosInstance.delete(`/orders/${orderId}`);
+    set((state) => ({
+      orders: state.orders.filter((o) => o._id !== orderId)
+    }));
   },
 
   fetchOrderById: async (orderId) => {

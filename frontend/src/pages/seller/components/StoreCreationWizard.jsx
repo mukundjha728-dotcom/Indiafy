@@ -278,7 +278,7 @@ export default function StoreCreationWizard({ nodeType, onClose, onSuccess }) {
 
       if (createdNode) {
         setActiveNode(createdNode);
-        try { localStorage.setItem("activeNode", JSON.stringify(createdNode)); } catch (_) {}
+        try { localStorage.setItem("activeNode", JSON.stringify(createdNode)); } catch (storageErr) { console.error("Storage error:", storageErr); }
       }
 
       toast.success(`🎉 ${form.storeName} is live on the marketplace!`);

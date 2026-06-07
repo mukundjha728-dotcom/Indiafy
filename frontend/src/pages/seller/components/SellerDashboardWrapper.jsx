@@ -25,16 +25,16 @@ export default function SellerDashboardWrapper() {
     clearError();
     await fetchNodeDetails(nodeId);
     setHasLoaded(true);
-  }, [nodeId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [nodeId, clearError, fetchNodeDetails]);
 
   useEffect(() => {
     // If activeNode._id already matches, skip re-fetch (persist layer)
     if (activeNode?._id?.toString() === nodeId) {
-      setHasLoaded(true);
+      Promise.resolve().then(() => setHasLoaded(true));
       return;
     }
     loadNode();
-  }, [nodeId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [nodeId, activeNode?._id, loadNode]);
 
   /* ----------------------------------------------------------
      LOADING STATE

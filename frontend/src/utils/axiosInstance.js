@@ -63,8 +63,8 @@ axiosInstance.interceptors.request.use(
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
-        } catch (err) {
-            // Silently fail if storage is corrupted or missing
+        } catch (errStorage) {
+            console.warn("Storage error reading token:", errStorage);
         }
         return config;
     },

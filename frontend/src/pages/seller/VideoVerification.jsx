@@ -25,7 +25,7 @@ import {
 const VideoVerification = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { fetchSellerOrders, updateOrderStatus } = useOrderStore();
+  const { fetchSellerOrders } = useOrderStore();
   const [items, setItems] = useState([]);
   const [orderData, setOrderData] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -58,6 +58,7 @@ const VideoVerification = () => {
         });
         setItems(checklist);
       } catch (err) {
+        console.error("fetchOrder error:", err);
         toast.error("Failed to load order details");
         navigate('/live');
       }
@@ -165,6 +166,7 @@ const VideoVerification = () => {
           const response = await fetch(videoSrc);
           videoBlob = await response.blob();
         } catch (err) {
+          console.error("fetch videoSrc error:", err);
           throw new Error("Could not read the video file.");
         }
       }
