@@ -98,10 +98,17 @@ axiosInstance.interceptors.response.use(
                 const isAuthCall = error.config.url.includes('/auth/me') || error.config.url.includes('/login') || error.config.url.includes('/signup') || error.config.url.includes('/logout');
                 if (isAuthCall) return Promise.reject(error);
 
-                // Clear auth stores from localStorage immediately
-                localStorage.removeItem('indiafy-auth-storage');
-                localStorage.removeItem('indiafy-seller-auth-storage');
-                
+                // Clear the specific auth store from localStorage
+                const isSellerReq = error.config.url.includes("/seller") || error.config.url.includes("/wholesale") || error.config.url.includes("/local");
+                const isAdminReq = error.config.url.includes("/admin");
+
+                if (isSellerReq) {
+                    localStorage.removeItem('indiafy-seller-auth-storage');
+                } else if (isAdminReq) {
+                    localStorage.removeItem('indiafy-admin-auth-storage');
+                } else {
+                    localStorage.removeItem('indiafy-auth-storage');
+                }
                 // toast.error("Your session has expired. Please login again.", { id: 'session-expired' });
 
                 const publicPaths = [

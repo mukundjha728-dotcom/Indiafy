@@ -34,7 +34,7 @@ const requiredLogin = async (req, res, next) => {
       const result = jwt.verify(refreshToken, securityKey);
 
       if (!result) {
-        return res.status(401).json(new ApiError(401, "Please Login"));
+        return res.status(401).set("Cache-Control", "no-store").json(new ApiError(401, "Please Login"));
       }
 
       req.user = result;
@@ -48,10 +48,12 @@ const requiredLogin = async (req, res, next) => {
 
     return res
       .status(401)
+      .set("Cache-Control", "no-store")
       .json(new ApiError(401, "Please Login (No Session Found)"));
   } catch (err) {
     return res
       .status(401)
+      .set("Cache-Control", "no-store")
       .json(
         new ApiError(401, "Please Login", [
           { message: err.message, name: err.name },
