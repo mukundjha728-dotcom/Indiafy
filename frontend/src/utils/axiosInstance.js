@@ -1,16 +1,14 @@
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 // Dynamic resolution of backend API URL
 const getBaseURL = () => {
-    if (import.meta.env.VITE_API_URL) {
-        return import.meta.env.VITE_API_URL;
-    }
-    // If running in production (not localhost), fallback to your Render production backend
-    if (typeof window !== "undefined" && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1")) {
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    // If running in production (not localhost) and no env var, fallback to Render backend
+    if (!import.meta.env.VITE_API_URL && typeof window !== "undefined" && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1")) {
         return "https://indiafy-1.onrender.com/api/v1/indiafy";
     }
-    // Fallback for local development
-    return "http://localhost:8000/api/v1/indiafy";
+    return `${API_URL}/api/v1/indiafy`;
 };
 
 // Base instance
@@ -79,10 +77,9 @@ axiosInstance.interceptors.response.use(
     },
     (error) => {
         // Handle Network Errors (Offline, CORS, Timeout)
-        if (error.message === 'Network Error' || error.code === 'ECONNABORTED') {
-            if (window.location.pathname !== '/network-error') {
-                window.location.href = '/network-error';
-            }
+        if (error.message === 'Network Error' || error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
+            // Ensure error code is standardized to ERR_NETWORK for stores to catch
+            error.code = "ERR_NETWORK";
             return Promise.reject(error);
         }
 
@@ -115,6 +112,12 @@ axiosInstance.interceptors.response.use(
                 if (window.location.pathname !== '/403') {
                     window.location.href = '/403';
                 }
+            }
+            
+            // Handle 429 Too Many Requests
+            else if (status === 429) {
+                // We don't want to redirect, just show a warning toast
+                toast.error("Too many requests. Please slow down and try again later.", { id: 'rate-limit' });
             }
             
             // Handle 500 Internal Server Error

@@ -52,6 +52,7 @@ export default function SellerAuth() {
   
   const navigate = useNavigate();
   const loginAuth = useSellerAuthStore((state) => state.login);
+  const isBackendAvailable = useSellerAuthStore((state) => state.isBackendAvailable);
   
   const {
     register: registerLogin,
@@ -179,7 +180,7 @@ export default function SellerAuth() {
           <div className="w-full h-full overflow-y-auto custom-scrollbar bg-white relative">
             
             <div className={`w-full max-w-xl mx-auto px-6 sm:px-12 lg:px-16 transition-all duration-300 ${
-              isLogin || currentStep === 6 
+              isLogin
                 ? 'min-h-full flex flex-col justify-center py-8' 
                 : 'flex flex-col min-h-full pt-12 pb-48 sm:pb-40' 
             }`}>
@@ -237,13 +238,19 @@ export default function SellerAuth() {
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
                       </div>
-                      {loginErrors.password && <p className="text-[10px] text-red-500 font-bold pl-1 uppercase tracking-wider">{loginErrors.password.message}</p>}
+                    {loginErrors.password && <p className="text-[10px] text-red-500 font-bold pl-1 uppercase tracking-wider">{loginErrors.password.message}</p>}
+                  </div>
+                  
+                  {!isBackendAvailable && (
+                    <div className="bg-red-50 border border-red-100 text-red-600 p-3 flex items-center justify-center rounded-xl text-xs font-bold mt-6 mb-2">
+                      Authentication service temporarily unavailable
                     </div>
-                    
-                    <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-3 py-4 mt-10 bg-slate-900 text-white rounded-2xl font-bold text-base hover:bg-slate-800 transition-all active:scale-[0.98] shadow-xl shadow-slate-900/20 disabled:opacity-70 h-[60px]">
-                      {isLoading ? <><Loader2 size={20} className="animate-spin" /> Authenticating...</> : <>Secure Login <ArrowRight size={20} className="ml-1" /></>}
-                    </button>
-                  </form>
+                  )}
+                  
+                  <button type="submit" disabled={isLoading || !isBackendAvailable} className="w-full flex items-center justify-center gap-3 py-4 mt-6 bg-slate-900 text-white rounded-2xl font-bold text-base hover:bg-slate-800 transition-all active:scale-[0.98] shadow-xl shadow-slate-900/20 disabled:opacity-70 h-[60px]">
+                    {isLoading ? <><Loader2 size={20} className="animate-spin" /> Authenticating...</> : <>Secure Login <ArrowRight size={20} className="ml-1" /></>}
+                  </button>
+                </form>
                 ) : (
                   /* REGISTRATION FORM */
                   <form onSubmit={handleSignupSubmit(onSignup)} className="space-y-7 animate-in fade-in zoom-in-95 duration-500">
@@ -258,7 +265,13 @@ export default function SellerAuth() {
                       <InputField label="Confirm Password" icon={Lock} name="confirmPassword" type="password" register={registerSignup} error={signupErrors.confirmPassword?.message} placeholder="Re-enter" required />
                     </div>
                     
-                    <button type="submit" disabled={isLoading} className="w-full flex items-center justify-center gap-3 py-4 mt-8 bg-blue-600 text-white rounded-2xl font-bold text-base hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/30 active:scale-[0.98] disabled:opacity-70 h-[60px]">
+                    {!isBackendAvailable && (
+                      <div className="bg-red-50 border border-red-100 text-red-600 p-3 flex items-center justify-center rounded-xl text-xs font-bold mt-6 mb-2">
+                        Authentication service temporarily unavailable
+                      </div>
+                    )}
+                    
+                    <button type="submit" disabled={isLoading || !isBackendAvailable} className="w-full flex items-center justify-center gap-3 py-4 mt-6 bg-blue-600 text-white rounded-2xl font-bold text-base hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/30 active:scale-[0.98] disabled:opacity-70 h-[60px]">
                       {isLoading ? <><Loader2 size={20} className="animate-spin" /> Creating Account...</> : "Create Seller Account"}
                     </button>
                   </form>

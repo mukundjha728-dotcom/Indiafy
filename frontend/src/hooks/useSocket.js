@@ -4,7 +4,9 @@ import { useSellerAuthStore } from '../store/sellerAuthStore';
 import { useOrderStore } from '../store/orderStore';
 import { toast } from 'react-toastify';
 
-const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+// The URL where your socket server is running
+// E.g., 'http://localhost:8000' or 'https://your-backend.com'
+const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export const useSocket = (activeNode) => {
     const socketRef = useRef(null);

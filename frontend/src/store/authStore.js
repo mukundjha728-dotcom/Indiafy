@@ -4,10 +4,11 @@ import axiosInstance from '../utils/axiosInstance';
 
 export const useAuthStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null, // { id, role, name, email, etc. }
       token: null,
       isAuthenticated: false,
+      isBackendAvailable: true,
 
       login: (userData, token) => set({
         user: {
@@ -15,7 +16,8 @@ export const useAuthStore = create(
           role: userData?.role?.toLowerCase() || 'customer'
         },
         token: token,
-        isAuthenticated: true
+        isAuthenticated: true,
+        isBackendAvailable: true
       }),
 
       logout: async () => {
@@ -31,7 +33,7 @@ export const useAuthStore = create(
         });
       },
 
-      fetchMe: async (role) => {
+      fetchMe: async (role, retries = 2) => {
         try {
           const res = await axiosInstance.get(`/${role.toLowerCase()}/auth/me`);
           // res = { statusCode, data: userData, message }
@@ -41,14 +43,26 @@ export const useAuthStore = create(
               ...userData,
               role: userData?.role?.toLowerCase() || role.toLowerCase()
             },
-            isAuthenticated: true
+            isAuthenticated: true,
+            isBackendAvailable: true
           });
         } catch (err) {
-          console.error("fetchMe failed:", err);
-          // Only clear state if it's a 401 Unauthorized (meaning session is actually dead)
-          if (err.response?.status === 401) {
-            set({ user: null, isAuthenticated: false });
+          if (err.code === "ERR_NETWORK") {
+            if (retries > 0) {
+              console.log(`Retrying fetchMe... (${retries} attempts left)`);
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              return get().fetchMe(role, retries - 1);
+            }
+            set({ user: null, isAuthenticated: false, isBackendAvailable: false });
+            return;
           }
+          
+          if (err.response?.status === 401 || err.response?.status === 429) {
+            set({ user: null, isAuthenticated: false, isBackendAvailable: true });
+            return;
+          }
+
+          throw err;
         }
       }
     }),

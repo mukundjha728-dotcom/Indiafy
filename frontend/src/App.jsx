@@ -24,6 +24,7 @@ import { useSellerAuthStore } from "./store/sellerAuthStore";
 import { useCartStore } from "./store/cartStore";
 import { useProfileStore } from "./store/profileStore";
 import { useProductStore } from "./store/productStore";
+import axiosInstance from "./utils/axiosInstance";
 
 /* =========================================================
    LAYOUTS
@@ -184,6 +185,20 @@ export default function App() {
   }, [sellerUser?.role, sellerUser?._id, fetchProducts]);
 
   useEffect(() => {
+    const checkBackendHealth = async () => {
+      try {
+        // Ping a lightweight endpoint to check availability
+        // If your backend has a dedicated /health, use that, otherwise this will gracefully fail if offline
+        await axiosInstance.get('/health');
+      } catch (error) {
+        if (error.code === 'ERR_NETWORK') {
+          toast.error("Backend server is offline. Running in degraded mode.", { id: 'backend-offline', duration: 8000 });
+        }
+      }
+    };
+
+    checkBackendHealth();
+
     // Run both fetchMe calls in parallel, then mark auth as ready
     Promise.allSettled([
       fetchCustomer("customer"),

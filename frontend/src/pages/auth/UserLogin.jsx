@@ -21,6 +21,7 @@ const UserLogin = () => {
   const [loading, setLoading] = useState(false);
 
   const loginAuth = useAuthStore((state) => state.login);
+  const isBackendAvailable = useAuthStore((state) => state.isBackendAvailable);
   const addToCart = useCartStore((state) => state.addToCart);
 
   const {
@@ -158,9 +159,14 @@ const UserLogin = () => {
                 )}
               </div>
 
+              {!isBackendAvailable && (
+                <div className="bg-red-50 border border-red-100 text-red-600 p-3 flex items-center justify-center rounded-xl text-xs font-bold mb-4">
+                  Authentication service temporarily unavailable
+                </div>
+              )}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !isBackendAvailable}
                 className="w-full group bg-slate-900 text-white rounded-2xl py-4 font-bold text-sm hover:bg-slate-800 transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 disabled:opacity-70"
               >
                 {loading ? (

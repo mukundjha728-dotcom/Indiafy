@@ -1,13 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { WifiOff, RefreshCw, Activity, ArrowRight } from "lucide-react";
 
+import axiosInstance from "../../utils/axiosInstance";
+
 export default function NetworkError() {
   const [isChecking, setIsChecking] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
+    const checkBackend = async () => {
+      if (!navigator.onLine) {
+        setIsOnline(false);
+        return;
+      }
+      try {
+        await axiosInstance.get('/health');
+        setIsOnline(true);
+      } catch (err) {
+        setIsOnline(false);
+      }
+    };
+    checkBackend();
+    
+    const handleOnline = () => checkBackend();
     const handleOffline = () => setIsOnline(false);
+    
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
     return () => {
@@ -16,15 +33,21 @@ export default function NetworkError() {
     };
   }, []);
 
-  const handleRetry = () => {
+  const handleRetry = async () => {
     setIsChecking(true);
-    setTimeout(() => {
-      if (navigator.onLine) {
-        window.location.reload();
-      } else {
-        setIsChecking(false);
-      }
-    }, 1500);
+    if (!navigator.onLine) {
+      setIsChecking(false);
+      setIsOnline(false);
+      return;
+    }
+    
+    try {
+      await axiosInstance.get('/health');
+      window.location.href = '/';
+    } catch (err) {
+      setIsOnline(false);
+      setIsChecking(false);
+    }
   };
 
   return (

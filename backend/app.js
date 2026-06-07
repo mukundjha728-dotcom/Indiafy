@@ -171,6 +171,13 @@ app.get("/health", (req, res) => {
   });
 });
 
+app.get("/api/v1/indiafy/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "ok"
+  });
+});
+
 // Routes
 app.use("/api/v1/indiafy/admin/auth", authLimiter, adminAuthRoutes);
 app.use("/admin/auth", authLimiter, adminAuthRoutes);

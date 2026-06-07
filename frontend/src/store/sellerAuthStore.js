@@ -4,10 +4,11 @@ import axiosInstance from '../utils/axiosInstance';
 
 export const useSellerAuthStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
+      isBackendAvailable: true,
 
       /**
        * Called after a successful login.
@@ -23,6 +24,7 @@ export const useSellerAuthStore = create(
           },
           token: token || null,
           isAuthenticated: true,
+          isBackendAvailable: true,
         });
       },
 
@@ -42,7 +44,7 @@ export const useSellerAuthStore = create(
        * { statusCode: 200, data: { _id, email, role, ...sellerFields }, message, success }
        * So res = { statusCode, data: sellerObject, message, success }
        */
-      fetchMe: async (role) => {
+      fetchMe: async (role, retries = 2) => {
         try {
           // axiosInstance returns response.data directly
           // Backend ApiResponse shape:
@@ -60,14 +62,29 @@ export const useSellerAuthStore = create(
                 role: userData?.role?.toLowerCase() || 'seller',
               },
               isAuthenticated: true,
+              isBackendAvailable: true,
             });
           } else {
             // Response came back but no valid user object — clear auth
-            set({ user: null, isAuthenticated: false });
+            set({ user: null, isAuthenticated: false, isBackendAvailable: true });
           }
         } catch (err) {
-          // 401 or network error → clear auth state (but don't throw)
-          set({ user: null, isAuthenticated: false });
+          if (err.code === "ERR_NETWORK") {
+            if (retries > 0) {
+              console.log(`Retrying seller fetchMe... (${retries} attempts left)`);
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              return get().fetchMe(role, retries - 1);
+            }
+            set({ user: null, isAuthenticated: false, isBackendAvailable: false });
+            return;
+          }
+          
+          if (err.response?.status === 401 || err.response?.status === 429) {
+            set({ user: null, isAuthenticated: false, isBackendAvailable: true });
+            return;
+          }
+
+          throw err;
         }
       },
     }),
@@ -78,6 +95,7 @@ export const useSellerAuthStore = create(
         user: state.user,
         token: state.token,
         isAuthenticated: state.isAuthenticated,
+        isBackendAvailable: state.isBackendAvailable,
       }),
     }
   )
