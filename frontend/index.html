@@ -51,7 +51,43 @@
     </script>
   </head>
   <body class="antialiased bg-[#F8FAFC] text-[#0F172A] transition-colors duration-300">
-    <div id="root"></div>
+    <div id="root">
+      <style>
+        .initial-loader {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          width: 100vw;
+          background-color: #F8FAFC;
+          font-family: 'Inter', sans-serif;
+        }
+        .spinner {
+          width: 50px;
+          height: 50px;
+          border: 4px solid rgba(16, 185, 129, 0.2);
+          border-left-color: #10B981;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin-bottom: 20px;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .brand-text {
+          font-size: 24px;
+          font-weight: 900;
+          color: #0F172A;
+          letter-spacing: -0.5px;
+        }
+      </style>
+      <div class="initial-loader">
+        <div class="spinner"></div>
+        <div class="brand-text">indiafy</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -6,5 +6,14 @@ export default defineConfig({
   build: {
     sourcemap: true,
     chunkSizeWarningLimit: 2000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          state: ['zustand'],
+          ui: ['lucide-react', 'react-toastify', 'framer-motion'],
+        }
+      }
+    }
   },
 });

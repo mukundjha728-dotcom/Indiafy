@@ -19,9 +19,7 @@ class GlobalErrorBoundary extends React.Component {
       if (status === 401 || status === 403 || status === 404 || status === 429) {
         return { hasError: false, error: null };
       }
-      if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
-        return { hasError: false, error: null };
-      }
+      // If it's a dynamic import failure (network error), we WANT the boundary to catch it and show recovery UI.
     }
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
