@@ -26,6 +26,20 @@ const axiosInstance = axios.create({
     }
 });
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
 // Request Interceptor
 axiosInstance.interceptors.request.use(
     (config) => {
@@ -94,41 +108,91 @@ axiosInstance.interceptors.response.use(
 
             // Handle 401 Unauthorized
             if (status === 401) {
-                // Don't redirect for auth/me, login/signup, or logout calls
-                const isAuthCall = error.config.url.includes('/auth/me') || error.config.url.includes('/login') || error.config.url.includes('/signup') || error.config.url.includes('/logout');
-                if (isAuthCall) return Promise.reject(error);
+                const originalRequest = error.config;
+                const isAuthCall = originalRequest.url.includes('/auth/me') || originalRequest.url.includes('/login') || originalRequest.url.includes('/signup') || originalRequest.url.includes('/logout') || originalRequest.url.includes('/refresh');
+                
+                if (isAuthCall && !originalRequest.url.includes('/refresh')) return Promise.reject(error);
 
-                // Clear the specific auth store from localStorage
-                const isSellerReq = error.config.url.includes("/seller") || error.config.url.includes("/wholesale") || error.config.url.includes("/local");
-                const isAdminReq = error.config.url.includes("/admin");
+                if (originalRequest.url.includes('/refresh')) {
+                    // Refresh token itself failed. Logout user.
+                    const isSellerReq = originalRequest.url.includes("/seller") || originalRequest.url.includes("/wholesale") || originalRequest.url.includes("/local");
+                    const isAdminReq = originalRequest.url.includes("/admin");
 
-                if (isSellerReq) {
-                    localStorage.removeItem('indiafy-seller-auth-storage');
-                } else if (isAdminReq) {
-                    localStorage.removeItem('indiafy-admin-auth-storage');
-                } else {
-                    localStorage.removeItem('indiafy-auth-storage');
-                }
-                // toast.error("Your session has expired. Please login again.", { id: 'session-expired' });
-
-                const publicPaths = [
-                    '/', '/about', '/product/', '/category/', '/search',
-                    '/store/', '/cart', '/login', '/signup',
-                    '/seller/login', '/admin/login',
-                ];
-                const currentPath = window.location.pathname;
-                const isPublicPage = publicPaths.some(path =>
-                    path === '/' ? currentPath === '/' : currentPath.startsWith(path)
-                );
-
-                if (!isPublicPage) {
-                    if (currentPath.includes('/seller')) {
+                    if (isSellerReq) {
+                        localStorage.removeItem('indiafy-seller-auth-storage');
                         window.location.href = '/seller/login?expired=true';
-                    } else if (currentPath.includes('/admin')) {
+                    } else if (isAdminReq) {
+                        localStorage.removeItem('indiafy-admin-auth-storage');
                         window.location.href = '/admin/login?expired=true';
                     } else {
+                        localStorage.removeItem('indiafy-auth-storage');
                         window.location.href = '/login?expired=true';
                     }
+                    return Promise.reject(error);
+                }
+
+                if (!originalRequest._retry) {
+                    originalRequest._retry = true;
+
+                    if (isRefreshing) {
+                        return new Promise(function(resolve, reject) {
+                            failedQueue.push({ resolve, reject });
+                        }).then(token => {
+                            originalRequest.headers['Authorization'] = 'Bearer ' + token;
+                            return axiosInstance(originalRequest);
+                        }).catch(err => {
+                            return Promise.reject(err);
+                        });
+                    }
+
+                    isRefreshing = true;
+
+                    const isSellerReq = originalRequest.url.includes("/seller") || originalRequest.url.includes("/wholesale") || originalRequest.url.includes("/local");
+                    const isAdminReq = originalRequest.url.includes("/admin");
+                    let refreshUrl = '/customer/auth/refresh'; // default
+                    
+                    if (isSellerReq) refreshUrl = '/seller/auth/refresh';
+                    if (isAdminReq) refreshUrl = '/admin/auth/refresh';
+
+                    return new Promise(function (resolve, reject) {
+                        axiosInstance.post(refreshUrl, {}, { withCredentials: true })
+                            .then(({ data }) => {
+                                const newAccessToken = data?.accessToken;
+                                if (newAccessToken) {
+                                    // Update local storage explicitly
+                                    try {
+                                        let storageKey = 'indiafy-auth-storage';
+                                        if (isSellerReq) storageKey = 'indiafy-seller-auth-storage';
+                                        if (isAdminReq) storageKey = 'indiafy-admin-auth-storage';
+                                        
+                                        const storageData = localStorage.getItem(storageKey);
+                                        if (storageData) {
+                                            const parsed = JSON.parse(storageData);
+                                            if (parsed.state) {
+                                                parsed.state.token = newAccessToken;
+                                                localStorage.setItem(storageKey, JSON.stringify(parsed));
+                                            }
+                                        }
+                                    } catch (e) {
+                                        // Ignore storage parsing error
+                                    }
+                                    
+                                    processQueue(null, newAccessToken);
+                                    originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
+                                    resolve(axiosInstance(originalRequest));
+                                } else {
+                                    processQueue(new Error("No access token"));
+                                    reject(error);
+                                }
+                            })
+                            .catch((err) => {
+                                processQueue(err, null);
+                                reject(err);
+                            })
+                            .finally(() => {
+                                isRefreshing = false;
+                            });
+                    });
                 }
             }
             

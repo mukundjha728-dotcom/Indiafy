@@ -192,4 +192,38 @@ const getMe = async (req, res) => {
     }
 }
 
-export { Signup, Login, forgetPassword, authOtp, getMe };
+const refreshTokenHandler = async (req, res) => {
+    try {
+        const refreshToken = req.cookies.AdminRefreshToken || req.body.refreshToken;
+        if (!refreshToken) {
+            return res.status(401).json(new ApiError(401, "No refresh token provided"));
+        }
+
+        const securityKey = process.env.SecurityKey;
+        const jwt = (await import("jsonwebtoken")).default;
+        
+        let result;
+        try {
+            result = jwt.verify(refreshToken, securityKey);
+        } catch (err) {
+            return res.status(401).json(new ApiError(401, "Invalid or expired refresh token"));
+        }
+
+        const { iat, exp, ...userData } = result;
+
+        // Verify token in DB
+        const admin = await AuthModel.findById(userData._id);
+        if (!admin || admin.refreshToken !== refreshToken) {
+            return res.status(401).json(new ApiError(401, "Invalid refresh token session"));
+        }
+
+        userData.role = "Admin";
+        const { accessToken } = await userCookies(res, userData);
+
+        return res.status(200).json(new ApiResponse(200, { accessToken }, "Token refreshed successfully"));
+    } catch (err) {
+        return res.status(500).json(new ApiError(500, err.message));
+    }
+};
+
+export { Signup, Login, forgetPassword, authOtp, getMe, refreshTokenHandler };

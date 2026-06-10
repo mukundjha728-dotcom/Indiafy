@@ -24,32 +24,19 @@ const requiredLogin = async (req, res, next) => {
           return next();
         }
       } catch (err) {
-        console.log(
-          "Access token expired or invalid, checking refresh token fallback...",
-        );
+        return res
+          .status(401)
+          .set("Cache-Control", "no-store")
+          .json(new ApiError(401, "Token Expired", [
+            { message: err.message, name: err.name },
+          ]));
       }
-    }
-
-    if (refreshToken) {
-      const result = jwt.verify(refreshToken, securityKey);
-
-      if (!result) {
-        return res.status(401).set("Cache-Control", "no-store").json(new ApiError(401, "Please Login"));
-      }
-
-      req.user = result;
-
-      // Remove exp and iat before signing new tokens
-      const { iat, exp, ...userData } = result;
-      await userCookies(res, userData);
-
-      return next();
     }
 
     return res
       .status(401)
       .set("Cache-Control", "no-store")
-      .json(new ApiError(401, "Please Login (No Session Found)"));
+      .json(new ApiError(401, "Please Login (No Token Found)"));
   } catch (err) {
     return res
       .status(401)

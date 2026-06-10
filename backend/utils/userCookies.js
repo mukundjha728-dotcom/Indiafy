@@ -25,19 +25,16 @@ const userCookies = async (res, user) => {
     const accessCookieName = `${rolePrefix}AccessToken`;
     const refreshCookieName = `${rolePrefix}RefreshToken`;
 
-    res.cookie(accessCookieName, accessToken, {
+    const isProd = process.env.NODE_ENV === "production";
+    const cookieOptions = {
       httpOnly: true,
-      secure: true, // Required for cross-site cookies
-      sameSite: "None", // Required for cross-site cookies
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+      secure: isProd,
+      sameSite: isProd ? "None" : "Lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    };
 
-    res.cookie(refreshCookieName, refreshToken, {
-      httpOnly: true,
-      secure: true, // Required for cross-site cookies
-      sameSite: "None", // Required for cross-site cookies
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie(accessCookieName, accessToken, cookieOptions);
+    res.cookie(refreshCookieName, refreshToken, cookieOptions);
 
     return { accessToken, refreshToken };
   } catch (err) {
