@@ -53,8 +53,9 @@ const Signup = async (req, res) => {
     const tokenData = customerDetails.toObject();
     tokenData.role = "Customer";
 
-    const { accessToken } = await userCookies(res, tokenData);
+    const { accessToken, refreshToken } = await userCookies(res, tokenData);
     tokenData.accessToken = accessToken;
+    tokenData.refreshToken = refreshToken;
 
     return res
       .status(200)
@@ -104,8 +105,9 @@ const Login = async (req, res) => {
 
     tokenData.role = "Customer";
 
-    const { accessToken } = await userCookies(res, tokenData);
+    const { accessToken, refreshToken } = await userCookies(res, tokenData);
     tokenData.accessToken = accessToken;
+    tokenData.refreshToken = refreshToken;
 
     return res
       .status(200)
@@ -279,9 +281,9 @@ const refreshTokenHandler = async (req, res) => {
     }
 
     userData.role = "Customer";
-    const { accessToken } = await userCookies(res, userData);
+    const { accessToken, refreshToken: newRefreshToken } = await userCookies(res, userData);
 
-    return res.status(200).json(new ApiResponse(200, { accessToken }, "Token refreshed successfully"));
+    return res.status(200).json(new ApiResponse(200, { accessToken, refreshToken: newRefreshToken }, "Token refreshed successfully"));
   } catch (err) {
     return res.status(500).json(new ApiError(500, err.message));
   }

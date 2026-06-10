@@ -109,7 +109,7 @@ axiosInstance.interceptors.response.use(
             // Handle 401 Unauthorized
             if (status === 401) {
                 const originalRequest = error.config;
-                const isAuthCall = originalRequest.url.includes('/auth/me') || originalRequest.url.includes('/login') || originalRequest.url.includes('/signup') || originalRequest.url.includes('/logout') || originalRequest.url.includes('/refresh');
+                const isAuthCall = originalRequest.url.includes('/login') || originalRequest.url.includes('/signup') || originalRequest.url.includes('/logout') || originalRequest.url.includes('/refresh');
                 
                 if (isAuthCall && !originalRequest.url.includes('/refresh')) return Promise.reject(error);
 
@@ -149,15 +149,34 @@ axiosInstance.interceptors.response.use(
 
                     const isSellerReq = originalRequest.url.includes("/seller") || originalRequest.url.includes("/wholesale") || originalRequest.url.includes("/local");
                     const isAdminReq = originalRequest.url.includes("/admin");
-                    let refreshUrl = '/customer/auth/refresh'; // default
                     
-                    if (isSellerReq) refreshUrl = '/seller/auth/refresh';
-                    if (isAdminReq) refreshUrl = '/admin/auth/refresh';
+                    let refreshUrl = '/customer/auth/refresh'; // default
+                    let currentRefreshToken = null;
+                    
+                    if (isSellerReq) {
+                        refreshUrl = '/seller/auth/refresh';
+                        try {
+                            const storage = localStorage.getItem('indiafy-seller-auth-storage');
+                            if (storage) currentRefreshToken = JSON.parse(storage).state?.refreshToken;
+                        } catch(e){}
+                    } else if (isAdminReq) {
+                        refreshUrl = '/admin/auth/refresh';
+                        try {
+                            const storage = localStorage.getItem('indiafy-admin-auth-storage');
+                            if (storage) currentRefreshToken = JSON.parse(storage).state?.refreshToken;
+                        } catch(e){}
+                    } else {
+                        try {
+                            const storage = localStorage.getItem('indiafy-auth-storage');
+                            if (storage) currentRefreshToken = JSON.parse(storage).state?.refreshToken;
+                        } catch(e){}
+                    }
 
                     return new Promise(function (resolve, reject) {
-                        axiosInstance.post(refreshUrl, {}, { withCredentials: true })
+                        axiosInstance.post(refreshUrl, { refreshToken: currentRefreshToken }, { withCredentials: true })
                             .then(({ data }) => {
                                 const newAccessToken = data?.accessToken;
+                                const newRefreshToken = data?.refreshToken;
                                 if (newAccessToken) {
                                     // Update local storage explicitly
                                     try {
@@ -170,6 +189,7 @@ axiosInstance.interceptors.response.use(
                                             const parsed = JSON.parse(storageData);
                                             if (parsed.state) {
                                                 parsed.state.token = newAccessToken;
+                                                if (newRefreshToken) parsed.state.refreshToken = newRefreshToken;
                                                 localStorage.setItem(storageKey, JSON.stringify(parsed));
                                             }
                                         }

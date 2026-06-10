@@ -7,6 +7,7 @@ export const useSellerAuthStore = create(
     (set, get) => ({
       user: null,
       token: null,
+      refreshToken: null,
       isAuthenticated: false,
       isBackendAvailable: true,
       expiresAt: null,
@@ -16,7 +17,7 @@ export const useSellerAuthStore = create(
        * userData: the seller object from the API
        * token: optional JWT (used as Bearer fallback for mobile)
        */
-      login: (userData, token) => {
+      login: (userData, token, refreshToken) => {
         if (!userData) return;
         set({
           user: {
@@ -24,6 +25,7 @@ export const useSellerAuthStore = create(
             role: userData?.role?.toLowerCase() || 'seller',
           },
           token: token || null,
+          refreshToken: refreshToken || userData?.refreshToken || null,
           isAuthenticated: true,
           isBackendAvailable: true,
           expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
@@ -33,7 +35,8 @@ export const useSellerAuthStore = create(
       clearSession: () => set({ 
         user: null, 
         token: null, 
-        isAuthenticated: false,
+        refreshToken: null,
+        isAuthenticated: false, 
         expiresAt: null 
       }),
 
@@ -43,7 +46,7 @@ export const useSellerAuthStore = create(
         } catch (err) {
           console.error('Seller logout failed on backend:', err);
         }
-        set({ user: null, token: null, isAuthenticated: false, expiresAt: null });
+        set({ user: null, token: null, refreshToken: null, isAuthenticated: false, expiresAt: null });
       },
 
       /**
@@ -95,7 +98,8 @@ export const useSellerAuthStore = create(
           }
           
           if (err.response?.status === 401) {
-            set({ user: null, isAuthenticated: false, isBackendAvailable: true });
+            get().clearSession();
+            set({ isBackendAvailable: true });
             return;
           }
 
@@ -109,6 +113,7 @@ export const useSellerAuthStore = create(
       partialize: (state) => ({
         user: state.user,
         token: state.token,
+        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
         isBackendAvailable: state.isBackendAvailable,
         expiresAt: state.expiresAt,

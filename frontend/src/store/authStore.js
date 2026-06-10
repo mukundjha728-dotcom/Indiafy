@@ -7,16 +7,18 @@ export const useAuthStore = create(
     (set, get) => ({
       user: null, // { id, role, name, email, etc. }
       token: null,
+      refreshToken: null,
       isAuthenticated: false,
       isBackendAvailable: true,
       expiresAt: null,
 
-      login: (userData, token) => set({
+      login: (userData, token, refreshToken) => set({
         user: {
           ...userData,
           role: userData?.role?.toLowerCase() || 'customer'
         },
         token: token,
+        refreshToken: refreshToken || userData?.refreshToken,
         isAuthenticated: true,
         isBackendAvailable: true,
         expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
@@ -25,6 +27,7 @@ export const useAuthStore = create(
       clearSession: () => set({ 
         user: null, 
         token: null, 
+        refreshToken: null,
         isAuthenticated: false,
         expiresAt: null 
       }),
@@ -38,6 +41,7 @@ export const useAuthStore = create(
         set({
           user: null,
           token: null,
+          refreshToken: null,
           isAuthenticated: false,
           expiresAt: null
         });
@@ -74,7 +78,8 @@ export const useAuthStore = create(
           }
           
           if (err.response?.status === 401) {
-            set({ user: null, isAuthenticated: false, isBackendAvailable: true });
+            get().clearSession();
+            set({ isBackendAvailable: true });
             return;
           }
 
@@ -87,6 +92,7 @@ export const useAuthStore = create(
       partialize: (state) => ({
         user: state.user,
         token: state.token,
+        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
         isBackendAvailable: state.isBackendAvailable,
         expiresAt: state.expiresAt,
