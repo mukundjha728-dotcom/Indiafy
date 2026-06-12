@@ -16,7 +16,7 @@ export default {
           surface: '#FFFFFF',
           background: '#F8FAFC',
           'text-primary': '#0F172A',
-          'text-secondary': '#64748B',
+          'text-secondary': '#475569',
           border: '#E2E8F0',
           success: '#10B981',
           warning: '#F59E0B',
@@ -46,7 +46,7 @@ export default {
           border: "#e2e8f0",
           text: {
             main: "#0F172A",
-            sub: "#64748B",
+            sub: "#475569",
           }
         },
         background: {

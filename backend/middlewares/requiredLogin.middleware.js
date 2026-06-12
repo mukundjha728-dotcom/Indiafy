@@ -3,34 +3,59 @@ import ApiError from "../utils/apiError.js";
 import userCookies from "../utils/userCookies.js";
 
 const requiredLogin = async (req, res, next) => {
-  const securityKey = process.env.SecurityKey;
+  const securityKey = process.env.SecurityKey || "indiafy_default_development_secret_key_987654321";
   try {
-    const isSellerRoute = req.originalUrl.includes('/seller') || req.originalUrl.includes('/wholesale') || req.originalUrl.includes('/local');
+    // 1. If Authorization header is present, prioritize it
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(" ")[1];
+      if (token) {
+        try {
+          const decoded = jwt.verify(token, securityKey);
+          req.user = decoded;
+          return next();
+        } catch (err) {
+          return res
+            .status(401)
+            .set("Cache-Control", "no-store")
+            .json(new ApiError(401, "Token Expired", [
+              { message: err.message, name: err.name },
+            ]));
+        }
+      }
+    }
+
+    // 2. Fallback to cookie verification
+    const isSellerRoute = req.originalUrl.includes('/seller') || req.originalUrl.includes('/wholesale') || req.originalUrl.includes('/local') || req.originalUrl.includes('sellerorders') || req.originalUrl.includes('upload-video');
     const isAdminRoute = req.originalUrl.includes('/admin');
     
-    let rolePrefix = "Customer"; // default
-    if (isSellerRoute) rolePrefix = "Seller";
-    if (isAdminRoute) rolePrefix = "Admin";
+    let order = ["Customer", "Seller", "Admin"];
+    if (isSellerRoute) order = ["Seller", "Customer", "Admin"];
+    if (isAdminRoute) order = ["Admin", "Seller", "Customer"];
 
-    let accessToken =
-      req?.cookies?.[`${rolePrefix}AccessToken`] || req.headers.authorization?.split(" ")[1];
-    const refreshToken = req?.cookies?.[`${rolePrefix}RefreshToken`];
-
-    if (accessToken) {
-      try {
-        const result = jwt.verify(accessToken, securityKey);
-        if (result) {
-          req.user = result;
-          return next();
+    let lastError = null;
+    for (const prefix of order) {
+      const token = req?.cookies?.[`${prefix}AccessToken`];
+      if (token) {
+        try {
+          const result = jwt.verify(token, securityKey);
+          if (result) {
+            req.user = result;
+            return next();
+          }
+        } catch (err) {
+          lastError = err;
+          // Continue loop to check other cookies if available
         }
-      } catch (err) {
-        return res
-          .status(401)
-          .set("Cache-Control", "no-store")
-          .json(new ApiError(401, "Token Expired", [
-            { message: err.message, name: err.name },
-          ]));
       }
+    }
+
+    if (lastError) {
+      return res
+        .status(401)
+        .set("Cache-Control", "no-store")
+        .json(new ApiError(401, "Token Expired", [
+          { message: lastError.message, name: lastError.name },
+        ]));
     }
 
     return res

@@ -27,7 +27,7 @@ const AdminLogin = () => {
       if (data) {
         // Normalize role for ProtectedRoute
         const userData = { ...data, role: "admin" };
-        loginAuth(userData, null); // userCookies handles token
+        loginAuth(userData, userData.accessToken, userData.refreshToken);
         navigate("/admin/dashboard");
       } else {
         setError("Login failed: Invalid response");
@@ -84,10 +84,11 @@ const AdminLogin = () => {
 
           {/* EMAIL */}
           <div>
-            <label className="text-xs font-medium tracking-wide text-gray-600">
+            <label htmlFor="admin-email" className="text-xs font-medium tracking-wide text-gray-600">
               EMAIL ADDRESS
             </label>
             <input
+              id="admin-email"
               type="email"
               placeholder="e.g. admin@indiafy.com"
               value={email}
@@ -100,11 +101,12 @@ const AdminLogin = () => {
 
           {/* PASSWORD */}
           <div>
-            <label className="text-xs font-medium tracking-wide text-gray-600">
+            <label htmlFor="admin-password" className="text-xs font-medium tracking-wide text-gray-600">
               PASSWORD
             </label>
             <div className="relative mt-1">
               <input
+                id="admin-password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={password}

@@ -49,7 +49,16 @@ if (process.env.CORS_ORIGIN) {
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, postman)
+      if (!origin) return callback(null, true);
+      const isLocalhost = origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:");
+      if (isLocalhost || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
@@ -112,6 +121,7 @@ app.use(
     },
     frameguard: { action: "deny" },
     noSniff: true,
+    crossOriginEmbedderPolicy: false,
   }),
 );
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));

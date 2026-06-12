@@ -55,6 +55,8 @@ const profileSchema = new Schema({
     { timestamps: true }
 )
 
+profileSchema.index({ customerId: 1 });
+
 const customerProfile = mongoose.model("customer_Profile", profileSchema);
 
 export default customerProfile;

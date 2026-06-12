@@ -46,8 +46,8 @@ axiosInstance.interceptors.request.use(
         // Fallback for mobile/cross-domain cookie issues: use Bearer token from localStorage
         try {
             const url = config.url || "";
-            // Determine if request is intended for Seller or Wholesale routes
-            const isSellerRoute = url.includes("/seller") || url.includes("/wholesale") || url.includes("/local");
+            const isCustomerRoute = url.includes("/customer");
+            const isAdminRoute = url.includes("/admin");
             
             let token = null;
 
@@ -69,12 +69,18 @@ axiosInstance.interceptors.request.use(
                 return null;
             };
 
-            if (isSellerRoute) {
-                // Strictly use seller token for seller endpoints
-                token = getSellerToken();
-            } else {
-                // Strictly use customer token for customer endpoints
+            if (isAdminRoute) {
                 token = getCustomerToken();
+            } else if (isCustomerRoute) {
+                token = getCustomerToken();
+            } else {
+                // Shared endpoint or seller endpoint: use seller token if present, otherwise fallback to customer
+                const sellerToken = getSellerToken();
+                if (sellerToken) {
+                    token = sellerToken;
+                } else {
+                    token = getCustomerToken();
+                }
             }
 
             if (token) {
@@ -109,24 +115,66 @@ axiosInstance.interceptors.response.use(
             // Handle 401 Unauthorized
             if (status === 401) {
                 const originalRequest = error.config;
+                
+                // Determine context
+                const isSellerReq = originalRequest.url.includes("/seller") || originalRequest.url.includes("/wholesale") || originalRequest.url.includes("/local");
+                const isAdminReq = originalRequest.url.includes("/admin");
+
+                // Check if user was previously authenticated
+                let wasAuthenticated = false;
+                try {
+                    let storageKey = 'indiafy-auth-storage';
+                    if (isSellerReq) storageKey = 'indiafy-seller-auth-storage';
+                    if (isAdminReq) storageKey = 'indiafy-admin-auth-storage';
+
+                    const storageData = localStorage.getItem(storageKey);
+                    if (storageData) {
+                        const parsed = JSON.parse(storageData);
+                        wasAuthenticated = !!parsed?.state?.isAuthenticated;
+                    }
+                } catch (e) {
+                    wasAuthenticated = false;
+                }
+
+                // If not authenticated, do not attempt to refresh or redirect. Just reject.
+                if (!wasAuthenticated) {
+                    return Promise.reject(error);
+                }
+
                 const isAuthCall = originalRequest.url.includes('/login') || originalRequest.url.includes('/signup') || originalRequest.url.includes('/logout') || originalRequest.url.includes('/refresh');
                 
                 if (isAuthCall && !originalRequest.url.includes('/refresh')) return Promise.reject(error);
 
                 if (originalRequest.url.includes('/refresh')) {
-                    // Refresh token itself failed. Logout user.
-                    const isSellerReq = originalRequest.url.includes("/seller") || originalRequest.url.includes("/wholesale") || originalRequest.url.includes("/local");
-                    const isAdminReq = originalRequest.url.includes("/admin");
-
-                    if (isSellerReq) {
-                        localStorage.removeItem('indiafy-seller-auth-storage');
-                        window.location.href = '/seller/login?expired=true';
-                    } else if (isAdminReq) {
-                        localStorage.removeItem('indiafy-admin-auth-storage');
-                        window.location.href = '/admin/login?expired=true';
-                    } else {
+                    // Refresh token itself failed. Logout user by clearing all storages.
+                    try {
                         localStorage.removeItem('indiafy-auth-storage');
-                        window.location.href = '/login?expired=true';
+                        localStorage.removeItem('indiafy-seller-auth-storage');
+                        localStorage.removeItem('indiafy-admin-auth-storage');
+                    } catch (e) {}
+
+                    // Redirect only if the user is on a protected route
+                    const currentPath = window.location.pathname;
+                    const publicPrefixes = [
+                        '/', '/login', '/signup', '/seller/login', '/seller/signup', '/admin/login',
+                        '/about', '/wholesale', '/cart', '/checkout', '/payment', '/order-success', 
+                        '/search', '/local-sellers', '/product/', '/category/', '/store/', '/blog', 
+                        '/contact', '/privacy-policy', '/terms-and-conditions', '/refund-policy', 
+                        '/seller-guidelines', '/community-standards', '/trust-safety', '/become-seller-info', 
+                        '/help-center', '/faq', '/best-shopping-platform-gurugram', '/quick-commerce-gurugram', 
+                        '/wholesale-suppliers-gurugram', '/verified-sellers-gurugram', '/hyperlocal-marketplace-gurugram',
+                        '/stores', '/quick-commerce'
+                    ];
+                    const isPublicPath = currentPath === '/' || publicPrefixes.some(prefix => currentPath.startsWith(prefix) && (prefix !== '/' || currentPath === '/'));
+
+                    if (!isPublicPath) {
+                        if (isSellerReq) {
+                            window.location.href = '/seller/login?expired=true';
+                        } else if (isAdminReq) {
+                            window.location.href = '/admin/login?expired=true';
+                        } else {
+                            window.location.href = '/login?expired=true';
+                        }
                     }
                     return Promise.reject(error);
                 }
@@ -162,7 +210,7 @@ axiosInstance.interceptors.response.use(
                     } else if (isAdminReq) {
                         refreshUrl = '/admin/auth/refresh';
                         try {
-                            const storage = localStorage.getItem('indiafy-admin-auth-storage');
+                            const storage = localStorage.getItem('indiafy-auth-storage');
                             if (storage) currentRefreshToken = JSON.parse(storage).state?.refreshToken;
                         } catch(e){}
                     } else {
@@ -182,7 +230,7 @@ axiosInstance.interceptors.response.use(
                                     try {
                                         let storageKey = 'indiafy-auth-storage';
                                         if (isSellerReq) storageKey = 'indiafy-seller-auth-storage';
-                                        if (isAdminReq) storageKey = 'indiafy-admin-auth-storage';
+                                        if (isAdminReq) storageKey = 'indiafy-auth-storage';
                                         
                                         const storageData = localStorage.getItem(storageKey);
                                         if (storageData) {

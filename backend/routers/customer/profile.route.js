@@ -7,7 +7,7 @@ const router = Router();
 
 // Secure all profile routes
 router.use(requiredLogin);
-router.use(roleGuard(["Customer"]));
+router.use(roleGuard(["Customer", "Seller"]));
 
 router.route("/")
     .get(getProfile)

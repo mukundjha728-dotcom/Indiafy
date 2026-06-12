@@ -205,6 +205,7 @@ const UserLogin = () => {
                   </div>
                   
                   <label 
+                    htmlFor="email"
                     className={`absolute left-[44px] top-[14px] text-slate-500 font-medium origin-left pointer-events-none transition-all duration-200
                       ${(focusedField === 'email' || emailValue) ? 'translate-y-[-12px] scale-75 opacity-100' : 'translate-y-0 scale-100 opacity-80'}`}
                   >
@@ -212,6 +213,7 @@ const UserLogin = () => {
                   </label>
                   
                   <input
+                    id="email"
                     type="email"
                     {...register("email", {
                       onBlur: () => setFocusedField(null)
@@ -232,7 +234,7 @@ const UserLogin = () => {
                   )}
                 </AnimatePresence>
               </div>
-
+ 
               {/* Password Field */}
               <div className="relative group pt-1">
                 <div 
@@ -247,6 +249,7 @@ const UserLogin = () => {
                   </div>
                   
                   <label 
+                    htmlFor="password"
                     className={`absolute left-[44px] top-[14px] text-slate-500 font-medium origin-left pointer-events-none transition-all duration-200
                       ${(focusedField === 'password' || passwordValue) ? 'translate-y-[-12px] scale-75 opacity-100' : 'translate-y-0 scale-100 opacity-80'}`}
                   >
@@ -254,6 +257,7 @@ const UserLogin = () => {
                   </label>
                   
                   <input
+                    id="password"
                     type={showPassword ? "text" : "password"}
                     {...register("password", {
                       onBlur: () => setFocusedField(null)
