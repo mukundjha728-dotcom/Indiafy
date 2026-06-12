@@ -8,10 +8,19 @@ export default defineConfig({
     chunkSizeWarningLimit: 2000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          state: ['zustand'],
-          ui: ['lucide-react', 'react-toastify', 'framer-motion'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-router-dom')) {
+              return 'vendor';
+            }
+            if (id.includes('zustand')) {
+              return 'state';
+            }
+            if (id.includes('lucide-react') || id.includes('react-toastify') || id.includes('framer-motion')) {
+              return 'ui';
+            }
+            return 'vendor';
+          }
         }
       }
     }
