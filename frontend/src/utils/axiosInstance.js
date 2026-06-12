@@ -125,7 +125,7 @@ axiosInstance.interceptors.response.use(
                 try {
                     let storageKey = 'indiafy-auth-storage';
                     if (isSellerReq) storageKey = 'indiafy-seller-auth-storage';
-                    if (isAdminReq) storageKey = 'indiafy-admin-auth-storage';
+                    if (isAdminReq) storageKey = 'indiafy-auth-storage';
 
                     const storageData = localStorage.getItem(storageKey);
                     if (storageData) {
